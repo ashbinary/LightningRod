@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>OatmealDome's fork of Syroot.BinaryData.</Description>
+		<Copyright>(c) Syroot, licensed under MIT</Copyright>
+		<AssemblyName>OatmealDome.BinaryData</AssemblyName>
+		<AssemblyTitle>BinaryData</AssemblyTitle>
+		<Authors>Syroot,OatmealDome</Authors>
+		<VersionPrefix>1.0.0</VersionPrefix>
+
+		<PackageId>OatmealDome.BinaryData</PackageId>
+		<PackageTags>binary;data;io;binaryreader;binarywriter</PackageTags>
+		<PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+		<PackageIconUrl>https://raw.githubusercontent.com/OatmealDome/BinaryData/master/res/Logo.png</PackageIconUrl>
+		<PackageProjectUrl>https://github.com/OatmealDome/BinaryData</PackageProjectUrl>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/OatmealDome/BinaryData/master/LICENSE</PackageLicenseUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/OatmealDome/BinaryData</RepositoryUrl>
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Configurations>Debug;Release;Release_Signed</Configurations>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release_Signed'">
+		<PackageId>Syroot.IO.BinaryData.Signed</PackageId>
+		<AssemblyOriginatorKeyFile>Syroot.BinaryData.pfx</AssemblyOriginatorKeyFile>
+		<SignAssembly>true</SignAssembly>
+	</PropertyGroup>
+</Project>

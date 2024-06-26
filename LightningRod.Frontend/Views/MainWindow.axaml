@@ -1,0 +1,315 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LightningRod.Frontend.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv ="clr-namespace:LightningRod.Frontend.Converters"
+        Width="740" Height="640"
+        CanResize="False"
+        x:Class="LightningRod.Frontend.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="LightningRod.Frontend">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Resources>
+        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Top Row for General Options and ROM Information -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- New Horizontal StackPanel -->
+        <StackPanel Orientation="Horizontal" Margin="15,5,15,0" Grid.Row="0" Grid.ColumnSpan="3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="350"/>
+                    <ColumnDefinition Width="360"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Side Options -->
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <TextBlock Text="LightningRod " 
+                            Margin="0,3,0,0"
+                            HorizontalAlignment="Left"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Background="Transparent"/>
+                    <TextBlock Text="{Binding VersionString}" 
+                            Margin="0,3,0,0"
+                            HorizontalAlignment="Left"
+                            FontSize="16"
+                            Background="Transparent"/>
+                    <TextBlock Text=" @ashbinary_" 
+                            Margin="0,3,0,0"
+                            HorizontalAlignment="Left"
+                            FontSize="16"
+                            Foreground="#4f4f4f"
+                            Background="Transparent"/>
+                </StackPanel>
+
+                <!-- Right Side Options -->
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" >
+                    <TextBlock Text="RNG Seed " 
+                            Margin="0,3,0,0"
+                            HorizontalAlignment="Right" 
+                            FontSize="16"
+                            Background="Transparent"/>
+                    <NumericUpDown Value="{Binding RandomizerSeed, Mode=TwoWay}"
+                            Margin="0,0,0,0" 
+                            HorizontalAlignment="Right" 
+                            AllowSpin="False"
+                            FontSize="16"
+                            Height="30"
+                            Width="165"
+                            Minimum="1000000000000000"
+                            Maximum="9999999999999999"
+                            ShowButtonSpinner="False"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="15,5,15,0" Grid.Row="1" Grid.ColumnSpan="3">
+            <!-- ROM Information Group -->
+            <StackPanel Width="350" Margin="0,0,10,0">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                    <StackPanel>
+                        <CheckBox Content="Load Game Data from romFS" HorizontalAlignment="Center" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
+                        <Button Name="LoadBaseNSP" Content="Load Base .nsp/.xci File" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
+                        <Button Name="LoadUpdateNSP" Content="Load Update .nsp/.xci File" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUpdateUnloaded, Mode=OneWay}" IsVisible="{Binding UseRomFSInstead, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Control Buttons -->
+            <StackPanel HorizontalAlignment="Right" Width="350" Margin="0,0,10,0">
+                <Button Content="Load Game Data" Width="350" Height="43" Click="SendDataToBackend" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,10,5"/>
+                <Button Content="Randomize + Save" Width="350" Height="43" Click="StartRandomizer" IsEnabled="{Binding GameDataLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Save Config" Width="172.5" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/>
+                    <Button Content="Load Config" Width="172.5" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- <StackPanel Grid.Row="2" Width="740" HorizontalAlignment="Center" Orientation="Horizontal">
+            <TextBlock Text="LightningRod " 
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Background="Transparent"/>
+            <TextBlock Text="{Binding VersionString}" 
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    Background="Transparent"/>
+            <TextBlock Text="RNG Seed " 
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right" 
+                    FontSize="16"
+                    Background="Transparent"/>
+            <NumericUpDown Value="{Binding RandomizerSeed, Mode=TwoWay}"
+                    Margin="0,5,0,0" 
+                    AllowSpin="False"
+                    FontSize="16"
+                    Height="30"
+                    Width="165"
+                    Minimum="1000000000000000"
+                    Maximum="9999999999999999"
+                    ShowButtonSpinner="False"/>
+        </StackPanel> -->
+
+        <!-- Tab Control -->
+        <TabControl Grid.Row="2" Margin="10,5,10,10" HorizontalAlignment="Left" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}">
+            <!-- Tab Items -->
+            <TabItem Header="Weapon Kits">
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <!-- General Options Group -->
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Sub Weapon Selection" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Include Hero Mode Sub Weapons" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                <CheckBox Content="Include Salmon Run Splat Bomb" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Include All Sub Weapons" IsChecked="{Binding AllSubWeapons, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This is very prone to crashing when a weapon is selected! Use at your own risk."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <TextBlock Text="Special Weapon Selection" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <CheckBox Content="Include Hero Mode Splashdown" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Include Rainmaker" IsChecked="{Binding UseRainmaker, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This includes both the Rainmaker and Modified Rainmaker (after v5.0.0). Highly likely to softlock before v5.0.0."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Include Smallfry" IsChecked="{Binding UseIkuraShoot, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This will not work at all without additional modifications."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Include All Specials" IsChecked="{Binding UseAllSpecials, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This has a very high chance of crashing the game, especially regarding the Side Order specials and specials intended for Rivals."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Include 170p - 220p Weapons" IsChecked="{Binding Include170To220p, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Use Non-Incremented PFS" IsChecked="{Binding NoPFSIncrementation, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This option allows weapons to have any PFS between the desired values instead of all PFS being divisible by 10, such as 188p or 204p for special."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Match Unscoped and Scoped Charger Kits" IsChecked="{Binding MatchPeriscopeKits, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,10,0,0">
+                            <CheckBox Content="Randomize Weapon Kits" IsChecked="{Binding RandomizeKits, Mode=TwoWay}"/>
+                        </Border>
+                    </StackPanel>
+
+                    
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="VS Stages">
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <!-- General Options Group -->
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Environment" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Stage Lighting" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+
+                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding HeroModeSuperLanding, Mode=OneWay}">
+                                    <TextBlock Text="Modification Level:" Margin="0,5,10,10"/>
+                                    <Slider x:Name="TweakAmount"
+                                        Minimum="0"
+                                        Maximum="10"
+                                        Value="3"
+                                        Margin="0,5,0,10"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True"
+                                        Width="100"/>
+                                    <TextBlock Text="{Binding #TweakAmount.Value}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Modify Object Position" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Rotation" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Scale" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Mismatch Stage Icons and Names" IsChecked="{Binding NoPFSIncrementation, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="There is a possiblity that certain stages may become inaccessible without additional mods."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding HeroModeSuperLanding, Mode=OneWay}">
+                                    <TextBlock Text="# of Checkpoints" Margin="0,5,10,10"/>
+                                    <Slider x:Name="TowerRandom"
+                                        Minimum="0"
+                                        Maximum="5"
+                                        Value="2"
+                                        Margin="0,5,0,10"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True"
+                                        Width="100"/>
+                                    <TextBlock Text="{Binding #TowerRandom.Value}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This has a very high chance of ending up unplayable on certain map modes, as the Tower will likely go into the floor. Use at your own risk."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Parameters">
+                <!-- Content of Pokemon Evos Tab -->
+            </TabItem>
+            <TabItem Header="Hero Mode">
+                <!-- Content of Trainer Pokemon Tab -->
+            </TabItem>
+            <TabItem Header="Salmon Run">
+                <!-- Content of Overworld Tab -->
+            </TabItem>
+            <TabItem Header="Miscellaneous Tweaks">
+                <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Ink Color" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Color Lock Ink Colors" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+
+                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Position" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Rotation" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Scale" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+
+</Window>
