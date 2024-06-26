@@ -180,7 +180,7 @@ public partial class MainWindow : Window
             else
             {
                 button.Content = "Load Base .nsp/.xci File";
-                buttonUpdate.Content = "Load Update .nsp/.xci File";
+                buttonUpdate.Content = "Load Update .nsp File";
                 button.Height = 35;
             }
         }
