@@ -30,6 +30,10 @@ public sealed class LongRNG
         return (int) (((uint)_seed) >> (48 - bits));
     }
 
+    public float NextFloat() {
+        return (float)(NextInt(1000)) / 1000;
+    }
+
     private long _seed;
 
     private const long LARGE_PRIME = 0x5DEECE66DL;

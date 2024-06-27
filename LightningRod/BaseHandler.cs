@@ -13,6 +13,7 @@ public class BaseHandler(IFileSystem fileSystem)
 
     public void triggerRandomizers(long seed,
         WeaponKitRandomizer.WeaponKitConfig weaponKitConfig,
+        VSStageRandomizer.VSStageConfig versusStageConfig,
         string saveFolder
     ) {
         string RegionLangData = GetFileAsciiData("/System/RegionLangMask.txt", fs);
@@ -22,6 +23,9 @@ public class BaseHandler(IFileSystem fileSystem)
             WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig, fs, saveFolder);
             weaponKitRandom.Randomize(seed, version);
         }
+
+        VSStageRandomizer versusStageRandomizer = new(versusStageConfig, fs, saveFolder);
+        versusStageRandomizer.Randomize(seed, version);
     }
 
     public static byte[] GetFileData(string filepath, IFileSystem fs) {

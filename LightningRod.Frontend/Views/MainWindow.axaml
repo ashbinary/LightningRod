@@ -219,31 +219,31 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                             <StackPanel>
                                 <TextBlock Text="Environment" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Stage Lighting" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding RandomFogLevels, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Stage Lighting" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}"/>
 
                                 <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,10,0,10"/>
-                                <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding HeroModeSuperLanding, Mode=OneWay}">
+                                <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding TweakStageLayouts, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
                                     <TextBlock Text="Modification Level:" Margin="0,5,10,10"/>
                                     <Slider x:Name="TweakAmount"
                                         Minimum="0"
                                         Maximum="10"
-                                        Value="3"
+                                        Value="{Binding TweakLevel, Mode=TwoWay}"
                                         Margin="0,5,0,10"
                                         TickFrequency="1"
                                         IsSnapToTickEnabled="True"
                                         Width="100"/>
-                                    <TextBlock Text="{Binding #TweakAmount.Value}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,10"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Modify Object Position" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
-                                <CheckBox Content="Modify Object Rotation" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
-                                <CheckBox Content="Modify Object Scale" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Position" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}" IsChecked="{Binding TweakStageLayoutPos, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Rotation" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}" IsChecked="{Binding TweakStageLayoutRot, Mode=TwoWay}"/>
+                                <CheckBox Content="Modify Object Scale" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}" IsChecked="{Binding TweakStageLayoutSiz, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -253,25 +253,25 @@
                             <StackPanel>
                                 <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,0,0,10"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Mismatch Stage Icons and Names" IsChecked="{Binding NoPFSIncrementation, Mode=TwoWay}"/>
+                                    <CheckBox Content="Mismatch Stage Icons and Names" IsChecked="{Binding MismatchedStages, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="There is a possiblity that certain stages may become inaccessible without additional mods."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding HeroModeSuperLanding, Mode=OneWay}">
+                                <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding YaguraRandomPath, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding YaguraRandomPath, Mode=OneWay}">
                                     <TextBlock Text="# of Checkpoints" Margin="0,5,10,10"/>
                                     <Slider x:Name="TowerRandom"
                                         Minimum="0"
                                         Maximum="5"
-                                        Value="2"
+                                        Value="{Binding YaguraCheckpointNum, Mode=TwoWay}"
                                         Margin="0,5,0,10"
                                         TickFrequency="1"
                                         IsSnapToTickEnabled="True"
                                         Width="100"/>
-                                    <TextBlock Text="{Binding #TowerRandom.Value}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="{Binding YaguraCheckpointNum}" Margin="10,5,0,10"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This has a very high chance of ending up unplayable on certain map modes, as the Tower will likely go into the floor. Use at your own risk."/>

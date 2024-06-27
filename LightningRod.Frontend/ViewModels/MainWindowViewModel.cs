@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalonia.Utilities;
 using ReactiveUI;
 
 namespace LightningRod.Frontend.ViewModels;
@@ -45,8 +46,7 @@ public class MainWindowViewModel : ViewModelBase
     
     private bool useRainmaker;
     public bool UseRainmaker {get => useRainmaker; set => SetProperty(ref useRainmaker, value); }
-    
-    
+        
     private bool useIkuraShoot;
     public bool UseIkuraShoot {get => useIkuraShoot; set => SetProperty(ref useIkuraShoot, value); }
        
@@ -61,6 +61,76 @@ public class MainWindowViewModel : ViewModelBase
     
     private bool matchPeriscopeKits;
     public bool MatchPeriscopeKits {get => matchPeriscopeKits; set => SetProperty(ref matchPeriscopeKits, value); }
+
+    private bool randomFogLevels;
+    public bool RandomFogLevels 
+    {
+        get => randomFogLevels; 
+        set => SetProperty(ref randomFogLevels, value);
+    }
+
+    private bool randomStageEnv;
+    public bool RandomStageEnv 
+    {
+        get => randomStageEnv; 
+        set => SetProperty(ref randomStageEnv, value);
+    }
+
+    private bool tweakStageLayouts;
+    public bool TweakStageLayouts 
+    {
+        get => tweakStageLayouts; 
+        set => SetProperty(ref tweakStageLayouts, value);
+    }
+
+    private int tweakLevel;
+    public int TweakLevel 
+    {
+        get => tweakLevel; 
+        set => SetProperty(ref tweakLevel, value);
+    }
+
+    private bool tweakStageLayoutPos;
+    public bool TweakStageLayoutPos 
+    {
+        get => tweakStageLayoutPos; 
+        set => SetProperty(ref tweakStageLayoutPos, value);
+    }
+
+    private bool tweakStageLayoutRot;
+    public bool TweakStageLayoutRot 
+    {
+        get => tweakStageLayoutRot; 
+        set => SetProperty(ref tweakStageLayoutRot, value);
+    }
+
+    private bool tweakStageLayoutSiz;
+    public bool TweakStageLayoutSiz 
+    {
+        get => tweakStageLayoutSiz; 
+        set => SetProperty(ref tweakStageLayoutSiz, value);
+    }
+
+    private bool mismatchedStages;
+    public bool MismatchedStages 
+    {
+        get => mismatchedStages; 
+        set => SetProperty(ref mismatchedStages, value);
+    }
+
+    private bool yaguraRandomPath;
+    public bool YaguraRandomPath 
+    {
+        get => yaguraRandomPath; 
+        set => SetProperty(ref yaguraRandomPath, value);
+    }
+
+    private int yaguraCheckpointNum;
+    public int YaguraCheckpointNum 
+    {
+        get => yaguraCheckpointNum; 
+        set => SetProperty(ref yaguraCheckpointNum, value);
+    }
 
     public MainWindowViewModel()
     {
@@ -84,5 +154,16 @@ public class MainWindowViewModel : ViewModelBase
         include170To220p = true;
         noPFSIncrementation = false;
         matchPeriscopeKits = true;
+
+        randomFogLevels = false;
+        randomStageEnv = false;
+        tweakStageLayouts = true;
+        tweakLevel = 3;
+        tweakStageLayoutPos = true;
+        tweakStageLayoutRot = false;
+        tweakStageLayoutSiz = false;
+        mismatchedStages = true;
+        yaguraRandomPath = false;
+        yaguraCheckpointNum = 3;
     }
 }

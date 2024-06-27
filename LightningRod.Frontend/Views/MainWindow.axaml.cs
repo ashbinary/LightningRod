@@ -67,24 +67,25 @@ public partial class MainWindow : Window
             var loadedFolderData = await storageProvider.OpenFolderPickerAsync(
                 new FolderPickerOpenOptions { Title = "Open Directory", AllowMultiple = false });
 
-            if (loadedFolderData.Count < 1) throw new Exception("Missing game folder data!");
+            if (loadedFolderData.Count < 1) return null;
             return loadedFolderData[0].Path.LocalPath;
         }   
 
         var loadedData = await storageProvider.OpenFilePickerAsync(
             new FilePickerOpenOptions { Title = "Open Game File", FileTypeFilter = [SwitchFiles], AllowMultiple = false });
 
-        if (loadedData.Count < 1) throw new Exception("Missing game file data!");
+        if (loadedData.Count < 1) return null;
         return loadedData[0].Path.LocalPath;
     }
 
     public async Task LoadRomFSAsync() {
         var romFSData = await OpenPickerPathAndReturn(true);
 
-        if (romFSData != null)
+        if (romFSData != null) {
             HoianBaseFiles = new LocalFileSystem(romFSData);
+            this.FindControl<Button>("LoadBaseNSP").Content = "romFS Directory loaded!";
+        }
 
-        this.FindControl<Button>("LoadBaseNSP").Content = "romFS Directory loaded!";
         Model.DataUnloaded = romFSData is null;
     }
 
@@ -124,6 +125,7 @@ public partial class MainWindow : Window
     }
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e) {
+        // TODO: Fix base NSP only
         if (!Model.UseRomFSInstead && !Model.DataUpdateUnloaded) { // if it sucks shit
             HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
             var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);  
@@ -160,7 +162,21 @@ public partial class MainWindow : Window
             Model.RandomizeKits
         );
 
-        thunderBackend.triggerRandomizers(Convert.ToInt64(Model.RandomizerSeed), weaponKitConfig, gameFilePath);
+        Randomizers.VSStageRandomizer.VSStageConfig versusStageConfig = new(
+            Model.RandomFogLevels,
+            Model.RandomStageEnv,
+            Model.TweakStageLayouts,
+            Model.TweakLevel,
+            Model.TweakStageLayoutPos,
+            Model.TweakStageLayoutRot,
+            Model.TweakStageLayoutSiz,
+            Model.MismatchedStages,
+            Model.YaguraRandomPath,
+            Model.YaguraCheckpointNum
+        );
+
+        thunderBackend.triggerRandomizers(Convert.ToInt64(Model.RandomizerSeed), 
+            weaponKitConfig, versusStageConfig, gameFilePath);
     }
 
     private void SwapRomFSandNSPInput(object sender, RoutedEventArgs e)

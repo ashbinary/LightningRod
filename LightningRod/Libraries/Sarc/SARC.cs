@@ -1,134 +1,164 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace LightningRod.Libraries.Sarc
 {
-    public class SARC
+    public ref struct Sarc
     {
         [StructLayout(LayoutKind.Sequential, Size = 0x14)]
-        public struct SARCHeader
-        {
+        public struct SarcHeader
+        {            
+            public static uint ExpectedMagic = 0x43524153;
             public uint Magic;
             public ushort HeaderSize;
-            public ushort BOM;
+            public ushort Bom;
             public uint FileSize;
-            public uint DataOffset;
-            public ushort Version;
-            public ushort Padding;
+            public uint DataStart;
         }
 
-        public struct SFATHeader
+        [StructLayout(LayoutKind.Sequential, Size = 0xC)]
+        public struct SfatHeader
         {
             public uint Magic;
             public ushort HeaderSize;
             public ushort NodeCount;
             public uint HashKey;
+            public static uint ExpectedMagic = 0x43524153;
         }
 
-        public struct SARCFile
+        [StructLayout(LayoutKind.Sequential, Size = 0x8)]
+        public struct SfntHeader
         {
-            public uint EntryOffs;
+            public uint Magic;
+            public uint HeaderSize;
+            public static uint ExpectedMagic = 0x43524153;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Size = 0x10)]
+        public struct FileNode : IComparable<uint>, IComparable<FileNode>
+        {
+            private const int FlagsShift = 24;
+            private const uint NameOffsetMask = (1 << FlagsShift) - 1;
+            private const uint FlagsMask = ~NameOffsetMask;
+
             public uint NameHash;
-            public uint NameOffs;
-            public uint Offs;
-            public uint Size;
-            public string FileName;
+            public uint FlagsAndNameOffset;
+            public uint FileDataBegin;
+            public uint FileDataEnd;
+
+            public uint NameOffset
+            {
+                get => FlagsAndNameOffset & NameOffsetMask;
+                set => FlagsAndNameOffset = (FlagsAndNameOffset & FlagsMask) | (value & NameOffsetMask);
+            }
+
+            public uint Flags
+            {
+                get => FlagsAndNameOffset >> 24;
+                set => FlagsAndNameOffset = (value << FlagsShift) | (FlagsAndNameOffset & NameOffsetMask);
+            }
+            public uint FileDataLength => FileDataEnd - FileDataBegin;
+
+            public int CompareTo(uint other) => NameHash.CompareTo(other);
+            public int CompareTo(FileNode other) => CompareTo(other.NameHash);
         }
 
-        SARCHeader Header;
-        SFATHeader SFAT_Header;
-        Dictionary<string, SARCFile> Files = new Dictionary<string, SARCFile>();
-        MemoryStream Stream;
+        private readonly int SfatOffset => Unsafe.SizeOf<SarcHeader>();
+        private readonly int SfatNodesOffset => SfatOffset + Unsafe.SizeOf<SfatHeader>();
+        private readonly int SfatNodesEnd => SfatNodesOffset + (Unsafe.SizeOf<FileNode>() * Sfat.NodeCount);
+        private readonly int SfntStart => SfatNodesEnd;
+        private readonly int SfntNameTableStart => SfntStart + Unsafe.SizeOf<SfntHeader>();
 
-        public SARC(MemoryStream stream)
+        private readonly Span<byte> Data;
+        public readonly ref SarcHeader Header;
+
+        private readonly ref SfatHeader Sfat;
+        public Span<FileNode> FileNodes;
+        
+        private ref SfntHeader Sfnt;
+        private Span<byte> NameTable;
+        
+        private Span<byte> FileData;
+
+        public Sarc(Span<byte> data)
         {
-            Stream = stream;
-            stream.Read(Utils.AsSpan(ref Header));
+            Data = data;
+            Header = ref MemoryMarshal.AsRef<SarcHeader>(Data);
 
+            /* Validate SARC header. */
+            if (Header.Bom != 0xFEFF)
+                throw new NotImplementedException("Big endian SARCs are not supported!");
             if (Header.Magic != 0x43524153)
-            {
-                throw new InvalidDataException("SARC::SARC() -- Invalid magic.");
-            }
+                throw new System.IO.InvalidDataException("Invalid SARC magic!");
+            if (Header.HeaderSize != Unsafe.SizeOf<SarcHeader>())
+                throw new System.IO.InvalidDataException("Invalid SARC header size!");
 
-            long sFatOffset = stream.Position;
+            /* Validate SFAT. */
+            Sfat = ref MemoryMarshal.AsRef<SfatHeader>(Data[SfatOffset..]);
+            if (Sfat.Magic != 0x54414653)
+                throw new System.IO.InvalidDataException("Invalid SFAT magic!");
+            if (Sfat.HeaderSize != Unsafe.SizeOf<SfatHeader>())
+                throw new System.IO.InvalidDataException("Invalid SFAT header size!");
+            if (Sfat.NodeCount >> 0xE != 0)
+                throw new System.IO.InvalidDataException("Invalid SFAT node count!");
+            FileNodes = MemoryMarshal.Cast<byte, FileNode>(Data[SfatNodesOffset..SfatNodesEnd]);
 
-            stream.Read(Utils.AsSpan(ref SFAT_Header));
+            /* Validate SFNT. */
+            Sfnt = ref MemoryMarshal.AsRef<SfntHeader>(Data[SfntStart..]);
+            if (Sfnt.Magic != 0x544E4653)
+                throw new System.IO.InvalidDataException("Invalid SNFT magic!");
+            if (Sfnt.HeaderSize != Unsafe.SizeOf<SfntHeader>())
+                throw new System.IO.InvalidDataException("Invalid SNFT header size!");
+            NameTable = Data.Slice(SfntNameTableStart, (int)(Data.Length - Header.DataStart));
 
-            if (SFAT_Header.Magic != 0x54414653)
-            {
-                throw new InvalidDataException("SARC::SARC() -- Invalid SFAT magic.");
-            }
-
-            long sFNTOffset = sFatOffset + 0xC + (SFAT_Header.NodeCount * 0x10);
-
-            for (uint i = 0; i < SFAT_Header.NodeCount; i++)
-            {
-                stream.Seek((long)(sFatOffset + 0xC + (i * 0x10)), SeekOrigin.Begin);
-                SARCFile file = new SARCFile();
-                file.EntryOffs = (uint)stream.Position;
-                file.NameHash = stream.AsBinaryReader().ReadUInt32();
-                file.NameOffs = (stream.AsBinaryReader().ReadUInt32() & 0xFFFFFF) << 2;
-                file.Offs = stream.AsBinaryReader().ReadUInt32();
-                file.Size = stream.AsBinaryReader().ReadUInt32() - file.Offs;
-
-                stream.Seek((long)(sFNTOffset + 0x8 + file.NameOffs), SeekOrigin.Begin);
-                file.FileName = Utils.ReadString(stream.AsBinaryReader());
-
-                Files.Add(file.FileName, file);
-            }
+            FileData = Data[(int)Header.DataStart..];
         }
 
-        public bool DirectoryExists(string path)
+        public string GetNodeFilename(in FileNode node)
         {
-            foreach (string file in Files.Keys)
-            {
-                if (file.StartsWith(path))
-                {
-                    return true;
-                }
-            }
+            var idx = (int)(node.NameOffset * 4);
 
-            return false;
+            var slice = NameTable[idx..];
+            int length = slice.IndexOf(byte.MinValue);
+            if(length < 0)
+                length = slice.Length;
+
+            return Encoding.UTF8.GetString(slice[..length]);
         }
 
-        public bool FileExists(string path)
+        public uint Hash(string str)
         {
-            foreach (string file in Files.Keys)
-            {
-                if (file == path)
-                {
-                    return true;
-                }
-            }
+            uint hash = 0;
 
-            return false;
+            for (int i = 0; i < str.Length; i++)
+                hash = hash * Sfat.HashKey + str[i];
+
+            return hash;
         }
 
-        public string[] GetFiles(string path)
+        public static uint Hash(string str, uint key)
         {
-            List<string> files = new List<string>();
-
-            foreach(string file in Files.Keys)
+            var bytes = Encoding.UTF8.GetBytes(str);
+            uint hash = 0;
+            foreach (var b in bytes)
             {
-                if (file.StartsWith(path))
-                {
-                    files.Add(file);
-                }
+                hash = hash * key + b;
             }
-
-            return files.ToArray();
+            return hash;
         }
 
-        public byte[] OpenFile(string path)
+        public int GetNodeIndex(string path)
         {
-            if (!FileExists(path))
-            {
-                return null;
-            }
+            var hash = Hash(path);
 
-            SARCFile file = Files[path];
-
-            Stream.Seek(Header.DataOffset + file.Offs, SeekOrigin.Begin);
-            return Utils.ReadBytes(Stream.AsBinaryReader(), file.Size);
+            return Utils.BinarySearch<FileNode, uint>(FileNodes, hash);
         }
+
+        public Span<byte> OpenFile(int idx) => OpenFile(in FileNodes[idx]);
+
+        public Span<byte> OpenFile(in FileNode node) => FileData.Slice((int)node.FileDataBegin, (int)node.FileDataLength);
+
     }
 }

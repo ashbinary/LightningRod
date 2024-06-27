@@ -109,32 +109,19 @@ public class WeaponKitRandomizer {
         streamwrite.Close();
     }
 
-    public class WeaponKitConfig {
+    public class WeaponKitConfig(bool hss, bool csb, bool asw, bool hmsl, bool ur, bool uis, bool uas, bool i1t2, bool npi, bool mpk, bool rk)
+    {
         
-        public bool heroSubSelection; // Initial value
-        public bool coopSplatBomb;
-        public bool allSubWeapons;
-        public bool heroModeSuperLanding;
-        public bool useRainmaker;
-        public bool useIkuraShoot;
-        public bool useAllSpecials;
-        public bool include170To220p;
-        public bool noPFSIncrementation;
-        public bool matchPeriscopeKits;
-        public bool randomizeKits;
-
-        public WeaponKitConfig(bool hss, bool csb, bool asw, bool hmsl, bool ur, bool uis, bool uas, bool i1t2, bool npi, bool mpk, bool rk) {
-            this.heroSubSelection = hss;
-            this.coopSplatBomb = csb;
-            this.allSubWeapons = asw;
-            this.heroModeSuperLanding = hmsl;
-            this.useRainmaker = ur;
-            this.useIkuraShoot = uis;
-            this.useAllSpecials = uas;
-            this.include170To220p = i1t2;
-            this.noPFSIncrementation = npi;
-            this.matchPeriscopeKits = mpk;
-            this.randomizeKits = rk;
-        }
+        public bool heroSubSelection = hss; // Initial value
+        public bool coopSplatBomb = csb;
+        public bool allSubWeapons = asw;
+        public bool heroModeSuperLanding = hmsl;
+        public bool useRainmaker = ur;
+        public bool useIkuraShoot = uis;
+        public bool useAllSpecials = uas;
+        public bool include170To220p = i1t2;
+        public bool noPFSIncrementation = npi;
+        public bool matchPeriscopeKits = mpk;
+        public bool randomizeKits = rk;
     }
 }
