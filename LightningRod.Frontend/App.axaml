@@ -15,6 +15,6 @@
 
     <Application.Styles>
         <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
-        <StyleInclude Source="avares://LightningRod.Frontend/Assets/Static.xaml"/>
+        <!--<StyleInclude Source="avares://LightningRod.Frontend/Assets/Static.xaml"/>-->
     </Application.Styles>
 </Application>

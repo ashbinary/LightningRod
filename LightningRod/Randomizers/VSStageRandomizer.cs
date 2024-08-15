@@ -20,14 +20,12 @@ public class VSStageRandomizer {
 
     public void Randomize(long seed, string version) {
         LongRNG rand = new(seed);
-        Console.WriteLine("Loading VS Scene randomizer with seed " + seed + " & file version " + version);
+        RandomizerUtil.DebugPrint("Loading VS Scene randomizer with seed " + seed + " & file version " + version);
 
-        dynamic VSceneByml;
         List<string> sceneNames = [];
 
         using Decompressor decompress = new();
-        byte[] compressedVScene = BaseHandler.GetFileData($"/RSDB/VersusSceneInfo.Product.{version}.rstbl.byml.zs", files);
-        VSceneByml = new Byml(new MemoryStream(decompress.Unwrap(compressedVScene))).Root;
+        dynamic VSceneByml = files.ReadCompressedByml($"/RSDB/VersusSceneInfo.Product.{version}.rstbl.byml.zs");
 
         Directory.CreateDirectory(savePath + "/romfs/Pack/Scene");
 
@@ -38,13 +36,14 @@ public class VSStageRandomizer {
             Sarc sceneSARC;
             Dictionary<string, Memory<byte>> buildAsset = new();
 
-            sceneSARC = new Sarc(decompress.Unwrap(BaseHandler.GetFileData($"/Pack/Scene/{sceneName}.pack.zs", files)));
+            sceneSARC = new Sarc(decompress.Unwrap(files.ReadWholeFile($"/Pack/Scene/{sceneName}.pack.zs")));
             dynamic fieldEnvCheck = new Byml(new MemoryStream(sceneSARC.OpenFile(sceneSARC.GetNodeIndex($"Gyml/{sceneName}.game__gfx__parameter__FieldEnv.bgyml")).ToArray())).Root;
 
             string DayEnvPathRef = fieldEnvCheck["EnvSetDay"].Data.Substring(5);
             string NightEnvPathRef = fieldEnvCheck["EnvSetNight"].Data.Substring(5);
 
-            Console.WriteLine($"Day env: {DayEnvPathRef}\nNight env: {NightEnvPathRef}");
+            RandomizerUtil.DebugPrint($"Day env: {DayEnvPathRef}"); 
+            RandomizerUtil.DebugPrint($"Night env: {NightEnvPathRef}");
 
             foreach (Sarc.FileNode fileNode in sceneSARC.FileNodes) {
                 buildAsset.Add(sceneSARC.GetNodeFilename(fileNode), sceneSARC.OpenFile(fileNode).ToArray());
@@ -57,7 +56,6 @@ public class VSStageRandomizer {
                 BymlHashTable layoutActor = (layoutRoot["Actors"] as BymlArrayNode)[i] as BymlHashTable;
                 BymlArrayNode pos, rot, siz;
                 if (layoutActor.ContainsKey("Translate")) {
-                    Console.WriteLine("Test Float " + rand.NextFloat());
                     var stuff = (layoutActor["Translate"] as BymlArrayNode);
                     ((layoutActor["Translate"] as BymlArrayNode)[0] as BymlNode<float>).Data = (float)((rand.NextFloat() * ((stuff[0] as BymlNode<float>).Data * (config.tweakLevel / 20))) + ((stuff[0] as BymlNode<float>).Data * 1 - (config.tweakLevel / 20 / 2)));
                     ((layoutActor["Translate"] as BymlArrayNode)[1] as BymlNode<float>).Data = (float)((rand.NextFloat() * ((stuff[1] as BymlNode<float>).Data * (config.tweakLevel / 20))) + ((stuff[1] as BymlNode<float>).Data * 1 - (config.tweakLevel / 20 / 2)));
@@ -72,7 +70,6 @@ public class VSStageRandomizer {
                 }
 
                 if (layoutActor.ContainsKey("Rotate")) {
-                    Console.WriteLine("Test Float " + rand.NextFloat());
                     var stuff = (layoutActor["Rotate"] as BymlArrayNode);
                     ((layoutActor["Rotate"] as BymlArrayNode)[0] as BymlNode<float>).Data = (float)((rand.NextFloat() * ((stuff[0] as BymlNode<float>).Data * (config.tweakLevel / 20))) + ((stuff[0] as BymlNode<float>).Data * 1 - (config.tweakLevel / 20 / 2)));
                     ((layoutActor["Rotate"] as BymlArrayNode)[1] as BymlNode<float>).Data = (float)((rand.NextFloat() * ((stuff[1] as BymlNode<float>).Data * (config.tweakLevel / 20))) + ((stuff[1] as BymlNode<float>).Data * 1 - (config.tweakLevel / 20 / 2)));
@@ -87,7 +84,6 @@ public class VSStageRandomizer {
                 }
 
                 if (layoutActor.ContainsKey("Scale")) {
-                    Console.WriteLine("Test Float " + rand.NextFloat());
                     var stuff = (layoutActor["Scale"] as BymlArrayNode);
                     ((layoutActor["Scale"] as BymlArrayNode)[0] as BymlNode<float>).Data = (float)((rand.NextFloat() * ((stuff[0] as BymlNode<float>).Data * (config.tweakLevel / 20))) + ((stuff[0] as BymlNode<float>).Data * 1 - (config.tweakLevel / 20 / 2)));
                     ((layoutActor["Scale"] as BymlArrayNode)[1] as BymlNode<float>).Data = (float)((rand.NextFloat() * ((stuff[1] as BymlNode<float>).Data * (config.tweakLevel / 20))) + ((stuff[1] as BymlNode<float>).Data * 1 - (config.tweakLevel / 20 / 2)));

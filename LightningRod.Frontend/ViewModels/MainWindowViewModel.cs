@@ -69,6 +69,13 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref randomFogLevels, value);
     }
 
+    private bool swapStageEnv;
+    public bool SwapStageEnv 
+    {
+        get => swapStageEnv; 
+        set => SetProperty(ref swapStageEnv, value);
+    }
+
     private bool randomStageEnv;
     public bool RandomStageEnv 
     {
@@ -157,6 +164,7 @@ public class MainWindowViewModel : ViewModelBase
 
         randomFogLevels = false;
         randomStageEnv = false;
+        swapStageEnv = false;
         tweakStageLayouts = true;
         tweakLevel = 3;
         tweakStageLayoutPos = true;

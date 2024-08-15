@@ -4,10 +4,16 @@
     <!-- Style for TextBlock -->
     <Style Selector="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}"/>
+        <Setter Property="Foreground" Value="#FF4C67" />
     </Style>
 
     <!-- Style for Button -->
     <Style Selector="Button">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}"/>
+        <Setter Property="Foreground" Value="#FF4C67" />
+    </Style>
+
+    <Style Selector="CheckBox">
+        <Setter Property="BorderBrush" Value="#FF4C67" />
     </Style>
 </Styles>

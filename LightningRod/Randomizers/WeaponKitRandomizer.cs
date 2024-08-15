@@ -17,25 +17,11 @@ public class WeaponKitRandomizer {
 
     public void Randomize(long seed, string version) {
         LongRNG rand = new(seed);
-        Console.WriteLine("Loading Weapon Kit randomizer with seed " + seed + " & file version " + version);
+        RandomizerUtil.DebugPrint("Loading Weapon Kit randomizer with seed " + seed + " & file version " + version);
 
-        Byml weaponByml;
-
-        BymlArrayNode weaponMain;
-        BymlArrayNode weaponSub;
-        BymlArrayNode weaponSpecial;
-
-        using (Decompressor decompress = new()) {
-            var compressedWeaponMain = BaseHandler.GetFileData($"/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs", files);
-            weaponByml = new Byml(new MemoryStream(decompress.Unwrap(compressedWeaponMain)));
-            weaponMain = (BymlArrayNode)weaponByml.Root;
-
-            var compressedWeaponSub = BaseHandler.GetFileData($"/RSDB/WeaponInfoSub.Product.{version}.rstbl.byml.zs", files);
-            weaponSub = (BymlArrayNode)new Byml(new MemoryStream(decompress.Unwrap(compressedWeaponSub))).Root;
-
-            var compressedWeaponSpecial = BaseHandler.GetFileData($"/RSDB/WeaponInfoSpecial.Product.{version}.rstbl.byml.zs", files);
-            weaponSpecial = (BymlArrayNode)new Byml(new MemoryStream(decompress.Unwrap(compressedWeaponSpecial))).Root;
-        }
+        BymlArrayNode weaponMain = files.ReadCompressedByml($"/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs");
+        BymlArrayNode weaponSub = files.ReadCompressedByml($"/RSDB/WeaponInfoSub.Product.{version}.rstbl.byml.zs");
+        BymlArrayNode weaponSpecial = files.ReadCompressedByml($"/RSDB/WeaponInfoSpecial.Product.{version}.rstbl.byml.zs");
 
         List<string> MainBanList = ["_Coop", "_Msn", "_Sdodr", "RivalLv1", "RivalLv2"];
         List<string> SubBanList = ["_Mission", "_Rival", "_Sdodr", "SalmonBuddy"];
@@ -74,7 +60,7 @@ public class WeaponKitRandomizer {
             if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains)) continue;
 
             int pfs = rand.NextInt(maxPFS - minPFS) + minPFS + 5; // better odds towards 220 (sorry machine mains)
-            if (!config.noPFSIncrementation) pfs = (pfs / 10) * 10;
+            if (!config.noPFSIncrementation) pfs = pfs / 10 * 10;
 
             ((BymlNode<int>)mainData["SpecialPoint"]).Data = pfs;
 
@@ -99,8 +85,10 @@ public class WeaponKitRandomizer {
         Stream streamwrite = File.Create($"{savePath}/romfs/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs");
         
         using (MemoryStream prezs = new()) {
-            weaponByml.Save(prezs);
-            using Compressor compressor= new();
+            new Byml(weaponMain).Save(prezs); // save new byml with weaponMain as root
+            RandomizerUtil.DebugPrint("Saved Weapon byml");
+
+            using Compressor compressor = new();
             var compressedByml = compressor.Wrap(prezs.ToArray());
             streamwrite.Write(compressedByml, 0, compressedByml.Length);
         }

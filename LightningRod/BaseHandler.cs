@@ -1,23 +1,27 @@
-﻿using System.Security.Cryptography;
-using LibHac.Common;
+﻿using LibHac.Common;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
+using LibHac.FsSystem;
 using LibHac.Tools.FsSystem;
 using LightningRod.Randomizers;
-
 namespace LightningRod;
 
 public class BaseHandler(IFileSystem fileSystem)
 {
     private readonly IFileSystem fs = fileSystem;
+    private LayeredFileSystem layeredFS;
 
     public void triggerRandomizers(long seed,
         WeaponKitRandomizer.WeaponKitConfig weaponKitConfig,
         VSStageRandomizer.VSStageConfig versusStageConfig,
         string saveFolder
     ) {
-        string RegionLangData = GetFileAsciiData("/System/RegionLangMask.txt", fs);
-        var version = RegionLangData.Split("\n")[2].Substring(0, 3);
+        Directory.CreateDirectory($"{saveFolder}/romfs/");
+        layeredFS = new LayeredFileSystem(fileSystem, new LocalFileSystem($"{saveFolder}/romfs/"));
+
+        string RegionLangData = System.Text.Encoding.UTF8.GetString(layeredFS.ReadWholeFile("/System/RegionLangMask.txt"));
+        var version = RegionLangData.Split("\n")[2][..3];
+        RandomizerUtil.DebugPrint($"Using game version {version}");
 
         if (weaponKitConfig.randomizeKits) {
             WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig, fs, saveFolder);
@@ -26,26 +30,5 @@ public class BaseHandler(IFileSystem fileSystem)
 
         VSStageRandomizer versusStageRandomizer = new(versusStageConfig, fs, saveFolder);
         versusStageRandomizer.Randomize(seed, version);
-    }
-
-    public static byte[] GetFileData(string filepath, IFileSystem fs) {
-        UniqueRef<IFile> tempFile = new(); // mmph god im so full of memory
-        fs.OpenFile(ref tempFile, filepath.ToU8Span(), OpenMode.Read);
-        Console.WriteLine(filepath);
-
-        tempFile.Get.GetSize(out long tempFileSize);
-        FileReader fReader = new(tempFile.Get);
-
-        return fReader.ReadBytes(0, (int)tempFileSize);     
-    }
-
-    public static string GetFileAsciiData(string filepath, IFileSystem fs) {
-        UniqueRef<IFile> tempFile = new(); // mmph god im so full of memory
-        fs.OpenFile(ref tempFile, filepath.ToU8Span(), OpenMode.Read);
-
-        _ = tempFile.Get.GetSize(out long tempFileSize);
-        FileReader fReader = new(tempFile.Get);
-
-        return fReader.ReadAscii(0, (int)tempFileSize);     
     }
 }
