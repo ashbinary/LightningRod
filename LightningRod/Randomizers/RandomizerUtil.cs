@@ -5,6 +5,7 @@ using LibHac.Fs.Fsa;
 using LibHac.Tools.FsSystem;
 using LibHac.Util;
 using LightningRod.Libraries.Byml;
+using LightningRod.Libraries.Sarc;
 using ZstdNet;
 
 namespace LightningRod.Randomizers;
@@ -26,6 +27,14 @@ public static class RandomizerUtil {
         }
     }
 
+    public static BymlArrayNode randomizeValues(this BymlArrayNode arrayNode, LongRNG rand) {
+        foreach (BymlNode<float> bymlNode in arrayNode.Array) {
+            bymlNode.Data = (rand.NextFloat() * 2) * bymlNode.Data;
+            DebugPrint($"Returned array node with float unk and RNG unk");
+        }
+        return arrayNode;
+    }
+
     // --------------------------
 
     public static BymlArrayNode ReadCompressedByml(this IFileSystem fs, string path) {
@@ -33,6 +42,17 @@ public static class RandomizerUtil {
         var data = fs.ReadWholeFile(path);
         Byml byml = new(new MemoryStream(data.DecompressZSTDBytes()));
         return (BymlArrayNode) byml.Root;
+    }
+
+    public static Sarc ReadCompressedSarc(this IFileSystem fs, string path) {
+        DebugPrint($"Loading {path}...");
+        var data = fs.ReadWholeFile(path);
+        return new Sarc(data.DecompressZSTDBytes());
+    }
+
+    public static byte[] GetFileInSarc(this Sarc sarc, string path) {
+        var sceneIndex = sarc.GetNodeIndex(path);
+        return sarc.OpenFile(sceneIndex).ToArray();
     }
 
     public static void DebugPrint(string info) {

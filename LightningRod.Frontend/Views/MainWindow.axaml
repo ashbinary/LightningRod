@@ -194,7 +194,7 @@
                     <StackPanel Width="350" Margin="0,0,5,0">
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                             <StackPanel>
-                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,0,0,10"/>
                                 <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding TweakStageLayouts, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
                                     <TextBlock Text="Modification Level:" Margin="0,5,10,10"/>
@@ -233,7 +233,7 @@
                                     </TextBlock>
                                 </StackPanel>
                                 <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding YaguraRandomPath, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding YaguraRandomPath, Mode=OneWay}">
+                                <!-- <StackPanel Orientation="Horizontal" IsVisible="{Binding YaguraRandomPath, Mode=OneWay}">
                                     <TextBlock Text="# of Checkpoints" Margin="0,5,10,5"/>
                                     <Slider x:Name="TowerRandom"
                                         Minimum="0"
@@ -254,7 +254,7 @@
                                 <CheckBox Content="Use Other Stage Environments" IsChecked="{Binding SwapStageEnv, Mode=TwoWay}"/>
                                 <CheckBox Content="Include Non-Versus Stage Environments" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
                                 <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding RandomFogLevels, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Stage Lighting" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Stage Lighting" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}"/> -->
                             </StackPanel>   
                         </Border>
                     </StackPanel>
