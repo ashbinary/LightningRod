@@ -34,6 +34,14 @@ public sealed class LongRNG
         return (float)(NextInt(1000)) / 1000;
     }
 
+    public float[] NextFloatArray(int arrLength) {
+        List<float> floatArr = [];
+        for (int i = 0; i < arrLength; i++) {
+            floatArr.Add(NextFloat());
+        }
+        return [.. floatArr];
+    }
+
     private long _seed;
 
     private const long LARGE_PRIME = 0x5DEECE66DL;

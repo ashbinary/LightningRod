@@ -26,7 +26,7 @@ public class VSStageRandomizer {
 
         Sarc paramPack = files.ReadCompressedSarc($"/Pack/Params.pack.zs");
         List<(string, Memory<byte>)> sarcBuilderFileList = [];
-        
+
         foreach (Sarc.FileNode node in paramPack.FileNodes) {
             var nodeFilename = paramPack.GetNodeFilename(node);
             if (!nodeFilename.StartsWith("Banc/")) {
@@ -48,11 +48,13 @@ public class VSStageRandomizer {
             {
                 foreach (string positionType in positionData) 
                 {
-                    if (!actorData.ContainsKey(positionType)) continue;
-                    foreach (BymlNode<float> bymlNode in (actorData[positionType] as BymlArrayNode).Array) 
-                    {
-                        bymlNode.Data = rand.NextFloat() * 2 * bymlNode.Data;
-                        RandomizerUtil.DebugPrint($"Returned array node with float unk and RNG unk");
+                    if (actorData.ContainsKey(positionType)) {
+                        ((BymlArrayNode)actorData[positionType]).VSStageRandomizePositions((1.0f, 0.2f), rand.NextFloatArray(3));
+                    } else {
+                        BymlArrayNode positionNode = new BymlArrayNode();
+                        (float, float) dataPoints = positionType.Contains("Scale") ? (1.0f, 0.2f) : (0.0f, 0.2f);
+                        positionNode.VSStageRandomizePositions(dataPoints, rand.NextFloatArray(3));
+                        actorData.AddNode(BymlNodeId.Array, positionNode, positionType);
                     }
                 }
             }
@@ -64,7 +66,7 @@ public class VSStageRandomizer {
         }
         
         using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
-        fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList));
+        fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
 
     }
 

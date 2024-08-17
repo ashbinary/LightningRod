@@ -27,12 +27,42 @@ public static class RandomizerUtil {
         }
     }
 
+    public static byte[] CompressZSTDBytes(this byte[] data) {
+        using Compressor compressor = new(new CompressionOptions(19)); {
+            return compressor.Wrap(data);
+        }
+    }
+
     public static BymlArrayNode randomizeValues(this BymlArrayNode arrayNode, LongRNG rand) {
         foreach (BymlNode<float> bymlNode in arrayNode.Array) {
             bymlNode.Data = (rand.NextFloat() * 2) * bymlNode.Data;
             DebugPrint($"Returned array node with float unk and RNG unk");
         }
         return arrayNode;
+    }
+
+    // Handler for the versus stage RNG. Held in a utility file cause I hate static classes.
+    public static BymlArrayNode VSStageRandomizePositions(this BymlArrayNode node, (float startPoint, float changePoint) dataPoints, float[] randInfo) {
+        float basePoint = dataPoints.startPoint - dataPoints.changePoint;
+        float modPoint = dataPoints.changePoint * 2;
+
+        bool isNewNode = false;
+
+        if (node.Length < 1) isNewNode = true;
+
+        // RNG is handled as (random * 0.02) + 0.99 (example) 
+        // provides random of 0.99 - 1.01
+        // (1, 0.01) in dataPoints does this
+        for (int i = 0; i < randInfo.Length; i++)
+        {
+            if (isNewNode)
+                node.AddNodeToArray(new BymlNode<float>(BymlNodeId.Float, (float)((randInfo[i] * modPoint) + basePoint)));
+            else
+                (node[i] as BymlNode<float>).Data = (float)((randInfo[i] * modPoint) + basePoint) * (node[i] as BymlNode<float>).Data;
+        }
+
+        DebugPrint($"{isNewNode} Node Log: ArrayNode with Value 1 {(node[0] as BymlNode<float>).Data} from RNG set {randInfo[0]} and Datapoints {basePoint} and {modPoint}");
+        return node;
     }
 
     // --------------------------
