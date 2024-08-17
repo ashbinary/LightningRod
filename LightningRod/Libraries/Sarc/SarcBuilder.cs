@@ -13,7 +13,8 @@ namespace LightningRod.Libraries.Sarc
     {
         private static readonly Dictionary<string, int> AlignmentsForExtensions = new()
         {
-            { "bameta", 0x40 },
+            { "bgyml", 0x40 },
+            { "byml", 0x40 },
         };
 
         private const int DefaultAlignment = 0x40;
