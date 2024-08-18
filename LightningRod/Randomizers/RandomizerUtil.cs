@@ -1,9 +1,7 @@
-using System.Text;
 using LibHac.Common;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LibHac.Tools.FsSystem;
-using LibHac.Util;
 using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 using ZstdNet;

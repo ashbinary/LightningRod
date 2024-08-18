@@ -1,11 +1,6 @@
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
-using LightningRod.Libraries.Byml.Writer;
 using LightningRod.Libraries.Sarc;
-using ZstdNet;
 
 namespace LightningRod.Randomizers;
 public class VSStageRandomizer {
@@ -97,9 +92,6 @@ public class VSStageRandomizer {
                     }
                     break;
                 }
-
-                using FileStream sceneInfoSaver = File.Create($"{savePath}/romfs/RSDB/SceneInfo.Product.{version}.rstbl.byml.zs");
-                sceneInfoSaver.Write(sceneInfo.ToBytes().CompressZSTDBytes());
             }
 
             using MemoryStream bancStream = new();
@@ -110,7 +102,14 @@ public class VSStageRandomizer {
 
         RandomizerUtil.DebugPrint("VS Stage handling complete");
 
-        if (config.tweakStageLayouts) {
+        if (config.mismatchedStages) 
+        {
+            using FileStream sceneInfoSaver = File.Create($"{savePath}/romfs/RSDB/SceneInfo.Product.{version}.rstbl.byml.zs");
+            sceneInfoSaver.Write(sceneInfo.ToBytes().CompressZSTDBytes());
+        }
+
+        if (config.tweakStageLayouts) 
+        {
             using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
             fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
         }

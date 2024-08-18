@@ -42,6 +42,10 @@ public sealed class LongRNG
         return [.. floatArr];
     }
 
+    public bool NextBoolean() {
+        return NextInt(100) < 50;
+    }
+
     private long _seed;
 
     private const long LARGE_PRIME = 0x5DEECE66DL;

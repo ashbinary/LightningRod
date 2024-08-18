@@ -256,7 +256,14 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Parameters">
-                <!-- Content of Pokemon Evos Tab -->
+                <StackPanel Width="350" Margin="0,0,5,0">
+                    <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <StackPanel>
+                            <TextBlock Text="Parameters" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <CheckBox Content="Randomize Parameters" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Hero Mode">
                 <!-- Content of Trainer Pokemon Tab -->

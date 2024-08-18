@@ -1,6 +1,5 @@
 using LightningRod.Libraries.Byml;
 using LibHac.Fs.Fsa;
-using ZstdNet;
 
 namespace LightningRod.Randomizers;
 public class WeaponKitRandomizer {
@@ -83,12 +82,10 @@ public class WeaponKitRandomizer {
 
         Directory.CreateDirectory(savePath + "/romfs/RSDB");
 
-        using MemoryStream uncompressedBymlStream = new();
-        new Byml(weaponMain).Save(uncompressedBymlStream);
-        RandomizerUtil.DebugPrint("Saved Weapon byml");
-
-        using FileStream compressedBymlStream = File.Create($"{savePath}/romfs/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs");
-        compressedBymlStream.Write(uncompressedBymlStream.ToArray().CompressZSTDBytes());
+        if (config.randomizeKits) {
+            using FileStream bymlStream = File.Create($"{savePath}/romfs/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs");
+            bymlStream.Write(weaponMain.ToBytes().CompressZSTDBytes());
+        }
     }
 
     public class WeaponKitConfig(bool hss, bool csb, bool asw, bool hmsl, bool ur, bool uis, bool uas, bool i1t2, bool npi, bool mpk, bool rk)
