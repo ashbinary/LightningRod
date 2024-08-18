@@ -65,6 +65,12 @@ public static class RandomizerUtil {
         return node;
     }
 
+    public static byte[] ToBytes(this IBymlNode file) {
+        using MemoryStream dataStream = new();
+        new Byml(file).Save(dataStream);
+        return dataStream.ToArray();
+    }
+
     // --------------------------
 
     public static BymlArrayNode ReadCompressedByml(this IFileSystem fs, string path) {

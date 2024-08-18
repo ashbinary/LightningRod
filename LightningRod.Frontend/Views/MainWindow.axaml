@@ -199,8 +199,8 @@
                                 <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
                                     <TextBlock Text="Modification Level:" Margin="0,5,10,10"/>
                                     <Slider x:Name="TweakAmount"
-                                        Minimum="0"
-                                        Maximum="10"
+                                        Minimum="1"
+                                        Maximum="20"
                                         Value="{Binding TweakLevel, Mode=TwoWay}"
                                         Margin="0,5,0,10"
                                         TickFrequency="1"
@@ -225,14 +225,9 @@
                             <StackPanel>
                                 <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,0,0,10"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Mismatch Stage Icons and Names" IsChecked="{Binding MismatchedStages, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
-                                        <ToolTip.Tip>
-                                            <ToolTip Content="There is a possiblity that certain stages may become inaccessible without additional mods."/>
-                                        </ToolTip.Tip>
-                                    </TextBlock>
+                                    <CheckBox Content="Mismatch Stage Icons" IsChecked="{Binding MismatchedStages, Mode=TwoWay}"/>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding YaguraRandomPath, Mode=TwoWay}"/>
+                                <!-- <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding YaguraRandomPath, Mode=TwoWay}"/> -->
                                 <!-- <StackPanel Orientation="Horizontal" IsVisible="{Binding YaguraRandomPath, Mode=OneWay}">
                                     <TextBlock Text="# of Checkpoints" Margin="0,5,10,5"/>
                                     <Slider x:Name="TowerRandom"

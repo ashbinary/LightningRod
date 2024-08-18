@@ -25,6 +25,7 @@ public class VSStageRandomizer {
         RandomizerUtil.DebugPrint("Loading VS Scene randomizer with seed " + seed + " & file version " + version);
 
         dynamic versusSceneInfo = files.ReadCompressedByml($"/RSDB/VersusSceneInfo.Product.{version}.rstbl.byml.zs");
+        BymlArrayNode sceneInfo = files.ReadCompressedByml($"/RSDB/SceneInfo.Product.{version}.rstbl.byml.zs");
 
         Sarc paramPack = files.ReadCompressedSarc($"/Pack/Params.pack.zs");
         List<(string, Memory<byte>)> sarcBuilderFileList = [];
@@ -55,7 +56,11 @@ public class VSStageRandomizer {
 
             BymlArrayNode stageActors = (BymlArrayNode)stageBancRoot.Values[0]; // get Actors
 
-            string[] positionData = ["Rotate", "Scale", "Translate"];
+            List<string> positionData = [];
+
+            if (config.tweakStageLayoutPos) positionData.Add("Translate");
+            if (config.tweakStageLayoutSiz) positionData.Add("Scale");
+            if (config.tweakStageLayoutRot) positionData.Add("Rotate");
 
             foreach (BymlHashTable actorData in stageActors.Array) 
             {
@@ -63,37 +68,38 @@ public class VSStageRandomizer {
                     foreach (string positionType in positionData) 
                     {
                         if (actorData.ContainsKey(positionType)) {
-                            ((BymlArrayNode)actorData[positionType]).VSStageRandomizePositions((1.0f, 0.2f), rand.NextFloatArray(3));
+                            ((BymlArrayNode)actorData[positionType]).VSStageRandomizePositions((1.0f, (float)config.tweakLevel / 100), rand.NextFloatArray(3));
                         } else {
                             BymlArrayNode positionNode = new BymlArrayNode();
-                            (float, float) dataPoints = positionType.Contains("Scale") ? (1.0f, 0.2f) : (0.0f, 0.2f);
+                            (float, float) dataPoints = positionType.Contains("Scale") ? (1.0f, (float)config.tweakLevel / 100) : (0.0f, (float)config.tweakLevel / 100);
                             positionNode.VSStageRandomizePositions(dataPoints, rand.NextFloatArray(3));
                             actorData.AddNode(BymlNodeId.Array, positionNode, positionType);
                         }
                     }
-                }
-                
-                // if (actorData.ContainsKey("Scale")) {
-                //     RandomizerUtil.DebugPrint("handling scale EXISTS");
-                //     BymlArrayNode scaleNode = (BymlArrayNode)actorData["Scale"];
-                //     scaleNode.SetNodeAtIdx(new BymlNode<float>(BymlNodeId.Float, ((BymlNode<float>)scaleNode[0]).Data * -1), 0);
-                //     scaleNode.SetNodeAtIdx(new BymlNode<float>(BymlNodeId.Float, ((BymlNode<float>)scaleNode[2]).Data * -1), 2);
-                //     actorData.SetNode("Scale", scaleNode);
-                // } else {
-                //     RandomizerUtil.DebugPrint("handling scale DOES NOT EXISTS");
-                //     if (actorData.ContainsKey("Scale")) continue; // because something is getting through?
-                //     BymlArrayNode scaleNode = new() {
-                //         Array = [new BymlNode<float>(BymlNodeId.Float, -1.0f), new BymlNode<float>(BymlNodeId.Float, 1.0f), new BymlNode<float>(BymlNodeId.Float, 1.0f)]
-                //     };
-                //     actorData.AddNode(BymlNodeId.Array, scaleNode, "Scale");
-                // }
+                }    
+            }
 
-                if (actorData.ContainsKey("Translate")) {
-                    RandomizerUtil.DebugPrint("handling rotation EXISTS");
-                    BymlArrayNode positionNode = (BymlArrayNode)actorData["Translate"];
-                    positionNode.SetNodeAtIdx(new BymlNode<float>(BymlNodeId.Float, ((BymlNode<float>)positionNode[0]).Data * -1), 0);
-                    actorData.SetNode("Translate", positionNode);
+            string[] sceneInfoLabels = ["StageIconBanner", "StageIconL", "StageIconS"];
+            BymlArrayNode newSceneInfo = new();
+
+            if (config.mismatchedStages) 
+            {
+                foreach (BymlHashTable scene in sceneInfo.Array) 
+                {
+                    if (((BymlNode<string>)scene["__RowId"]).Data != versusSceneName) continue;
+
+                    for (int i = 0; i < sceneInfoLabels.Length; i++) 
+                    {
+                        string newStage = versusSceneInfo[rand.NextInt(versusSceneInfo.Length)]["__RowId"].Data;
+                        newStage = newStage.TrimEnd(['0', '1', '2', '3', '4', '5']);
+                        RandomizerUtil.DebugPrint($"Checking for {newStage} in scene {((BymlNode<string>)scene["__RowId"]).Data}");
+                        ((BymlNode<string>)scene[sceneInfoLabels[i]]).Data = newStage;
+                    }
+                    break;
                 }
+
+                using FileStream sceneInfoSaver = File.Create($"{savePath}/romfs/RSDB/SceneInfo.Product.{version}.rstbl.byml.zs");
+                sceneInfoSaver.Write(sceneInfo.ToBytes().CompressZSTDBytes());
             }
 
             using MemoryStream bancStream = new();
@@ -101,23 +107,22 @@ public class VSStageRandomizer {
 
             sarcBuilderFileList.Add(($"Banc/{versusSceneName}.bcett.byml", bancStream.ToArray().AsMemory<byte>()));
         }
-        
+
         RandomizerUtil.DebugPrint("VS Stage handling complete");
-        using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
-        fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+
+        if (config.tweakStageLayouts) {
+            using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
+            fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+        }
 
     }
 
     public class VSStageConfig(bool rfl, bool rse, bool tsl, int tl, bool tslp, bool tslr, bool tsls, bool ms, bool yrp, int ycn) {
-        public bool randomFogLevels = rfl;
-        public bool randomStageEnv = rse;
         public bool tweakStageLayouts = tsl;
         public int tweakLevel = tl;
         public bool tweakStageLayoutPos = tslp;
         public bool tweakStageLayoutRot = tslr;
         public bool tweakStageLayoutSiz = tsls;
         public bool mismatchedStages = ms;
-        public bool yaguraRandomPath = yrp;
-        public int yaguraCheckpointNum = ycn;
     }
 }
