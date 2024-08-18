@@ -30,5 +30,8 @@ public class BaseHandler(IFileSystem fileSystem)
 
         VSStageRandomizer versusStageRandomizer = new(versusStageConfig, fs, saveFolder);
         versusStageRandomizer.Randomize(seed, version);
+
+        ParameterRandomizer parameterRandomizer = new(new ParameterRandomizer.ParameterConfig(true), fs, saveFolder);
+        parameterRandomizer.Randomize(seed, version);
     }
 }
