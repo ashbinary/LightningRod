@@ -105,29 +105,23 @@ class ParameterRandomizer {
         }
 
         public IBymlNode HandleValue(IBymlNode paramData) {
+            dynamic typedParam = paramData;
+            RandomizerUtil.DebugPrint($"Current Typed param data: {typedParam.Data}");
             switch (paramData.Id)
             {
                 case BymlNodeId.Int:
-                    BymlNode<int> paramInt = (BymlNode<int>)paramData; // handling
-
-                    RandomizerUtil.DebugPrint($"Current Typed param data: {paramInt.Data}");
-                    
-                    if (paramInt.Data > 0) paramInt.Data = rand.NextInt(paramInt.Data * 2) + 1;
-                    else if (paramInt.Data == 0) paramInt.Data = rand.NextInt(1); //unfortunate rare edge case
-                    else paramInt.Data = -1 * rand.NextInt(Math.Abs(paramInt.Data));
-
-                    RandomizerUtil.DebugPrint($"Handling Integer, {paramInt.Data}");
+                    if (typedParam.Data > 0) typedParam.Data = rand.NextInt(typedParam.Data * 2) + 1;
+                    else if (typedParam.Data == 0) typedParam.Data = rand.NextInt(1); //unfortunate rare edge case
+                    else typedParam.Data = -1 * rand.NextInt(Math.Abs(typedParam.Data));
                     break;
                 case BymlNodeId.Float:
-                    BymlNode<float> paramFloat = (BymlNode<float>)paramData; // handling
-
-                    RandomizerUtil.DebugPrint($"Current Typed param data: {paramFloat.Data}");
-                    
-                    paramFloat.Data = rand.NextFloat() * (paramFloat.Data * 2);
-
-                    RandomizerUtil.DebugPrint($"Handling Float, {paramFloat.Data}");
+                    typedParam.Data = rand.NextFloat() * (typedParam.Data * 2);
+                    break;
+                case BymlNodeId.Bool:
+                    typedParam.Data = rand.NextBoolean();
                     break;
             }
+            RandomizerUtil.DebugPrint($"Handling, {typedParam.Data}");
             return paramData;
         }
     }
