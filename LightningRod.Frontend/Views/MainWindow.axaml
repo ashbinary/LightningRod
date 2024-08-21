@@ -256,13 +256,32 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Parameters">
-                <StackPanel Width="350" Margin="0,0,5,0">
-                    <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
-                        <StackPanel>
-                            <TextBlock Text="Parameters" FontWeight="Bold" Margin="0,0,0,10"/>
-                            <CheckBox Content="Randomize Parameters" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
-                        </StackPanel>
-                    </Border>
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Parameters" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Parameters" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
+                                    <TextBlock Text="Severity Level:" Margin="0,5,10,10"/>
+                                    <Slider x:Name="ParameterScale"
+                                        Minimum="0"
+                                        Maximum="2"
+                                        Value="{Binding ParameterSeverity, Mode=TwoWay}"
+                                        Margin="0,5,0,10"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True"
+                                        Width="100"/>
+                                    <TextBlock Text="{Binding SeverityLabel}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Hero Mode">

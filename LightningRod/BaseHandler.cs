@@ -8,30 +8,34 @@ namespace LightningRod;
 
 public class BaseHandler(IFileSystem fileSystem)
 {
-    private readonly IFileSystem fs = fileSystem;
+    private readonly IFileSystem nspFS = fileSystem;
     private LayeredFileSystem layeredFS;
 
     public void triggerRandomizers(long seed,
         WeaponKitRandomizer.WeaponKitConfig weaponKitConfig,
         VSStageRandomizer.VSStageConfig versusStageConfig,
+        ParameterRandomizer.ParameterConfig parameterConfig,
         string saveFolder
     ) {
-        Directory.CreateDirectory($"{saveFolder}/romfs/");
-        layeredFS = new LayeredFileSystem(fileSystem, new LocalFileSystem($"{saveFolder}/romfs/"));
+        string fsPath = $"{saveFolder}/romfs/";
+
+        if (Directory.Exists(fsPath)) Directory.Delete(fsPath, true);
+        Directory.CreateDirectory(fsPath);
+        layeredFS = new LayeredFileSystem(nspFS, new LocalFileSystem(fsPath));
 
         string RegionLangData = System.Text.Encoding.UTF8.GetString(layeredFS.ReadWholeFile("/System/RegionLangMask.txt"));
         var version = RegionLangData.Split("\n")[2][..3];
         RandomizerUtil.DebugPrint($"Using game version {version}");
 
         if (weaponKitConfig.randomizeKits) {
-            WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig, fs, saveFolder);
+            WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig, layeredFS, saveFolder);
             weaponKitRandom.Randomize(seed, version);
         }
 
-        VSStageRandomizer versusStageRandomizer = new(versusStageConfig, fs, saveFolder);
+        VSStageRandomizer versusStageRandomizer = new(versusStageConfig, layeredFS, saveFolder);
         versusStageRandomizer.Randomize(seed, version);
 
-        ParameterRandomizer parameterRandomizer = new(new ParameterRandomizer.ParameterConfig(true), fs, saveFolder);
+        ParameterRandomizer parameterRandomizer = new(parameterConfig, layeredFS, saveFolder);
         parameterRandomizer.Randomize(seed, version);
     }
 }

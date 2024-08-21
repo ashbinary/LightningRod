@@ -125,18 +125,46 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref mismatchedStages, value);
     }
 
-    private bool yaguraRandomPath;
-    public bool YaguraRandomPath 
+    private bool randomizeParameters;
+    public bool RandomizeParameters 
     {
-        get => yaguraRandomPath; 
-        set => SetProperty(ref yaguraRandomPath, value);
+        get => randomizeParameters; 
+        set => SetProperty(ref randomizeParameters, value);
     }
 
-    private int yaguraCheckpointNum;
-    public int YaguraCheckpointNum 
+    private int parameterSeverity;
+    public int ParameterSeverity 
     {
-        get => yaguraCheckpointNum; 
-        set => SetProperty(ref yaguraCheckpointNum, value);
+        get => parameterSeverity; 
+        set => SetProperty(ref parameterSeverity, value);
+    }
+
+    private string severityLabel;
+
+    public string SeverityLabel
+    {
+        get => severityLabel;
+        set {
+            UpdateLabel();
+            SetProperty(ref severityLabel, value);
+        }
+
+    }
+
+    private void UpdateLabel()
+    {
+        switch (parameterSeverity)
+        {
+            case 0:
+                severityLabel = "Minimal";
+                break;
+            case 1:
+                severityLabel = "Average";
+                break;
+            case 2:
+                severityLabel = "Heavy";
+                break;
+        }
     }
 
     public MainWindowViewModel()
@@ -171,7 +199,8 @@ public class MainWindowViewModel : ViewModelBase
         tweakStageLayoutRot = false;
         tweakStageLayoutSiz = false;
         mismatchedStages = true;
-        yaguraRandomPath = false;
-        yaguraCheckpointNum = 3;
+
+        randomizeParameters = false;
+        parameterSeverity = 3;
     }
 }

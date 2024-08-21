@@ -25,7 +25,7 @@ namespace LightningRod.Libraries.Sarc
             public ushort HeaderSize;
             public ushort NodeCount;
             public uint HashKey;
-            public static uint ExpectedMagic = 0x43524153;
+            public static uint ExpectedMagic = 0x54414653;
         }
 
         [StructLayout(LayoutKind.Sequential, Size = 0x8)]
@@ -33,7 +33,7 @@ namespace LightningRod.Libraries.Sarc
         {
             public uint Magic;
             public uint HeaderSize;
-            public static uint ExpectedMagic = 0x43524153;
+            public static uint ExpectedMagic = 0x544E4653;
         }
 
         [StructLayout(LayoutKind.Sequential, Size = 0x10)]

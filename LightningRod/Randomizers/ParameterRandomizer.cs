@@ -6,7 +6,7 @@ using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 
 namespace LightningRod.Randomizers;
-class ParameterRandomizer {
+public class ParameterRandomizer {
 
     private static ParameterConfig? config;
     private static IFileSystem files;
@@ -48,8 +48,9 @@ class ParameterRandomizer {
         fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
     }
 
-    public class ParameterConfig(bool rp) {
-        bool randomizeParameters = rp;
+    public class ParameterConfig(bool rp, int ps) {
+        public bool randomizeParameters = rp;
+        public int parameterSeverity = ps;
     }
 
     public class BymlIterator {
@@ -106,16 +107,20 @@ class ParameterRandomizer {
 
         public IBymlNode HandleValue(IBymlNode paramData) {
             dynamic typedParam = paramData;
+
+            double[] severityValues = [1.5, 2.0, 3.0];
+            float severity = (float)severityValues[config.parameterSeverity];
+
             RandomizerUtil.DebugPrint($"Current Typed param data: {typedParam.Data}");
             switch (paramData.Id)
             {
                 case BymlNodeId.Int:
-                    if (typedParam.Data > 0) typedParam.Data = rand.NextInt(typedParam.Data * 2) + 1;
-                    else if (typedParam.Data == 0) typedParam.Data = rand.NextInt(1); //unfortunate rare edge case
+                    if (typedParam.Data > 0) typedParam.Data = rand.NextInt((int)(typedParam.Data * severity)) + 1;
+                    else if (typedParam.Data == 0) typedParam.Data = rand.NextInt((int)severity); //unfortunate rare edge case
                     else typedParam.Data = -1 * rand.NextInt(Math.Abs(typedParam.Data));
                     break;
                 case BymlNodeId.Float:
-                    typedParam.Data = rand.NextFloat() * (typedParam.Data * 2);
+                    typedParam.Data = rand.NextFloat() * (typedParam.Data * severity);
                     break;
                 case BymlNodeId.Bool:
                     typedParam.Data = rand.NextBoolean();

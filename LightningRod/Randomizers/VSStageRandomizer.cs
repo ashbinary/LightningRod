@@ -100,6 +100,7 @@ public class VSStageRandomizer {
             sarcBuilderFileList.Add(($"Banc/{versusSceneName}.bcett.byml", bancStream.ToArray().AsMemory<byte>()));
         }
 
+        Directory.CreateDirectory(savePath + "/romfs/Pack");
         RandomizerUtil.DebugPrint("VS Stage handling complete");
 
         if (config.mismatchedStages) 
@@ -116,7 +117,7 @@ public class VSStageRandomizer {
 
     }
 
-    public class VSStageConfig(bool rfl, bool rse, bool tsl, int tl, bool tslp, bool tslr, bool tsls, bool ms, bool yrp, int ycn) {
+    public class VSStageConfig(bool rfl, bool rse, bool tsl, int tl, bool tslp, bool tslr, bool tsls, bool ms) {
         public bool tweakStageLayouts = tsl;
         public int tweakLevel = tl;
         public bool tweakStageLayoutPos = tslp;

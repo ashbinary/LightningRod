@@ -170,13 +170,16 @@ public partial class MainWindow : Window
             Model.TweakStageLayoutPos,
             Model.TweakStageLayoutRot,
             Model.TweakStageLayoutSiz,
-            Model.MismatchedStages,
-            Model.YaguraRandomPath,
-            Model.YaguraCheckpointNum
+            Model.MismatchedStages
+        );
+
+        Randomizers.ParameterRandomizer.ParameterConfig parameterConfig = new(
+            Model.RandomizeParameters,
+            Model.ParameterSeverity
         );
 
         thunderBackend.triggerRandomizers(Convert.ToInt64(Model.RandomizerSeed), 
-            weaponKitConfig, versusStageConfig, gameFilePath);
+            weaponKitConfig, versusStageConfig, parameterConfig, gameFilePath);
     }
 
     private void SwapRomFSandNSPInput(object sender, RoutedEventArgs e)

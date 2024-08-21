@@ -11,11 +11,7 @@ namespace LightningRod.Libraries.Sarc
 {
     public class SarcBuilder
     {
-        private static readonly Dictionary<string, int> AlignmentsForExtensions = new()
-        {
-            { "bgyml", 0x40 },
-            { "byml", 0x40 },
-        };
+        private static readonly Dictionary<string, int> AlignmentsForExtensions = new() {};
 
         private const int DefaultAlignment = 0x40;
 
