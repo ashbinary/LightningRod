@@ -7,11 +7,12 @@ namespace LightningRod.Frontend.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     #pragma warning disable CA1822 // Mark members as static
-    public string ToolVersion => "1.0";
+    public string ToolVersion => "0.9";
     public string VersionString => $"(v{ToolVersion})";
     #pragma warning restore CA1822 // Mark members as static
 
-    
+    private bool unimplemented;
+    public bool Unimplemented {get => unimplemented; set => SetProperty(ref unimplemented, value); }
     
     private string randomizerSeed;
     public string RandomizerSeed { get => randomizerSeed; set => SetProperty(ref randomizerSeed, value); }
@@ -139,36 +140,18 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref parameterSeverity, value);
     }
 
-    private string severityLabel;
-
-    public string SeverityLabel
+    private bool maxInkConsume;
+    public bool MaxInkConsume 
     {
-        get => severityLabel;
-        set {
-            UpdateLabel();
-            SetProperty(ref severityLabel, value);
-        }
-
+        get => maxInkConsume; 
+        set => SetProperty(ref maxInkConsume, value);
     }
 
-    private void UpdateLabel()
-    {
-        switch (parameterSeverity)
-        {
-            case 0:
-                severityLabel = "Minimal";
-                break;
-            case 1:
-                severityLabel = "Average";
-                break;
-            case 2:
-                severityLabel = "Heavy";
-                break;
-        }
-    }
 
     public MainWindowViewModel()
     {
+        unimplemented = false;
+
         dataUnloaded = true;
         dataUpdateUnloaded = true;
         useRomFSInstead = false;
@@ -201,6 +184,7 @@ public class MainWindowViewModel : ViewModelBase
         mismatchedStages = true;
 
         randomizeParameters = false;
-        parameterSeverity = 3;
+        parameterSeverity = 2;
+        maxInkConsume = true;
     }
 }

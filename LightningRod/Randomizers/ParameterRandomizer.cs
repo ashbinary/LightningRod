@@ -48,9 +48,10 @@ public class ParameterRandomizer {
         fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
     }
 
-    public class ParameterConfig(bool rp, int ps) {
+    public class ParameterConfig(bool rp, int ps, bool mic) {
         public bool randomizeParameters = rp;
         public int parameterSeverity = ps;
+        public bool maxInkConsume = mic;
     }
 
     public class BymlIterator {
@@ -91,6 +92,7 @@ public class ParameterRandomizer {
         public BymlHashTable HandleHashTable(BymlHashTable paramData) {
             foreach (string paramKey in paramData.Keys) 
             {
+                if (paramKey.Contains("InkConsume") && config.maxInkConsume) paramData.SetNode(paramKey, new BymlNode<float>(BymlNodeId.Float, rand.NextFloat()));
                 paramData.SetNode(paramKey, CheckType(paramData[paramKey]));
             }
             return paramData;
@@ -109,7 +111,7 @@ public class ParameterRandomizer {
             dynamic typedParam = paramData;
 
             double[] severityValues = [1.5, 2.0, 3.0];
-            float severity = (float)severityValues[config.parameterSeverity];
+            float severity = (float)severityValues[config.parameterSeverity - 1];
 
             RandomizerUtil.DebugPrint($"Current Typed param data: {typedParam.Data}");
             switch (paramData.Id)

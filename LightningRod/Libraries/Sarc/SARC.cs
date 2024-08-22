@@ -8,9 +8,10 @@ namespace LightningRod.Libraries.Sarc
     public ref struct Sarc
     {
         [StructLayout(LayoutKind.Sequential, Size = 0x14)]
-        public struct SarcHeader
-        {            
+        public struct Header
+        {
             public static uint ExpectedMagic = 0x43524153;
+
             public uint Magic;
             public ushort HeaderSize;
             public ushort Bom;
@@ -21,24 +22,27 @@ namespace LightningRod.Libraries.Sarc
         [StructLayout(LayoutKind.Sequential, Size = 0xC)]
         public struct SfatHeader
         {
+            public static uint ExpectedMagic = 0x54414653;
+
             public uint Magic;
             public ushort HeaderSize;
             public ushort NodeCount;
             public uint HashKey;
-            public static uint ExpectedMagic = 0x54414653;
         }
 
         [StructLayout(LayoutKind.Sequential, Size = 0x8)]
         public struct SfntHeader
         {
+            public static uint ExpectedMagic = 0x544E4653;
+
             public uint Magic;
             public uint HeaderSize;
-            public static uint ExpectedMagic = 0x544E4653;
         }
 
         [StructLayout(LayoutKind.Sequential, Size = 0x10)]
         public struct FileNode : IComparable<uint>, IComparable<FileNode>
         {
+            /* Flags are the upper byte of the uint, so 24 bits up. */
             private const int FlagsShift = 24;
             private const uint NameOffsetMask = (1 << FlagsShift) - 1;
             private const uint FlagsMask = ~NameOffsetMask;
@@ -61,18 +65,25 @@ namespace LightningRod.Libraries.Sarc
             }
             public uint FileDataLength => FileDataEnd - FileDataBegin;
 
-            public int CompareTo(uint other) => NameHash.CompareTo(other);
-            public int CompareTo(FileNode other) => CompareTo(other.NameHash);
+            public int CompareTo(uint other)
+            {
+                return NameHash.CompareTo(other);
+            }
+
+            public int CompareTo(FileNode other)
+            {
+                return CompareTo(other.NameHash);
+            }
         }
 
-        private readonly int SfatOffset => Unsafe.SizeOf<SarcHeader>();
+        private readonly int SfatOffset => Unsafe.SizeOf<Header>();
         private readonly int SfatNodesOffset => SfatOffset + Unsafe.SizeOf<SfatHeader>();
         private readonly int SfatNodesEnd => SfatNodesOffset + (Unsafe.SizeOf<FileNode>() * Sfat.NodeCount);
         private readonly int SfntStart => SfatNodesEnd;
         private readonly int SfntNameTableStart => SfntStart + Unsafe.SizeOf<SfntHeader>();
 
         private readonly Span<byte> Data;
-        public readonly ref SarcHeader Header;
+        public readonly ref Header SarcHeader;
 
         private readonly ref SfatHeader Sfat;
         public Span<FileNode> FileNodes;
@@ -85,14 +96,14 @@ namespace LightningRod.Libraries.Sarc
         public Sarc(Span<byte> data)
         {
             Data = data;
-            Header = ref MemoryMarshal.AsRef<SarcHeader>(Data);
+            SarcHeader = ref MemoryMarshal.AsRef<Header>(Data);
 
             /* Validate SARC header. */
-            if (Header.Bom != 0xFEFF)
+            if (SarcHeader.Bom != 0xFEFF)
                 throw new NotImplementedException("Big endian SARCs are not supported!");
-            if (Header.Magic != 0x43524153)
+            if (SarcHeader.Magic != 0x43524153)
                 throw new System.IO.InvalidDataException("Invalid SARC magic!");
-            if (Header.HeaderSize != Unsafe.SizeOf<SarcHeader>())
+            if (SarcHeader.HeaderSize != Unsafe.SizeOf<Header>())
                 throw new System.IO.InvalidDataException("Invalid SARC header size!");
 
             /* Validate SFAT. */
@@ -111,9 +122,9 @@ namespace LightningRod.Libraries.Sarc
                 throw new System.IO.InvalidDataException("Invalid SNFT magic!");
             if (Sfnt.HeaderSize != Unsafe.SizeOf<SfntHeader>())
                 throw new System.IO.InvalidDataException("Invalid SNFT header size!");
-            NameTable = Data.Slice(SfntNameTableStart, (int)(Data.Length - Header.DataStart));
+            NameTable = Data.Slice(SfntNameTableStart, (int)(Data.Length - SarcHeader.DataStart));
 
-            FileData = Data[(int)Header.DataStart..];
+            FileData = Data[(int)SarcHeader.DataStart..];
         }
 
         public string GetNodeFilename(in FileNode node)

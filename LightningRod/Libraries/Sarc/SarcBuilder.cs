@@ -11,7 +11,10 @@ namespace LightningRod.Libraries.Sarc
 {
     public class SarcBuilder
     {
-        private static readonly Dictionary<string, int> AlignmentsForExtensions = new() {};
+        private static readonly Dictionary<string, int> AlignmentsForExtensions = new()
+        {
+            { "bameta", 0x40 },
+        };
 
         private const int DefaultAlignment = 0x40;
 
@@ -57,7 +60,7 @@ namespace LightningRod.Libraries.Sarc
                 firstFileAlignment = 0;
             }
 
-            var sfatOffset = Unsafe.SizeOf<Sarc.SarcHeader>();
+            var sfatOffset = Unsafe.SizeOf<Sarc.Header>();
             var fileNodesOffset = sfatOffset + Unsafe.SizeOf<Sarc.SfatHeader>();
             var sfntOffset = fileNodesOffset + (Unsafe.SizeOf<Sarc.FileNode>() * files.Count);
             var nameTableOffset = sfntOffset + Unsafe.SizeOf<Sarc.SfntHeader>();
@@ -67,9 +70,9 @@ namespace LightningRod.Libraries.Sarc
             var data = new byte[totalData];
             var span = data.AsSpan();
 
-            ref var header = ref span.AsStruct<Sarc.SarcHeader>();
-            header.Magic = Sarc.SarcHeader.ExpectedMagic;
-            header.HeaderSize = (ushort)Unsafe.SizeOf<Sarc.SarcHeader>();
+            ref var header = ref span.AsStruct<Sarc.Header>();
+            header.Magic = Sarc.Header.ExpectedMagic;
+            header.HeaderSize = (ushort)Unsafe.SizeOf<Sarc.Header>();
             header.Bom = 0xFEFF;
             header.FileSize = (uint)totalData;
             header.DataStart = (uint)dataStart;

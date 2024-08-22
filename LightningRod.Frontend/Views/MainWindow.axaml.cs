@@ -175,7 +175,8 @@ public partial class MainWindow : Window
 
         Randomizers.ParameterRandomizer.ParameterConfig parameterConfig = new(
             Model.RandomizeParameters,
-            Model.ParameterSeverity
+            Model.ParameterSeverity,
+            Model.MaxInkConsume
         );
 
         thunderBackend.triggerRandomizers(Convert.ToInt64(Model.RandomizerSeed), 

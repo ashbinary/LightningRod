@@ -106,8 +106,8 @@
                 <Button Content="Load Game Data" Width="350" Height="43" Click="SendDataToBackend" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,10,5"/>
                 <Button Content="Randomize + Save" Width="350" Height="43" Click="StartRandomizer" IsEnabled="{Binding GameDataLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Save Config" Width="172.5" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/>
-                    <Button Content="Load Config" Width="172.5" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/>
+                    <Button Content="Save Config [TBD]" Width="172.5" Height="43" IsEnabled="{Binding Unimplemented, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
+                    <Button Content="Load Config [TBD]" Width="172.5" Height="43" IsEnabled="{Binding Unimplemented, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
                 </StackPanel>
             </StackPanel>
         </StackPanel>
@@ -207,7 +207,7 @@
                                         IsSnapToTickEnabled="True"
                                         Width="100"/>
                                     <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,10"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,-5,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
                                         </ToolTip.Tip>
@@ -261,52 +261,130 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                             <StackPanel>
                                 <TextBlock Text="Parameters" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <CheckBox Content="Randomize Parameters" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Weapon Parameters" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
                                     <TextBlock Text="Severity Level:" Margin="0,5,10,10"/>
                                     <Slider x:Name="ParameterScale"
-                                        Minimum="0"
-                                        Maximum="2"
+                                        Minimum="1"
+                                        Maximum="3"
                                         Value="{Binding ParameterSeverity, Mode=TwoWay}"
                                         Margin="0,5,0,10"
                                         TickFrequency="1"
                                         IsSnapToTickEnabled="True"
                                         Width="100"/>
-                                    <TextBlock Text="{Binding SeverityLabel}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="{Binding ParameterSeverity}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,-5,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="The parameter randomization was developed with Level 2 in mind. Level 1 and 3 are only for fun, and Level 3 in particular has a high chance of crashing on certain Sloshers and Grizzco weapons."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Keep Ink Consumption Under 100%" IsChecked="{Binding MaxInkConsume, Mode=TwoWay}"/>
+                                <TextBlock Text="Singletons" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Randomize Versus Constants" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
+                                            <ToolTip Content="Due to how the versus constants are randomized, it's possible that the game may flag you for cheating on an unlucky save. Enable Prevent Scorekeeper Detection to prevent this."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Randomize Salmon Run Constants" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Prevent Scorekeeper Detection" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This is NOT an anticheat bypass. All this does is prevent the game's internal scorekeeper from being randomized and falsely flagging a player."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                </StackPanel>
-            </TabItem>
-            <TabItem Header="Hero Mode">
-                <!-- Content of Trainer Pokemon Tab -->
-            </TabItem>
-            <TabItem Header="Salmon Run">
-                <!-- Content of Overworld Tab -->
-            </TabItem>
-            <TabItem Header="Miscellaneous Tweaks">
-                <StackPanel Width="350" Margin="0,0,5,0">
+                    <StackPanel Width="350" Margin="5,0,0,0">
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                             <StackPanel>
-                                <TextBlock Text="Ink Color" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Color Lock Ink Colors" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
-
-                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,10,0,10"/>
-                                <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
-                                <CheckBox Content="Modify Object Position" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
-                                <CheckBox Content="Modify Object Rotation" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
-                                <CheckBox Content="Modify Object Scale" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <TextBlock Text="Ink Appearance" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Ink Colors [TBD]" IsEnabled="{Binding Unimplemented, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Color Lock Ink Colors [TBD]" IsEnabled="{Binding Unimplemented, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Side Order Ink Colors [TBD]" IsEnabled="{Binding Unimplemented, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Ink Type Appearance [TBD]" IsEnabled="{Binding Unimplemented, Mode=OneWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
+                </StackPanel>
             </TabItem>
+            <TabItem Header="Hero Mode [TBD]" IsEnabled="{Binding Unimplemented, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Weapon Selection" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Allowed Weapons" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Always Set First Slot To Hero Shot" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Power Egg Reward" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Allow Non-Story Mode Weapons" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Mission Stage" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Kettles" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Mission Layouts" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
+                                    <TextBlock Text="Randomization Level:" Margin="0,5,10,10"/>
+                                    <Slider x:Name="MissionModifier"
+                                        Minimum="1"
+                                        Maximum="20"
+                                        Value="{Binding TweakLevel, Mode=TwoWay}"
+                                        Margin="0,5,0,10"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True"
+                                        Width="100"/>
+                                    <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,10"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,-5,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Randomize Special-Only Stages" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <CheckBox Content="Randomize Mission Enemy Parameters" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <CheckBox Content="Set All Level Fees To 0" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <!-- <TabItem Header="Salmon Run">
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Ink Appearance" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Color Lock Ink Colors" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Side Order Ink Colors" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Ink Type Appearance" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Ink Appearance" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Color Lock Ink Colors" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Side Order Ink Colors" IsEnabled="{Binding HeroModeSuperLanding, Mode=OneWay}" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Ink Type Appearance" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem> -->
         </TabControl>
     </Grid>
 
