@@ -25,8 +25,6 @@ using LibHac.Tools.FsSystem;
 using LibHac.Tools.FsSystem.NcaUtils;
 using LightningRod.Frontend.ViewModels;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Scripting.Hosting;
-using ReactiveUI;
 
 namespace LightningRod.Frontend.Views;
 
@@ -130,7 +128,10 @@ public partial class MainWindow : Window
             HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
             var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);  
 
-            IFileSystem baseNcaData = filesystem.Titles[0x0100C2500FC20000].MainNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.IgnoreOnInvalid);
+            Title baseNcaTitle = filesystem.Titles[0x0100C2500FC20000];
+            SwitchFsNca baseNca = baseNcaTitle.MainNca;
+            IFileSystem baseNcaData = baseNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.IgnoreOnInvalid);
+            
             IFileSystem updateNcaData = filesystem.Titles[filesystem.Applications[0x0100C2500FC20000].Patch.Id].MainNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.IgnoreOnInvalid);
         
             HoianBaseFiles = new LayeredFileSystem(baseNcaData, updateNcaData);

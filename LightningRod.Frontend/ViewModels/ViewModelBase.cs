@@ -1,12 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LightningRod.Frontend.ViewModels;
 
-public class ViewModelBase : ReactiveObject
+public class ViewModelBase : ObservableObject
 {
-    protected void SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = null)
-    {
-        this.RaiseAndSetIfChanged(ref backingField, value, propertyName);
-    }
 }
