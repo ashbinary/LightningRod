@@ -40,6 +40,8 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool randomizeParameters;
     [ObservableProperty] private int parameterSeverity;
     [ObservableProperty] private bool maxInkConsume;
+    [ObservableProperty] private bool randomizeInkColors;
+    [ObservableProperty] private bool randomizeInkColorLock;
 
     public MainWindowViewModel()
     {
@@ -82,5 +84,7 @@ public partial class MainWindowViewModel : ObservableObject
         RandomizeParameters = false;
         ParameterSeverity = 2;
         MaxInkConsume = true;
+        RandomizeInkColors = true;
+        RandomizeInkColorLock = true;
     }
 }

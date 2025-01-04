@@ -1,9 +1,11 @@
+using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
+using OatmealDome.BinaryData;
 
 namespace LightningRod.Randomizers;
 public class ParameterRandomizer {
@@ -46,12 +48,38 @@ public class ParameterRandomizer {
 
         using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
         fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+
+        BymlArrayNode inkColorByml = files.ReadCompressedByml($"/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs");
+
+        if (config.randomizeInkColors) 
+        {
+            string[] teamNames = ["AlphaTeam", "BravoTeam", "CharlieTeam", "Neutral"];
+            string[] colorTypes = ["R", "G", "B"];
+
+            for (int i = 0; i < inkColorByml.Length; i++) {
+                BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
+
+                if (!config.randomizeInkColorLock && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support")) continue; 
+
+                //if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains)) continue;
+                for (int t = 0; t < teamNames.Length; t++)
+                    for (int j = 0; j < colorTypes.Length; j++)
+                        ((colorData[$"{teamNames[t]}Color"] as BymlHashTable)[colorTypes[j]] as BymlNode<float>).Data = rand.NextFloat();
+
+                RandomizerUtil.DebugPrint("Handled ink color");
+            }
+
+            using FileStream bymlStream = File.Create($"{savePath}/romfs/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs");
+            bymlStream.Write(inkColorByml.ToBytes().CompressZSTDBytes());
+        }
     }
 
-    public class ParameterConfig(bool rp, int ps, bool mic) {
+    public class ParameterConfig(bool rp, int ps, bool mic, bool ric, bool ricl) {
         public bool randomizeParameters = rp;
         public int parameterSeverity = ps;
         public bool maxInkConsume = mic;
+        public bool randomizeInkColors = ric;
+        public bool randomizeInkColorLock = ricl;
     }
 
     public class BymlIterator {

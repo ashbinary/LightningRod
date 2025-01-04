@@ -124,8 +124,15 @@ public partial class MainWindow : Window
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e) {
         // TODO: Fix base NSP only
-        if (!Model.UseRomFSInstead && !Model.DataUpdateUnloaded) { // if it sucks shit
-            HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
+        if (!Model.UseRomFSInstead) { // if it sucks shit
+            if (Model.DataUpdateUnloaded)
+            {
+                HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempBase.Get);
+            }
+            else
+            {
+                HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
+            }
             var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);  
 
             Title baseNcaTitle = filesystem.Titles[0x0100C2500FC20000];
@@ -177,7 +184,9 @@ public partial class MainWindow : Window
         Randomizers.ParameterRandomizer.ParameterConfig parameterConfig = new(
             Model.RandomizeParameters,
             Model.ParameterSeverity,
-            Model.MaxInkConsume
+            Model.MaxInkConsume,
+            Model.RandomizeInkColors,
+            Model.RandomizeInkColorLock
         );
 
         thunderBackend.triggerRandomizers(Convert.ToInt64(Model.RandomizerSeed), 
