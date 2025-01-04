@@ -3,6 +3,7 @@
     public class BymlIntData : BymlData
     {
         private readonly int Value;
+
         public BymlIntData(int value)
         {
             Value = value;

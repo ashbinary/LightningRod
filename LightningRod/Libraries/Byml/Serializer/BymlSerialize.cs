@@ -29,7 +29,10 @@ namespace LightningRod.Libraries.Byml.Serializer
         {
             var hashTable = node as BymlHashTable;
 
-            var properties = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var properties = obj.GetType()
+                .GetProperties(
+                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
+                );
 
             for (int i = 0; i < properties.Length; i++)
             {
@@ -46,7 +49,10 @@ namespace LightningRod.Libraries.Byml.Serializer
                     type = nullableType;
 
                 //Set custom keys as property name if used
-                string name = byamlAttribute != null && byamlAttribute.Key != null ? byamlAttribute.Key : properties[i].Name;
+                string name =
+                    byamlAttribute != null && byamlAttribute.Key != null
+                        ? byamlAttribute.Key
+                        : properties[i].Name;
 
                 //Skip properties that are not present
                 if (!hashTable.ContainsKey(name))
@@ -58,7 +64,7 @@ namespace LightningRod.Libraries.Byml.Serializer
 
         static void SetValues(object property, Type type, object section, dynamic value)
         {
-             if (value is BymlArrayNode)
+            if (value is BymlArrayNode)
             {
                 if (type == typeof(System.Numerics.Vector3))
                 {
@@ -66,7 +72,8 @@ namespace LightningRod.Libraries.Byml.Serializer
                     var vec3 = new System.Numerics.Vector3(
                         ((dynamic)values[0]).Data,
                         ((dynamic)values[0]).Data,
-                        ((dynamic)values[0]).Data);
+                        ((dynamic)values[0]).Data
+                    );
                     SetValue(property, section, vec3);
                 }
                 else
@@ -112,7 +119,8 @@ namespace LightningRod.Libraries.Byml.Serializer
                     var vec3 = new System.Numerics.Vector3(
                         ((dynamic)values["X"]).Data,
                         ((dynamic)values["Y"]).Data,
-                        ((dynamic)values["Z"]).Data);
+                        ((dynamic)values["Z"]).Data
+                    );
                     SetValue(property, section, vec3);
                 }
                 else if (type == typeof(System.Numerics.Vector2))
@@ -120,7 +128,8 @@ namespace LightningRod.Libraries.Byml.Serializer
                     var values = value as BymlHashTable;
                     var vec3 = new System.Numerics.Vector2(
                         ((dynamic)values["X"]).Data,
-                        ((dynamic)values["Y"]).Data);
+                        ((dynamic)values["Y"]).Data
+                    );
                     SetValue(property, section, vec3);
                 }
                 else if (type == typeof(Dictionary<string, dynamic>))
@@ -137,7 +146,6 @@ namespace LightningRod.Libraries.Byml.Serializer
                 {
                     var values = value as BymlHashTable;
 
-                    
                     var dict = (IDictionary)CreateInstance(type);
                     foreach (var pair in values.Pairs)
                     {
@@ -162,10 +170,10 @@ namespace LightningRod.Libraries.Byml.Serializer
         static bool IsByStringDictionaryType(Type type, [NotNullWhen(true)] out Type? valueType)
         {
             valueType = null;
-            if(!type.IsGenericType)
+            if (!type.IsGenericType)
                 return false;
 
-            if(!type.GetGenericTypeDefinition().Equals(typeof(Dictionary<,>)))
+            if (!type.GetGenericTypeDefinition().Equals(typeof(Dictionary<,>)))
                 return false;
 
             valueType = type.GetGenericArguments()[1];
@@ -176,7 +184,9 @@ namespace LightningRod.Libraries.Byml.Serializer
         {
             if (property is PropertyInfo)
             {
-                Type nullableType = Nullable.GetUnderlyingType(((PropertyInfo)property).PropertyType);
+                Type nullableType = Nullable.GetUnderlyingType(
+                    ((PropertyInfo)property).PropertyType
+                );
                 if (nullableType != null && nullableType.GetTypeInfo().IsEnum)
                 {
                     value = Enum.ToObject(nullableType, value);
@@ -198,7 +208,11 @@ namespace LightningRod.Libraries.Byml.Serializer
         {
             BymlHashTable bymlProperties = new BymlHashTable();
 
-            var properties = section.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var properties = section
+                .GetType()
+                .GetProperties(
+                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
+                );
 
             for (int i = 0; i < properties.Length; i++)
             {
@@ -215,13 +229,16 @@ namespace LightningRod.Libraries.Byml.Serializer
                     value = byamlAttribute.DefaultValue;
 
                 //Set custom keys as property name if used
-                string name = byamlAttribute != null && byamlAttribute.Key != null ? byamlAttribute.Key : properties[i].Name;
+                string name =
+                    byamlAttribute != null && byamlAttribute.Key != null
+                        ? byamlAttribute.Key
+                        : properties[i].Name;
 
                 if (value == null)
                     continue;
 
                 var node = SetBymlValue(value);
-                bymlProperties.AddNode(node.Id, node, name); 
+                bymlProperties.AddNode(node.Id, node, name);
             }
             return bymlProperties;
         }
@@ -235,15 +252,24 @@ namespace LightningRod.Libraries.Byml.Serializer
             if (type.IsEnum)
                 type = Enum.GetUnderlyingType(type);
 
-            if (type == typeof(bool)) return new BymlNode<bool>(BymlNodeId.Bool, (bool)value);
-            else if (type == typeof(float)) return new BymlNode<float>(BymlNodeId.Float, (float)value);
-            else if (type == typeof(int)) return new BymlNode<int>(BymlNodeId.Int, (int)value);
-            else if (type == typeof(uint)) return new BymlNode<uint>(BymlNodeId.UInt, (uint)value);
-            else if (type == typeof(string)) return new BymlNode<string>(BymlNodeId.String, (string)value);
-            else if (type == typeof(double)) return new BymlBigDataNode<double>(BymlNodeId.Double, (double)value);
-            else if (type == typeof(ulong)) return new BymlBigDataNode<ulong>(BymlNodeId.UInt64, (ulong)value);
-            else if (type == typeof(long)) return new BymlBigDataNode<long>(BymlNodeId.Int64, (long)value);
-            else if (type == typeof(byte[])) return new BymlBigDataNode<byte[]>(BymlNodeId.Bin, (byte[])value);
+            if (type == typeof(bool))
+                return new BymlNode<bool>(BymlNodeId.Bool, (bool)value);
+            else if (type == typeof(float))
+                return new BymlNode<float>(BymlNodeId.Float, (float)value);
+            else if (type == typeof(int))
+                return new BymlNode<int>(BymlNodeId.Int, (int)value);
+            else if (type == typeof(uint))
+                return new BymlNode<uint>(BymlNodeId.UInt, (uint)value);
+            else if (type == typeof(string))
+                return new BymlNode<string>(BymlNodeId.String, (string)value);
+            else if (type == typeof(double))
+                return new BymlBigDataNode<double>(BymlNodeId.Double, (double)value);
+            else if (type == typeof(ulong))
+                return new BymlBigDataNode<ulong>(BymlNodeId.UInt64, (ulong)value);
+            else if (type == typeof(long))
+                return new BymlBigDataNode<long>(BymlNodeId.Int64, (long)value);
+            else if (type == typeof(byte[]))
+                return new BymlBigDataNode<byte[]>(BymlNodeId.Bin, (byte[])value);
             else if (typeof(IList).GetTypeInfo().IsAssignableFrom(type))
             {
                 BymlArrayNode savedValues = new BymlArrayNode();
@@ -259,12 +285,10 @@ namespace LightningRod.Libraries.Byml.Serializer
             throw new Exception($"Type {type.Name} is not supported as BYAML data.");
         }
 
-
         static bool IsTypeSerializableObject(Type type)
         {
             return Attribute.IsDefined(type, typeof(SerializableAttribute));
         }
-
 
         private static bool IsTypeList(Type type)
         {

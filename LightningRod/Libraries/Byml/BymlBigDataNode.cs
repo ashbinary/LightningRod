@@ -9,7 +9,11 @@ namespace LightningRod.Libraries.Byml
 
         object IBymlValueNode.GetValue() => Data!;
 
-        public BymlBigDataNode(BymlNodeId id, BinaryReader reader, Func<BinaryReader, T> valueReader)
+        public BymlBigDataNode(
+            BymlNodeId id,
+            BinaryReader reader,
+            Func<BinaryReader, T> valueReader
+        )
         {
             Id = id;
             using (reader.BaseStream.TemporarySeek(reader.ReadUInt32(), SeekOrigin.Begin))

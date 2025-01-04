@@ -11,11 +11,11 @@ namespace OatmealDome.BinaryData.Core
     internal static class TypeExtensions
     {
         // ---- FIELDS -------------------------------------------------------------------------------------------------
-        
+
         private static readonly Type _iEnumerableType = typeof(IEnumerable);
 
         // ---- METHODS (INTERNAL) -------------------------------------------------------------------------------------
-        
+
         /// <summary>
         /// Returns a value indicating whether the given <paramref name="type"/> is enumerable. Returns <c>false</c> for
         /// non-enumerable objects and strings.
@@ -24,7 +24,8 @@ namespace OatmealDome.BinaryData.Core
         /// <returns><c>true</c> if the type is enumerable and not a string; otherwise <c>false</c>.</returns>
         internal static bool IsEnumerable(this Type type)
         {
-            return type != typeof(String) && (type.IsArray || _iEnumerableType.IsAssignableFrom(type));
+            return type != typeof(String)
+                && (type.IsArray || _iEnumerableType.IsAssignableFrom(type));
         }
 
         /// <summary>
@@ -48,7 +49,8 @@ namespace OatmealDome.BinaryData.Core
                 if (type.GetArrayRank() > 1 || (elementType = type.GetElementType()).IsArray)
                 {
                     throw new NotImplementedException(
-                        $"Type {type} is a multidimensional array and not supported at the moment.");
+                        $"Type {type} is a multidimensional array and not supported at the moment."
+                    );
                 }
                 return elementType;
             }
@@ -58,8 +60,10 @@ namespace OatmealDome.BinaryData.Core
             {
                 foreach (Type interfaceType in type.GetInterfaces())
                 {
-                    if (interfaceType.IsGenericType
-                        && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    if (
+                        interfaceType.IsGenericType
+                        && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                    )
                     {
                         return interfaceType.GetGenericArguments()[0];
                     }
@@ -81,7 +85,8 @@ namespace OatmealDome.BinaryData.Core
                     if (type.GetArrayRank() > 1 || (elemType = type.GetElementType()).IsArray)
                     {
                         throw new NotImplementedException(
-                            $"Type {type} is a multidimensional array and not supported at the moment.");
+                            $"Type {type} is a multidimensional array and not supported at the moment."
+                        );
                     }
                     elementType = elemType;
                     return true;
@@ -92,8 +97,10 @@ namespace OatmealDome.BinaryData.Core
                 {
                     foreach (Type interfaceType in type.GetInterfaces())
                     {
-                        if (interfaceType.IsGenericType
-                            && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                        if (
+                            interfaceType.IsGenericType
+                            && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                        )
                         {
                             elementType = interfaceType.GetGenericArguments()[0];
                             return true;

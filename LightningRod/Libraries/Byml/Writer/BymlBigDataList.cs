@@ -10,14 +10,14 @@
         }
 
         public int CalcPackSize()
-        {   
+        {
             /* Sum up big data sizes and round up by 4. */
             return Utils.AlignUp(Internal.Sum(x => x.CalcBigDataSize()), 4);
         }
 
         public int SetOffset(int offset)
         {
-            foreach(var data in Internal)
+            foreach (var data in Internal)
             {
                 data.Offset = offset;
                 offset += data.CalcBigDataSize();
@@ -27,7 +27,7 @@
 
         public void Write(Stream stream)
         {
-            foreach(var data in Internal)
+            foreach (var data in Internal)
             {
                 using (stream.TemporarySeek(data.Offset, SeekOrigin.Begin))
                     data.WriteBigData(stream);

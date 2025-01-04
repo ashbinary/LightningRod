@@ -26,16 +26,18 @@ namespace LightningRod.Libraries.Sarc
         {
             var hashKey = DefaultHashKey;
 
-            files.Sort((left, right) =>
-            {
-                var (leftPath, _) = left;
-                var (rightPath, _) = right;
+            files.Sort(
+                (left, right) =>
+                {
+                    var (leftPath, _) = left;
+                    var (rightPath, _) = right;
 
-                var leftAlignment = Sarc.Hash(leftPath, (uint)hashKey);
-                var rightAlignment = Sarc.Hash(rightPath, (uint)hashKey);
+                    var leftAlignment = Sarc.Hash(leftPath, (uint)hashKey);
+                    var rightAlignment = Sarc.Hash(rightPath, (uint)hashKey);
 
-                return leftAlignment.CompareTo(rightAlignment);
-            });
+                    return leftAlignment.CompareTo(rightAlignment);
+                }
+            );
 
             /* Collect up all the sizes of files, rounded up by their respective alignment. */
             var alignedFileSizes = files
@@ -46,9 +48,7 @@ namespace LightningRod.Libraries.Sarc
             var totalFileData = alignedFileSizes.Sum();
 
             /* Collect up the size of the name table. */
-            var nameTableSize = files
-                .Select(x => x.Item1)
-                .Sum(LengthOfStringForNameTable);
+            var nameTableSize = files.Select(x => x.Item1).Sum(LengthOfStringForNameTable);
 
             int firstFileAlignment;
             if (files.Count > 0)
@@ -86,7 +86,7 @@ namespace LightningRod.Libraries.Sarc
             var nodes = span[fileNodesOffset..].AsStructSpan<Sarc.FileNode>(files.Count);
 
             /* Build file nodes. */
-            for(var i = 0; i < files.Count; i++)
+            for (var i = 0; i < files.Count; i++)
             {
                 var (fileName, _) = files[i];
                 ref var node = ref nodes[i];
@@ -119,7 +119,7 @@ namespace LightningRod.Libraries.Sarc
             /* Write out the file data. */
             var currentDataOffset = 0;
             var dataarea = span.Slice(dataStart, totalData - dataStart);
-            for(var i = 0; i < files.Count; i++)
+            for (var i = 0; i < files.Count; i++)
             {
                 ref var node = ref nodes[i];
                 var (_, fileData) = files[i];
@@ -137,9 +137,11 @@ namespace LightningRod.Libraries.Sarc
         }
 
         /* The length of the string, +1 for the null terminator, then aligned. */
-        private static int LengthOfStringForNameTable(string name) => Utils.RoundUp(name.Length + 1, NameTableAlignment);
+        private static int LengthOfStringForNameTable(string name) =>
+            Utils.RoundUp(name.Length + 1, NameTableAlignment);
 
-        private static int GetAlignmentForName(string name) => GetAlignmentForExtension(Path.GetExtension(name));
+        private static int GetAlignmentForName(string name) =>
+            GetAlignmentForExtension(Path.GetExtension(name));
 
         private static int GetAlignmentForExtension(string extension)
         {

@@ -8,73 +8,95 @@ using LightningRod.Libraries.Sarc;
 using OatmealDome.BinaryData;
 
 namespace LightningRod.Randomizers;
-public class ParameterRandomizer {
 
+public class ParameterRandomizer
+{
     private static ParameterConfig? config;
     private static IFileSystem files;
     private readonly string savePath;
 
-    public ParameterRandomizer(ParameterConfig sceneConfig, IFileSystem fileSys, string save) {
+    public ParameterRandomizer(ParameterConfig sceneConfig, IFileSystem fileSys, string save)
+    {
         config = sceneConfig;
         files = fileSys;
         savePath = save;
     }
 
-    public void Randomize(long seed, string version) {
+    public void Randomize(long seed, string version)
+    {
         LongRNG rand = new LongRNG(seed);
-        RandomizerUtil.DebugPrint($"Loading parameter randomizer with seed {seed} and version {version}");
+        RandomizerUtil.DebugPrint(
+            $"Loading parameter randomizer with seed {seed} and version {version}"
+        );
 
         Sarc paramPack = files.ReadCompressedSarc($"/Pack/Params.pack.zs");
         List<(string, Memory<byte>)> sarcBuilderFileList = []; // Essentially taken from VSStageRandomizer
 
-        foreach (Sarc.FileNode node in paramPack.FileNodes) { // Setup SARC builder data
+        foreach (Sarc.FileNode node in paramPack.FileNodes)
+        { // Setup SARC builder data
             string fileName = paramPack.GetNodeFilename(node);
-            if (fileName.StartsWith("Component/GameParameterTable/Weapon")) continue;
+            if (fileName.StartsWith("Component/GameParameterTable/Weapon"))
+                continue;
             sarcBuilderFileList.Add((fileName, paramPack.GetFileInSarc(fileName).AsMemory()));
         }
 
         foreach (Sarc.FileNode paramNode in paramPack.FileNodes)
         {
             string paramFileName = paramPack.GetNodeFilename(paramNode);
-            if (!paramFileName.StartsWith("Component/GameParameterTable/Weapon")) continue; // exact opposite as above
-            BymlHashTable paramFile = (BymlHashTable)new Byml(new MemoryStream(paramPack.GetFileInSarc(paramFileName))).Root;
+            if (!paramFileName.StartsWith("Component/GameParameterTable/Weapon"))
+                continue; // exact opposite as above
+            BymlHashTable paramFile = (BymlHashTable)
+                new Byml(new MemoryStream(paramPack.GetFileInSarc(paramFileName))).Root;
 
             BymlIterator paramIterator = new(seed);
             paramFile = paramIterator.IterateParams(paramFile);
             RandomizerUtil.DebugPrint("Handled param file");
-            
+
             sarcBuilderFileList.Add((paramFileName, paramFile.ToBytes().AsMemory()));
         }
 
         using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
         fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
 
-        BymlArrayNode inkColorByml = files.ReadCompressedByml($"/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs");
+        BymlArrayNode inkColorByml = files.ReadCompressedByml(
+            $"/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs"
+        );
 
-        if (config.randomizeInkColors) 
+        if (config.randomizeInkColors)
         {
             string[] teamNames = ["AlphaTeam", "BravoTeam", "CharlieTeam", "Neutral"];
             string[] colorTypes = ["R", "G", "B"];
 
-            for (int i = 0; i < inkColorByml.Length; i++) {
+            for (int i = 0; i < inkColorByml.Length; i++)
+            {
                 BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
 
-                if (!config.randomizeInkColorLock && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support")) continue; 
+                if (
+                    !config.randomizeInkColorLock
+                    && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support")
+                )
+                    continue;
 
                 //if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains)) continue;
                 for (int t = 0; t < teamNames.Length; t++)
-                    for (int j = 0; j < colorTypes.Length; j++)
-                        ((colorData[$"{teamNames[t]}Color"] as BymlHashTable)[colorTypes[j]] as BymlNode<float>).Data = rand.NextFloat();
+                for (int j = 0; j < colorTypes.Length; j++)
+                    (
+                        (colorData[$"{teamNames[t]}Color"] as BymlHashTable)[colorTypes[j]]
+                        as BymlNode<float>
+                    ).Data = rand.NextFloat();
 
                 RandomizerUtil.DebugPrint("Handled ink color");
             }
 
-            using FileStream bymlStream = File.Create($"{savePath}/romfs/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs");
+            using FileStream bymlStream = File.Create(
+                $"{savePath}/romfs/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs"
+            );
             bymlStream.Write(inkColorByml.ToBytes().CompressZSTDBytes());
         }
     }
 
-    public class ParameterConfig(bool rp, int ps, bool mic, bool ric, bool ricl) {
+    public class ParameterConfig(bool rp, int ps, bool mic, bool ric, bool ricl)
+    {
         public bool randomizeParameters = rp;
         public int parameterSeverity = ps;
         public bool maxInkConsume = mic;
@@ -82,13 +104,19 @@ public class ParameterRandomizer {
         public bool randomizeInkColorLock = ricl;
     }
 
-    public class BymlIterator {
+    public class BymlIterator
+    {
         private LongRNG rand;
-        public BymlIterator(long seed) {
+
+        public BymlIterator(long seed)
+        {
             rand = new LongRNG(seed);
         }
-        public BymlHashTable IterateParams(BymlHashTable paramFile) {
-            if (!paramFile.ContainsKey("GameParameters")) return paramFile;
+
+        public BymlHashTable IterateParams(BymlHashTable paramFile)
+        {
+            if (!paramFile.ContainsKey("GameParameters"))
+                return paramFile;
 
             BymlHashTable paramData = (BymlHashTable)paramFile["GameParameters"];
             paramData = (BymlHashTable)CheckType(paramData);
@@ -96,10 +124,11 @@ public class ParameterRandomizer {
             return paramFile;
         }
 
-        public IBymlNode CheckType(IBymlNode paramData) {
+        public IBymlNode CheckType(IBymlNode paramData)
+        {
             BymlNodeId dataType = paramData.Id;
             RandomizerUtil.DebugPrint($"Checking param data ID {paramData.Id}");
-            switch (dataType) 
+            switch (dataType)
             {
                 case BymlNodeId.Hash:
                     paramData = HandleHashTable((BymlHashTable)paramData);
@@ -117,16 +146,22 @@ public class ParameterRandomizer {
             return paramData;
         }
 
-        public BymlHashTable HandleHashTable(BymlHashTable paramData) {
-            foreach (string paramKey in paramData.Keys) 
+        public BymlHashTable HandleHashTable(BymlHashTable paramData)
+        {
+            foreach (string paramKey in paramData.Keys)
             {
-                if (paramKey.Contains("InkConsume") && config.maxInkConsume) paramData.SetNode(paramKey, new BymlNode<float>(BymlNodeId.Float, rand.NextFloat()));
+                if (paramKey.Contains("InkConsume") && config.maxInkConsume)
+                    paramData.SetNode(
+                        paramKey,
+                        new BymlNode<float>(BymlNodeId.Float, rand.NextFloat())
+                    );
                 paramData.SetNode(paramKey, CheckType(paramData[paramKey]));
             }
             return paramData;
         }
 
-        public BymlArrayNode HandleArrayNode(BymlArrayNode paramData) {
+        public BymlArrayNode HandleArrayNode(BymlArrayNode paramData)
+        {
             for (int i = 0; i < paramData.Length; i++)
             {
                 paramData.SetNodeAtIdx(CheckType(paramData[i]), i);
@@ -135,7 +170,8 @@ public class ParameterRandomizer {
             return paramData;
         }
 
-        public IBymlNode HandleValue(IBymlNode paramData) {
+        public IBymlNode HandleValue(IBymlNode paramData)
+        {
             dynamic typedParam = paramData;
 
             double[] severityValues = [1.5, 2.0, 3.0];
@@ -145,9 +181,12 @@ public class ParameterRandomizer {
             switch (paramData.Id)
             {
                 case BymlNodeId.Int:
-                    if (typedParam.Data > 0) typedParam.Data = rand.NextInt((int)(typedParam.Data * severity)) + 1;
-                    else if (typedParam.Data == 0) typedParam.Data = rand.NextInt((int)severity); //unfortunate rare edge case
-                    else typedParam.Data = -1 * rand.NextInt(Math.Abs(typedParam.Data));
+                    if (typedParam.Data > 0)
+                        typedParam.Data = rand.NextInt((int)(typedParam.Data * severity)) + 1;
+                    else if (typedParam.Data == 0)
+                        typedParam.Data = rand.NextInt((int)severity); //unfortunate rare edge case
+                    else
+                        typedParam.Data = -1 * rand.NextInt(Math.Abs(typedParam.Data));
                     break;
                 case BymlNodeId.Float:
                     typedParam.Data = rand.NextFloat() * (typedParam.Data * severity);

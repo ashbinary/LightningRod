@@ -34,6 +34,5 @@
                 Strings.Add(str);
             }
         }
-
     }
 }

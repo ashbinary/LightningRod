@@ -22,8 +22,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="value">The value to write.</param>
         /// <param name="format">The <see cref="BooleanDataFormat"/> format in which the data is stored.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, Boolean value,
-            BooleanDataFormat format = BooleanDataFormat.Byte, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            Boolean value,
+            BooleanDataFormat format = BooleanDataFormat.Byte,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             byte[] buffer;
@@ -43,7 +47,10 @@ namespace OatmealDome.BinaryData.Extensions
                     stream.Write(Buffer, 0, sizeof(Int32));
                     break;
                 default:
-                    throw new ArgumentException($"Invalid {nameof(BooleanDataFormat)}.", nameof(format));
+                    throw new ArgumentException(
+                        $"Invalid {nameof(BooleanDataFormat)}.",
+                        nameof(format)
+                    );
             }
         }
 
@@ -54,8 +61,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="values">The values to write.</param>
         /// <param name="format">The <see cref="BooleanDataFormat"/> format in which the data is stored.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Boolean> values,
-            BooleanDataFormat format = BooleanDataFormat.Byte, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Boolean> values,
+            BooleanDataFormat format = BooleanDataFormat.Byte,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -86,7 +97,10 @@ namespace OatmealDome.BinaryData.Extensions
                         }
                         break;
                     default:
-                        throw new ArgumentException($"Invalid {nameof(BooleanDataFormat)}.", nameof(format));
+                        throw new ArgumentException(
+                            $"Invalid {nameof(BooleanDataFormat)}.",
+                            nameof(format)
+                        );
                 }
             }
         }
@@ -128,8 +142,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="value">The value to write.</param>
         /// <param name="format">The <see cref="DateTimeDataFormat"/> format in which the data is stored.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, DateTime value,
-            DateTimeDataFormat format = DateTimeDataFormat.NetTicks, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            DateTime value,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             switch (format)
@@ -141,10 +159,17 @@ namespace OatmealDome.BinaryData.Extensions
                     Write(stream, (uint)(new DateTime(1970, 1, 1) - value).TotalSeconds, converter);
                     break;
                 case DateTimeDataFormat.CTime64:
-                    Write(stream, (ulong)(new DateTime(1970, 1, 1) - value).TotalSeconds, converter);
+                    Write(
+                        stream,
+                        (ulong)(new DateTime(1970, 1, 1) - value).TotalSeconds,
+                        converter
+                    );
                     break;
                 default:
-                    throw new ArgumentException($"Invalid {nameof(DateTimeDataFormat)}.", nameof(format));
+                    throw new ArgumentException(
+                        $"Invalid {nameof(DateTimeDataFormat)}.",
+                        nameof(format)
+                    );
             }
         }
 
@@ -155,8 +180,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="values">The values to write.</param>
         /// <param name="format">The <see cref="DateTimeDataFormat"/> format in which the data is stored.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<DateTime> values,
-            DateTimeDataFormat format = DateTimeDataFormat.NetTicks, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<DateTime> values,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
         }
@@ -182,7 +211,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Decimal> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Decimal> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -217,7 +250,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Double> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Double> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -242,10 +279,14 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="strict"><c>true</c> to raise an <see cref="ArgumentOutOfRangeException"/> if the value is not
         /// defined in the enum type.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void WriteEnum<T>(this Stream stream, T value, bool strict = false,
-            ByteConverter converter = null)
-            where T : struct, IComparable, IFormattable
-            => WriteEnum(stream, typeof(T), value, strict, converter);
+        public static void WriteEnum<T>(
+            this Stream stream,
+            T value,
+            bool strict = false,
+            ByteConverter converter = null
+        )
+            where T : struct, IComparable, IFormattable =>
+            WriteEnum(stream, typeof(T), value, strict, converter);
 
         /// <summary>
         /// Writes an array of <see cref="Enum"/> values of type <typeparamref name="T"/> to the
@@ -257,8 +298,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="strict"><c>true</c> to raise an <see cref="ArgumentOutOfRangeException"/> if the value is not
         /// defined in the enum type.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void WriteEnums<T>(this Stream stream, IEnumerable<T> values, bool strict = false,
-            ByteConverter converter = null)
+        public static void WriteEnums<T>(
+            this Stream stream,
+            IEnumerable<T> values,
+            bool strict = false,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             Type enumType = typeof(T);
@@ -292,7 +337,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Int16> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Int16> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -327,7 +376,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Int32> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Int32> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -362,7 +415,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Int64> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Int64> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -384,8 +441,19 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="value">The object or enumerable of objects to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void WriteObject(this Stream stream, object value, ByteConverter converter = null)
-            => WriteObject(stream, null, BinaryMemberAttribute.Default, value.GetType(), value, converter);
+        public static void WriteObject(
+            this Stream stream,
+            object value,
+            ByteConverter converter = null
+        ) =>
+            WriteObject(
+                stream,
+                null,
+                BinaryMemberAttribute.Default,
+                value.GetType(),
+                value,
+                converter
+            );
 
         // ---- SByte ----
 
@@ -440,7 +508,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<Single> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<Single> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -466,9 +538,13 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="encoding">The <see cref="Encoding"/> to parse the bytes with, or <c>null</c> to use
         /// <see cref="Encoding.UTF8"/>.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, String value,
-            StringDataFormat format = StringDataFormat.DynamicByteCount, Encoding encoding = null,
-            ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            String value,
+            StringDataFormat format = StringDataFormat.DynamicByteCount,
+            Encoding encoding = null,
+            ByteConverter converter = null
+        )
         {
             encoding = encoding ?? Encoding.UTF8;
             converter = converter ?? ByteConverter.System;
@@ -512,7 +588,10 @@ namespace OatmealDome.BinaryData.Extensions
                         stream.Write(textBuffer, 0, textBuffer.Length);
                         break;
                     default:
-                        throw new ArgumentException($"Invalid {nameof(StringDataFormat)}.", nameof(format));
+                        throw new ArgumentException(
+                            $"Invalid {nameof(StringDataFormat)}.",
+                            nameof(format)
+                        );
                 }
             }
         }
@@ -527,9 +606,13 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="encoding">The <see cref="Encoding"/> to parse the bytes with, or <c>null</c> to use
         /// <see cref="Encoding.UTF8"/>.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<String> values,
-            StringDataFormat format = StringDataFormat.DynamicByteCount, Encoding encoding = null, 
-            ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<String> values,
+            StringDataFormat format = StringDataFormat.DynamicByteCount,
+            Encoding encoding = null,
+            ByteConverter converter = null
+        )
         {
             encoding = encoding ?? Encoding.UTF8;
             converter = converter ?? ByteConverter.System;
@@ -563,7 +646,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<UInt16> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<UInt16> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -576,7 +663,7 @@ namespace OatmealDome.BinaryData.Extensions
                 }
             }
         }
-        
+
         // ---- UInt32 ----
 
         /// <summary>
@@ -598,7 +685,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<UInt32> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<UInt32> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -633,7 +724,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="values">The values to write.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
-        public static void Write(this Stream stream, IEnumerable<UInt64> values, ByteConverter converter = null)
+        public static void Write(
+            this Stream stream,
+            IEnumerable<UInt64> values,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             lock (stream)
@@ -660,7 +755,13 @@ namespace OatmealDome.BinaryData.Extensions
             stream.WriteByte((byte)value);
         }
 
-        private static void WriteEnum(Stream stream, Type enumType, object value, bool strict, ByteConverter converter)
+        private static void WriteEnum(
+            Stream stream,
+            Type enumType,
+            object value,
+            bool strict,
+            ByteConverter converter
+        )
         {
             converter = converter ?? ByteConverter.System;
             Type valueType = Enum.GetUnderlyingType(enumType);
@@ -712,8 +813,14 @@ namespace OatmealDome.BinaryData.Extensions
             stream.Write(buffer, 0, Marshal.SizeOf(valueType));
         }
 
-        private static void WriteObject(Stream stream, object instance, BinaryMemberAttribute attribute, Type type,
-            object value, ByteConverter converter)
+        private static void WriteObject(
+            Stream stream,
+            object instance,
+            BinaryMemberAttribute attribute,
+            Type type,
+            object value,
+            ByteConverter converter
+        )
         {
             converter = converter ?? ByteConverter.System;
 
@@ -731,7 +838,14 @@ namespace OatmealDome.BinaryData.Extensions
                 {
                     foreach (object element in (IEnumerable)value)
                     {
-                        WriteObject(stream, null, BinaryMemberAttribute.Default, elementType, element, converter);
+                        WriteObject(
+                            stream,
+                            null,
+                            BinaryMemberAttribute.Default,
+                            elementType,
+                            element,
+                            converter
+                        );
                     }
                 }
                 else if (type == typeof(Boolean))
@@ -801,13 +915,20 @@ namespace OatmealDome.BinaryData.Extensions
             else
             {
                 // Let a binary converter do all the work.
-                IBinaryConverter binaryConverter = BinaryConverterCache.GetConverter(attribute.Converter);
+                IBinaryConverter binaryConverter = BinaryConverterCache.GetConverter(
+                    attribute.Converter
+                );
                 binaryConverter.Write(stream, instance, attribute, value, converter);
             }
         }
 
-        private static void WriteCustomObject(Stream stream, Type type, object instance, long startOffset,
-            ByteConverter converter)
+        private static void WriteCustomObject(
+            Stream stream,
+            Type type,
+            object instance,
+            long startOffset,
+            ByteConverter converter
+        )
         {
             TypeData typeData = TypeData.GetTypeData(type);
 
@@ -828,8 +949,13 @@ namespace OatmealDome.BinaryData.Extensions
             }
         }
 
-        private static void WriteMember(Stream stream, object instance, long startOffset, ByteConverter converter,
-            MemberData member)
+        private static void WriteMember(
+            Stream stream,
+            object instance,
+            long startOffset,
+            ByteConverter converter,
+            MemberData member
+        )
         {
             // If possible, reposition the stream according to offset.
             if (stream.CanSeek)
@@ -841,8 +967,13 @@ namespace OatmealDome.BinaryData.Extensions
             }
             else
             {
-                if (member.Attribute.OffsetOrigin == OffsetOrigin.Begin || member.Attribute.Offset < 0)
-                    throw new NotSupportedException("Cannot reposition the stream as it is not seekable.");
+                if (
+                    member.Attribute.OffsetOrigin == OffsetOrigin.Begin
+                    || member.Attribute.Offset < 0
+                )
+                    throw new NotSupportedException(
+                        "Cannot reposition the stream as it is not seekable."
+                    );
                 else if (member.Attribute.Offset > 0) // Simulate moving forward by writing bytes.
                     stream.Write(new byte[member.Attribute.Offset]);
             }
@@ -858,7 +989,9 @@ namespace OatmealDome.BinaryData.Extensions
                     value = property.GetValue(instance);
                     break;
                 default:
-                    throw new InvalidOperationException($"Tried to write an invalid member {member.MemberInfo}.");
+                    throw new InvalidOperationException(
+                        $"Tried to write an invalid member {member.MemberInfo}."
+                    );
             }
 
             // Write the value and respect settings stored in the member attribute.
@@ -871,7 +1004,14 @@ namespace OatmealDome.BinaryData.Extensions
             {
                 foreach (object element in (IEnumerable)value)
                 {
-                    WriteObject(stream, instance, member.Attribute, elementType, element, converter);
+                    WriteObject(
+                        stream,
+                        instance,
+                        member.Attribute,
+                        elementType,
+                        element,
+                        converter
+                    );
                 }
             }
         }

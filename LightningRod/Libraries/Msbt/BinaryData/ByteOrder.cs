@@ -18,6 +18,6 @@
         /// <summary>
         /// Indicates little endian byte order.
         /// </summary>
-        LittleEndian = 0xFFFE
+        LittleEndian = 0xFFFE,
     }
 }

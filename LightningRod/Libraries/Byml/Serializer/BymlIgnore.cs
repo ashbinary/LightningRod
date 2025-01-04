@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace LightningRod.Libraries.Byml.Serializer
 {
-    public class BymlIgnore : Attribute
-    {
-
-    }
+    public class BymlIgnore : Attribute { }
 }

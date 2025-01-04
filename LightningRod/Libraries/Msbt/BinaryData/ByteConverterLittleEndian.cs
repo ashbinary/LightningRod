@@ -151,7 +151,8 @@ namespace OatmealDome.BinaryData
         [SecuritySafeCritical]
         public override unsafe Double ToDouble(byte[] buffer, int startIndex = 0)
         {
-            Int64 raw = buffer[startIndex]
+            Int64 raw =
+                buffer[startIndex]
                 | (long)buffer[startIndex + 1] << 8
                 | (long)buffer[startIndex + 2] << 16
                 | (long)buffer[startIndex + 3] << 24
@@ -170,8 +171,7 @@ namespace OatmealDome.BinaryData
         /// <returns>The converted value.</returns>
         public override Int16 ToInt16(byte[] buffer, int startIndex = 0)
         {
-            return (Int16)(buffer[startIndex]
-                | buffer[startIndex + 1] << 8);
+            return (Int16)(buffer[startIndex] | buffer[startIndex + 1] << 8);
         }
 
         /// <summary>
@@ -215,7 +215,8 @@ namespace OatmealDome.BinaryData
         [SecuritySafeCritical]
         public override unsafe Single ToSingle(byte[] buffer, int startIndex = 0)
         {
-            Int32 raw = buffer[startIndex]
+            Int32 raw =
+                buffer[startIndex]
                 | buffer[startIndex + 1] << 8
                 | buffer[startIndex + 2] << 16
                 | buffer[startIndex + 3] << 24;
@@ -230,8 +231,7 @@ namespace OatmealDome.BinaryData
         /// <returns>The converted value.</returns>
         public override UInt16 ToUInt16(byte[] buffer, int startIndex = 0)
         {
-            return (UInt16)(buffer[startIndex]
-                | buffer[startIndex + 1] << 8);
+            return (UInt16)(buffer[startIndex] | buffer[startIndex + 1] << 8);
         }
 
         /// <summary>
@@ -242,10 +242,12 @@ namespace OatmealDome.BinaryData
         /// <returns>The converted value.</returns>
         public override UInt32 ToUInt32(byte[] buffer, int startIndex = 0)
         {
-            return (UInt32)(buffer[startIndex]
+            return (UInt32)(
+                buffer[startIndex]
                 | buffer[startIndex + 1] << 8
                 | buffer[startIndex + 2] << 16
-                | buffer[startIndex + 3] << 24);
+                | buffer[startIndex + 3] << 24
+            );
         }
 
         /// <summary>

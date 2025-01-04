@@ -48,7 +48,7 @@ namespace OatmealDome.BinaryData
         /// <see cref="StringDataFormat.DynamicByteCount"/>.
         /// </summary>
         public StringDataFormat StringFormat { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of elements to read or write. Required for <see cref="IEnumerable"/> members or
         /// strings when <see cref="StringFormat"/> is <see cref="StringDataFormat.Raw"/>.
@@ -82,6 +82,6 @@ namespace OatmealDome.BinaryData
         /// The origin is relative to the start of the class or structure, which is the position at which reading or
         /// writing the instance of the top-most base type has been initiated.
         /// </summary>
-        Begin
+        Begin,
     }
 }

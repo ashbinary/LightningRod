@@ -55,13 +55,17 @@ namespace LightningRod.Libraries.Sarc
             public uint NameOffset
             {
                 get => FlagsAndNameOffset & NameOffsetMask;
-                set => FlagsAndNameOffset = (FlagsAndNameOffset & FlagsMask) | (value & NameOffsetMask);
+                set =>
+                    FlagsAndNameOffset =
+                        (FlagsAndNameOffset & FlagsMask) | (value & NameOffsetMask);
             }
 
             public uint Flags
             {
                 get => FlagsAndNameOffset >> 24;
-                set => FlagsAndNameOffset = (value << FlagsShift) | (FlagsAndNameOffset & NameOffsetMask);
+                set =>
+                    FlagsAndNameOffset =
+                        (value << FlagsShift) | (FlagsAndNameOffset & NameOffsetMask);
             }
             public uint FileDataLength => FileDataEnd - FileDataBegin;
 
@@ -78,7 +82,8 @@ namespace LightningRod.Libraries.Sarc
 
         private readonly int SfatOffset => Unsafe.SizeOf<Header>();
         private readonly int SfatNodesOffset => SfatOffset + Unsafe.SizeOf<SfatHeader>();
-        private readonly int SfatNodesEnd => SfatNodesOffset + (Unsafe.SizeOf<FileNode>() * Sfat.NodeCount);
+        private readonly int SfatNodesEnd =>
+            SfatNodesOffset + (Unsafe.SizeOf<FileNode>() * Sfat.NodeCount);
         private readonly int SfntStart => SfatNodesEnd;
         private readonly int SfntNameTableStart => SfntStart + Unsafe.SizeOf<SfntHeader>();
 
@@ -87,10 +92,10 @@ namespace LightningRod.Libraries.Sarc
 
         private readonly ref SfatHeader Sfat;
         public Span<FileNode> FileNodes;
-        
+
         private ref SfntHeader Sfnt;
         private Span<byte> NameTable;
-        
+
         private Span<byte> FileData;
 
         public Sarc(Span<byte> data)
@@ -133,7 +138,7 @@ namespace LightningRod.Libraries.Sarc
 
             var slice = NameTable[idx..];
             int length = slice.IndexOf(byte.MinValue);
-            if(length < 0)
+            if (length < 0)
                 length = slice.Length;
 
             return Encoding.UTF8.GetString(slice[..length]);
@@ -169,7 +174,7 @@ namespace LightningRod.Libraries.Sarc
 
         public Span<byte> OpenFile(int idx) => OpenFile(in FileNodes[idx]);
 
-        public Span<byte> OpenFile(in FileNode node) => FileData.Slice((int)node.FileDataBegin, (int)node.FileDataLength);
-
+        public Span<byte> OpenFile(in FileNode node) =>
+            FileData.Slice((int)node.FileDataBegin, (int)node.FileDataLength);
     }
 }

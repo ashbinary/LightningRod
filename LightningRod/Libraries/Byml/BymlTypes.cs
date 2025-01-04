@@ -9,7 +9,7 @@ namespace LightningRod.Libraries.Byml
         Array = 0xC0,
         Hash = 0xC1,
         StringTable = 0xC2,
-        PathArray = 0xC3,   /* Obscure, only observed in MK8DX. */
+        PathArray = 0xC3, /* Obscure, only observed in MK8DX. */
         Bool = 0xD0,
         Int = 0xD1,
         Float = 0xD2,
@@ -33,11 +33,12 @@ namespace LightningRod.Libraries.Byml
     [StructLayout(LayoutKind.Sequential, Size = 0xC)]
     public struct Vector3
     {
-        public float X, Y, Z;
+        public float X,
+            Y,
+            Z;
     }
 
     [StructLayout(LayoutKind.Sequential, Size = 0x1C)]
-
     public struct BymlPathPoint
     {
         public Vector3 Position;
@@ -53,7 +54,8 @@ namespace LightningRod.Libraries.Byml
 
         public int CompareTo(string? other)
         {
-            if (other == null) return 1;
+            if (other == null)
+                return 1;
             return string.CompareOrdinal(Name, other);
         }
 
@@ -77,6 +79,7 @@ namespace LightningRod.Libraries.Byml
     {
         public BymlNodeId Id { get; }
         public T Data;
+
         object IBymlValueNode.GetValue() => Data!;
 
         public BymlNode(BymlNodeId id, T data)

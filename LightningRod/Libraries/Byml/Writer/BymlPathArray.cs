@@ -33,7 +33,6 @@ namespace LightningRod.Libraries.Byml.Writer
 
         public bool IsEmpty() => Count() == 0;
 
-
         public void Write(Stream stream)
         {
             /* Don't write if there's nothing to write. */

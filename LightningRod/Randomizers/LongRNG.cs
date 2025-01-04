@@ -11,38 +11,43 @@ public sealed class LongRNG
         if (n <= 0)
             throw new ArgumentOutOfRangeException("n", n, "n must be positive");
 
-        if ((n & -n) == n)  // i.e., n is a power of 2
+        if ((n & -n) == n) // i.e., n is a power of 2
             return (int)((n * (long)next(31)) >> 31);
 
-        int bits, val;
+        int bits,
+            val;
 
         do
         {
             bits = next(31);
             val = bits % n;
-        } while (bits - val + (n-1) < 0);
+        } while (bits - val + (n - 1) < 0);
         return val;
     }
 
     private int next(int bits)
     {
-        _seed = (_seed*LARGE_PRIME + SMALL_PRIME) & ((1L << 48) - 1);
-        return (int) (((uint)_seed) >> (48 - bits));
+        _seed = (_seed * LARGE_PRIME + SMALL_PRIME) & ((1L << 48) - 1);
+        return (int)(((uint)_seed) >> (48 - bits));
     }
 
-    public float NextFloat() {
+    public float NextFloat()
+    {
         return (float)(NextInt(1000)) / 1000;
     }
 
-    public float[] NextFloatArray(int arrLength) {
+    public float[] NextFloatArray(int arrLength)
+    {
         List<float> floatArr = [];
-        for (int i = 0; i < arrLength; i++) {
+        for (int i = 0; i < arrLength; i++)
+        {
             floatArr.Add(NextFloat());
         }
         return [.. floatArr];
     }
 
-    public bool NextBoolean() {
+    public bool NextBoolean()
+    {
         return NextInt(100) < 50;
     }
 

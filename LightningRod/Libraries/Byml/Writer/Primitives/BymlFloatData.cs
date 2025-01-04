@@ -3,6 +3,7 @@
     public class BymlFloatData : BymlData
     {
         private readonly float Value;
+
         public BymlFloatData(float value)
         {
             Value = value;

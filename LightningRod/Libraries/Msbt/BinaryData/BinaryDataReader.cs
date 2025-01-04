@@ -9,7 +9,9 @@ namespace OatmealDome.BinaryData
     /// <summary>
     /// Represents an extended <see cref="BinaryReader"/> supporting special file format data types.
     /// </summary>
-    [DebuggerDisplay(nameof(BinaryDataReader) + ", " + nameof(Position) + "={" + nameof(Position) + "}")]
+    [DebuggerDisplay(
+        nameof(BinaryDataReader) + ", " + nameof(Position) + "={" + nameof(Position) + "}"
+    )]
     public class BinaryDataReader : BinaryReader
     {
         // ---- CONSTRUCTORS -------------------------------------------------------------------------------------------
@@ -21,7 +23,8 @@ namespace OatmealDome.BinaryData
         /// <param name="input">The input stream.</param>
         /// <exception cref="ArgumentException">The stream does not support reading, is null, or is already closed.
         /// </exception>
-        public BinaryDataReader(Stream input) : this(input, new UTF8Encoding(), false) { }
+        public BinaryDataReader(Stream input)
+            : this(input, new UTF8Encoding(), false) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryDataReader"/> class based on the specified stream, UTF-8
@@ -33,7 +36,8 @@ namespace OatmealDome.BinaryData
         /// <exception cref="ArgumentException">The stream does not support reading, is null, or is already closed.
         /// </exception>
         /// <exception cref="ArgumentNullException">encoding is null.</exception>
-        public BinaryDataReader(Stream input, bool leaveOpen) : this(input, new UTF8Encoding(), leaveOpen) { }
+        public BinaryDataReader(Stream input, bool leaveOpen)
+            : this(input, new UTF8Encoding(), leaveOpen) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryDataReader"/> class based on the specified stream and
@@ -44,7 +48,8 @@ namespace OatmealDome.BinaryData
         /// <exception cref="ArgumentException">The stream does not support reading, is null, or is already closed.
         /// </exception>
         /// <exception cref="ArgumentNullException">encoding is null.</exception>
-        public BinaryDataReader(Stream input, Encoding encoding) : this(input, encoding, false) { }
+        public BinaryDataReader(Stream input, Encoding encoding)
+            : this(input, encoding, false) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryDataReader"/> class based on the specified stream and
@@ -57,7 +62,8 @@ namespace OatmealDome.BinaryData
         /// <exception cref="ArgumentException">The stream does not support reading, is null, or is already closed.
         /// </exception>
         /// <exception cref="ArgumentNullException">encoding is null.</exception>
-        public BinaryDataReader(Stream input, Encoding encoding, bool leaveOpen) : base(input, encoding, leaveOpen)
+        public BinaryDataReader(Stream input, Encoding encoding, bool leaveOpen)
+            : base(input, encoding, leaveOpen)
         {
             Encoding = encoding;
             ByteOrder = ByteConverter.System.ByteOrder;
@@ -94,7 +100,7 @@ namespace OatmealDome.BinaryData
         /// Gets the length of the stream in bytes.
         /// </summary>
         public long Length => BaseStream.Length;
-        
+
         /// <summary>
         /// Gets or sets the position within the current stream. This is a shortcut to the base stream Position
         /// property.
@@ -104,7 +110,7 @@ namespace OatmealDome.BinaryData
             get => BaseStream.Position;
             set => BaseStream.Position = value;
         }
-        
+
         // ---- METHODS (PUBLIC) ---------------------------------------------------------------------------------------
 
         /// <summary>
@@ -142,7 +148,8 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="offset">A byte offset relative to the current position in the stream.</param>
         /// <returns>The <see cref="SeekTask"/> to be disposed to undo the seek.</returns>
-        public SeekTask TemporarySeek(long offset) => BaseStream.TemporarySeek(offset, SeekOrigin.Current);
+        public SeekTask TemporarySeek(long offset) =>
+            BaseStream.TemporarySeek(offset, SeekOrigin.Current);
 
         /// <summary>
         /// Creates a <see cref="SeekTask"/> with the given parameters. As soon as the returned <see cref="SeekTask"/>
@@ -152,7 +159,8 @@ namespace OatmealDome.BinaryData
         /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain
         /// the new position.</param>
         /// <returns>The <see cref="SeekTask"/> to be disposed to undo the seek.</returns>
-        public SeekTask TemporarySeek(long offset, SeekOrigin origin) => BaseStream.TemporarySeek(offset, origin);
+        public SeekTask TemporarySeek(long offset, SeekOrigin origin) =>
+            BaseStream.TemporarySeek(offset, origin);
 
         // ---- Boolean ----
 
@@ -171,8 +179,10 @@ namespace OatmealDome.BinaryData
         /// <param name="count">The number of <see cref="Boolean"/> values to read.</param>
         /// <param name="format">The binary format, in which the <see cref="Boolean"/> values will be read.</param>
         /// <returns>The <see cref="Boolean"/> array read from the current stream.</returns>
-        public Boolean[] ReadBooleans(int count, BooleanDataFormat format = BooleanDataFormat.Byte)
-            => BaseStream.ReadBooleans(count, format);
+        public Boolean[] ReadBooleans(
+            int count,
+            BooleanDataFormat format = BooleanDataFormat.Byte
+        ) => BaseStream.ReadBooleans(count, format);
 
         // ---- DateTime ----
 
@@ -182,8 +192,8 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="format">The binary format, in which the <see cref="DateTime"/> will be read.</param>
         /// <returns>The <see cref="DateTime"/> read from the current stream.</returns>
-        public DateTime ReadDateTime(DateTimeDataFormat format = DateTimeDataFormat.NetTicks)
-            => BaseStream.ReadDateTime(format, ByteConverter);
+        public DateTime ReadDateTime(DateTimeDataFormat format = DateTimeDataFormat.NetTicks) =>
+            BaseStream.ReadDateTime(format, ByteConverter);
 
         /// <summary>
         /// Reads the specified number of <see cref="DateTime"/> values from the current stream into a
@@ -193,8 +203,10 @@ namespace OatmealDome.BinaryData
         /// <param name="count">The number of <see cref="DateTime"/> values to read.</param>
         /// <param name="format">The binary format, in which the <see cref="DateTime"/> values will be read.</param>
         /// <returns>The <see cref="DateTime"/> array read from the current stream.</returns>
-        public DateTime[] ReadDateTimes(int count, DateTimeDataFormat format = DateTimeDataFormat.NetTicks)
-            => BaseStream.ReadDateTimes(count, format, ByteConverter);
+        public DateTime[] ReadDateTimes(
+            int count,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks
+        ) => BaseStream.ReadDateTimes(count, format, ByteConverter);
 
         // ---- Decimal ----
 
@@ -243,8 +255,8 @@ namespace OatmealDome.BinaryData
         /// defined in the enum type.</param>
         /// <returns>The enum value read from the current stream.</returns>
         public T ReadEnum<T>(bool strict = false)
-            where T : struct, IComparable, IFormattable
-            => BaseStream.ReadEnum<T>(strict, ByteConverter);
+            where T : struct, IComparable, IFormattable =>
+            BaseStream.ReadEnum<T>(strict, ByteConverter);
 
         /// <summary>
         /// Reads the specified number of enum values from the current stream into an array of the enum type. Optionally
@@ -256,8 +268,8 @@ namespace OatmealDome.BinaryData
         /// defined in the enum type.</param>
         /// <returns>The enum values array read from the current stream.</returns>
         public T[] ReadEnums<T>(int count, bool strict = false)
-            where T : struct, IComparable, IFormattable
-            => BaseStream.ReadEnums<T>(count, strict, ByteConverter);
+            where T : struct, IComparable, IFormattable =>
+            BaseStream.ReadEnums<T>(count, strict, ByteConverter);
 
         // ---- Int16 ----
 
@@ -329,7 +341,7 @@ namespace OatmealDome.BinaryData
         /// <param name="count">The number of objects to read.</param>
         /// <returns>The objects array read from the current stream.</returns>
         public T[] ReadObjects<T>(int count) => BaseStream.ReadObjects<T>(count, ByteConverter);
-        
+
         // ---- SByte ----
 
         /// <summary>
@@ -349,7 +361,7 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <returns>The 4-byte floating point value read from the current stream.</returns>
         public override Single ReadSingle() => BaseStream.ReadSingle(ByteConverter);
-        
+
         /// <summary>
         /// Reads the specified number of <see cref="Single"/> values from the current stream into a
         /// <see cref="Single"/> array and advances the current position by that number of <see cref="Single"/> values
@@ -368,8 +380,8 @@ namespace OatmealDome.BinaryData
         /// <param name="encoding">The encoding used for converting the string or <c>null</c> to use the encoding
         /// configured for this instance.</param>
         /// <returns>The string read from the current stream.</returns>
-        public String ReadString(StringDataFormat format, Encoding encoding = null)
-            => BaseStream.ReadString(format, encoding ?? Encoding, ByteConverter);
+        public String ReadString(StringDataFormat format, Encoding encoding = null) =>
+            BaseStream.ReadString(format, encoding ?? Encoding, ByteConverter);
 
         /// <summary>
         /// Reads a string from the current stream. The string has neither a prefix or postfix, the length has to be
@@ -379,8 +391,8 @@ namespace OatmealDome.BinaryData
         /// <param name="encoding">The encoding used for converting the string or <c>null</c> to use the encoding
         /// configured for this instance.</param>
         /// <returns>The <see cref="String"/> read from the current stream.</returns>
-        public String ReadString(int length, Encoding encoding = null)
-            => BaseStream.ReadString(length, encoding ?? Encoding);
+        public String ReadString(int length, Encoding encoding = null) =>
+            BaseStream.ReadString(length, encoding ?? Encoding);
 
         /// <summary>
         /// Reads the specified number of <see cref="String"/> values from the current stream into a
@@ -399,8 +411,8 @@ namespace OatmealDome.BinaryData
         /// <param name="encoding">The encoding used for converting the string or <c>null</c> to use the encoding
         /// configured for this instance.</param>
         /// <returns>The <see cref="String"/> array read from the current stream.</returns>
-        public String[] ReadStrings(int count, StringDataFormat format, Encoding encoding = null)
-            => BaseStream.ReadStrings(count, format, encoding ?? Encoding, ByteConverter);
+        public String[] ReadStrings(int count, StringDataFormat format, Encoding encoding = null) =>
+            BaseStream.ReadStrings(count, format, encoding ?? Encoding, ByteConverter);
 
         /// <summary>
         /// Reads the specified number of <see cref="String"/> values from the current stream into a
@@ -412,8 +424,8 @@ namespace OatmealDome.BinaryData
         /// <param name="encoding">The encoding used for converting the string or <c>null</c> to use the encoding
         /// configured for this instance.</param>
         /// <returns>The <see cref="String"/> array read from the current stream.</returns>
-        public String[] ReadStrings(int count, int length, Encoding encoding = null)
-            => BaseStream.ReadStrings(count, length, encoding ?? Encoding);
+        public String[] ReadStrings(int count, int length, Encoding encoding = null) =>
+            BaseStream.ReadStrings(count, length, encoding ?? Encoding);
 
         // ---- UInt16 ----
 

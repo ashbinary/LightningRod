@@ -13,6 +13,7 @@
         }
 
         public override BymlNodeId GetTypeCode() => BymlNodeId.String;
+
         public override void Write(Stream stream)
         {
             var idx = StringTable.CalcIndex(Value);

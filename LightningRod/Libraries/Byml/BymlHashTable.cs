@@ -29,7 +29,6 @@ namespace LightningRod.Libraries.Byml
                 return;
             }
 
-
             BymlHashPair pair = Pairs[idx];
             pair.Value = value;
         }
@@ -136,7 +135,8 @@ namespace LightningRod.Libraries.Byml
                     yield return this[i];
             }
 
-            public readonly IEnumerator<IBymlNode> GetEnumerator() => AsEnumerable().GetEnumerator();
+            public readonly IEnumerator<IBymlNode> GetEnumerator() =>
+                AsEnumerable().GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => AsEnumerable().GetEnumerator();
         }

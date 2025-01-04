@@ -10,7 +10,8 @@ namespace OatmealDome.BinaryData
     {
         // ---- FIELDS -------------------------------------------------------------------------------------------------
 
-        private static readonly Dictionary<Type, IBinaryConverter> _cache = new Dictionary<Type, IBinaryConverter>();
+        private static readonly Dictionary<Type, IBinaryConverter> _cache =
+            new Dictionary<Type, IBinaryConverter>();
 
         // ---- METHODS (INTERNAL) -------------------------------------------------------------------------------------
 

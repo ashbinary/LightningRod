@@ -7,7 +7,7 @@
         private readonly BymlBigDataList ParentList;
 
         protected BymlBigData(BymlBigDataList parentList)
-        { 
+        {
             ParentList = parentList;
             parentList.AddData(this);
         }
@@ -16,8 +16,8 @@
         {
             stream.AsBinaryWriter().Write(Offset);
         }
+
         public abstract int CalcBigDataSize();
         public abstract void WriteBigData(Stream stream);
-
     }
 }

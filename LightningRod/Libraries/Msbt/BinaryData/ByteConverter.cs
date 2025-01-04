@@ -12,8 +12,10 @@ namespace OatmealDome.BinaryData
         /// <summary>
         /// The exception thrown if a conversion buffer is too small or <c>null</c>.
         /// </summary>
-        protected static readonly Exception BufferException = new Exception("Buffer null or too small.");
-        
+        protected static readonly Exception BufferException = new Exception(
+            "Buffer null or too small."
+        );
+
         // ---- CONSTRUCTORS & DESTRUCTOR ------------------------------------------------------------------------------
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace OatmealDome.BinaryData
                     throw new ArgumentException($"Invalid {nameof(ByteOrder)}.", nameof(byteOrder));
             }
         }
-        
+
         /// <summary>
         /// Stores the specified <see cref="Decimal"/> value as bytes in the given <paramref name="buffer"/>.
         /// </summary>
@@ -115,7 +117,7 @@ namespace OatmealDome.BinaryData
         /// <param name="buffer">The byte array to store the value in.</param>
         /// <param name="startIndex">The index at which to start writing values into the buffer.</param>
         public abstract void GetBytes(Int16 value, byte[] buffer, int startIndex = 0);
-        
+
         /// <summary>
         /// Stores the specified <see cref="Int32"/> value as bytes in the given <paramref name="buffer"/>.
         /// </summary>
@@ -180,7 +182,8 @@ namespace OatmealDome.BinaryData
             for (int i = 0; i < 4; i++)
             {
                 int offset = startIndex + i * sizeof(int);
-                parts[i] = buffer[offset]
+                parts[i] =
+                    buffer[offset]
                     | buffer[offset + 1] << 8
                     | buffer[offset + 2] << 16
                     | buffer[offset + 3] << 24;
@@ -195,7 +198,7 @@ namespace OatmealDome.BinaryData
         /// <param name="startIndex">The index at which to start writing values into the buffer.</param>
         /// <returns>The converted value.</returns>
         public abstract Double ToDouble(byte[] buffer, int startIndex = 0);
-        
+
         /// <summary>
         /// Returns an <see cref="Int16"/> instance converted from the bytes in the given <paramref name="buffer"/>.
         /// </summary>

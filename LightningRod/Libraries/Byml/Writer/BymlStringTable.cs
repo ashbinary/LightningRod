@@ -53,11 +53,11 @@ namespace LightningRod.Libraries.Byml.Writer
             StringList.Sort(StringComparer.Ordinal);
 
             var writer = stream.AsBinaryWriter();
-            writer.Write((byte) BymlNodeId.StringTable);
+            writer.Write((byte)BymlNodeId.StringTable);
             writer.WriteUInt24((uint)StringList.Count);
 
             int offset = CalcHeaderSize();
-            foreach(var str in StringList)
+            foreach (var str in StringList)
             {
                 writer.Write(offset);
 

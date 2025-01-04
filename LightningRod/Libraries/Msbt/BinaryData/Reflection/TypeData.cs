@@ -12,8 +12,9 @@ namespace OatmealDome.BinaryData
     {
         // ---- FIELDS -------------------------------------------------------------------------------------------------
 
-        private static readonly Dictionary<Type, TypeData> _cache = new Dictionary<Type, TypeData>();
-        
+        private static readonly Dictionary<Type, TypeData> _cache =
+            new Dictionary<Type, TypeData>();
+
         // ---- CONSTRUCTORS & DESTRUCTOR ------------------------------------------------------------------------------
 
         private TypeData(Type type)
@@ -21,13 +22,20 @@ namespace OatmealDome.BinaryData
             Type = type;
 
             // Get the type configuration.
-            Attribute = Type.GetCustomAttribute<BinaryObjectAttribute>() ?? new BinaryObjectAttribute();
+            Attribute =
+                Type.GetCustomAttribute<BinaryObjectAttribute>() ?? new BinaryObjectAttribute();
 
             // Get the member configurations, and collect a parameterless constructor on the way.
             OrderedMembers = new SortedDictionary<int, MemberData>();
             UnorderedMembers = new SortedList<string, MemberData>(StringComparer.Ordinal);
-            foreach (MemberInfo member in Type.GetMembers(
-                BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            foreach (
+                MemberInfo member in Type.GetMembers(
+                    BindingFlags.DeclaredOnly
+                        | BindingFlags.Instance
+                        | BindingFlags.Public
+                        | BindingFlags.NonPublic
+                )
+            )
             {
                 switch (member)
                 {
@@ -53,7 +61,7 @@ namespace OatmealDome.BinaryData
         /// Gets the <see cref="Type"/> to which informations are stored.
         /// </summary>
         internal Type Type { get; }
-        
+
         /// <summary>
         /// Gets the <see cref="BinaryObjectAttribute"/> configuring how the object is read and written.
         /// </summary>
@@ -77,7 +85,7 @@ namespace OatmealDome.BinaryData
         internal SortedList<string, MemberData> UnorderedMembers { get; }
 
         // ---- METHODS (INTERNAL) -------------------------------------------------------------------------------------
-        
+
         /// <summary>
         /// Gets the <see cref="TypeData"/> instance for the given <paramref name="type"/> and caches the information on
         /// it if necessary.
@@ -130,7 +138,8 @@ namespace OatmealDome.BinaryData
                 if (field.FieldType.IsEnumerable() && attrib.Length <= 0)
                 {
                     throw new InvalidOperationException(
-                        $"Field {field} requires an element count specified with a {nameof(BinaryMemberAttribute)}.");
+                        $"Field {field} requires an element count specified with a {nameof(BinaryMemberAttribute)}."
+                    );
                 }
 
                 // Store member in a deterministic order.
@@ -156,17 +165,26 @@ namespace OatmealDome.BinaryData
             // Property must have getter and setter - if not, throw an exception if it is explicitly decorated.
             if (hasAttrib && (prop.GetMethod == null || prop.SetMethod == null))
             {
-                throw new InvalidOperationException($"Getter and setter on property {prop} not found.");
+                throw new InvalidOperationException(
+                    $"Getter and setter on property {prop} not found."
+                );
             }
             // Property must be decorated or getter and setter public.
-            if (hasAttrib
-                || (!Attribute.Explicit && prop.GetMethod?.IsPublic == true && prop.SetMethod?.IsPublic == true))
+            if (
+                hasAttrib
+                || (
+                    !Attribute.Explicit
+                    && prop.GetMethod?.IsPublic == true
+                    && prop.SetMethod?.IsPublic == true
+                )
+            )
             {
                 // For properties of enumerable type ElementCount must be specified.
                 if (prop.PropertyType.IsEnumerable() && attrib.Length <= 0)
                 {
                     throw new InvalidOperationException(
-                        $"Property {prop} requires an element count specified with a {nameof(BinaryMemberAttribute)}.");
+                        $"Property {prop} requires an element count specified with a {nameof(BinaryMemberAttribute)}."
+                    );
                 }
 
                 // Store member in a deterministic order.

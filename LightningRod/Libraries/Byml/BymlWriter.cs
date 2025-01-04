@@ -55,6 +55,7 @@ namespace LightningRod.Libraries.Byml
             }
             Pop();
         }
+
         public void AddFloat(float value) => GetCurrentContainer().AddFloat(value);
 
         public void AddFloat(float[] array)
@@ -124,15 +125,20 @@ namespace LightningRod.Libraries.Byml
             Pop();
         }
 
-        public void AddInt64(string key, long value) => GetCurrentContainer().AddInt64(key, value, BigDataList);
+        public void AddInt64(string key, long value) =>
+            GetCurrentContainer().AddInt64(key, value, BigDataList);
 
-        public void AddUInt64(string key, ulong value) => GetCurrentContainer().AddUInt64(key, value, BigDataList);
+        public void AddUInt64(string key, ulong value) =>
+            GetCurrentContainer().AddUInt64(key, value, BigDataList);
 
-        public void AddDouble(string key, double value) => GetCurrentContainer().AddDouble(key, value, BigDataList);
+        public void AddDouble(string key, double value) =>
+            GetCurrentContainer().AddDouble(key, value, BigDataList);
 
-        public void AddBinary(string key, byte[] value) => GetCurrentContainer().AddBinary(key, value, BigDataList);
+        public void AddBinary(string key, byte[] value) =>
+            GetCurrentContainer().AddBinary(key, value, BigDataList);
 
-        public void AddString(string key, string value) => GetCurrentContainer().AddString(key, value);
+        public void AddString(string key, string value) =>
+            GetCurrentContainer().AddString(key, value);
 
         public void AddNull(string key) => GetCurrentContainer().AddNull(key);
 
@@ -196,7 +202,6 @@ namespace LightningRod.Libraries.Byml
 
             if (size > 0)
             {
-
                 for (int i = 0; i < size; i++)
                 {
                     IBymlNode node;
@@ -300,7 +305,8 @@ namespace LightningRod.Libraries.Byml
             PushLocalIter(node, key);
         }
 
-        public uint CalcHeaderSize() => (uint)(Unsafe.SizeOf<BymlHeader>() + (PathArray != null ? Unsafe.SizeOf<uint>() : 0));
+        public uint CalcHeaderSize() =>
+            (uint)(Unsafe.SizeOf<BymlHeader>() + (PathArray != null ? Unsafe.SizeOf<uint>() : 0));
 
         public uint CalcPackSize()
         {
@@ -338,7 +344,7 @@ namespace LightningRod.Libraries.Byml
                 Version = 7,
                 HashKeyOffset = HashKeyStringTable.IsEmpty() ? 0 : hashKeyOffset,
                 StringTableOffset = StringTable.IsEmpty() ? 0 : stringTableOffset,
-                RootOrPathArrayOffset = rootOrPathArrayOffset
+                RootOrPathArrayOffset = rootOrPathArrayOffset,
             };
 
             if (PathArray != null)
@@ -362,7 +368,6 @@ namespace LightningRod.Libraries.Byml
             {
                 container.WriteContainer(stream);
             }
-
         }
     }
 }

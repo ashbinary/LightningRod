@@ -4,8 +4,7 @@ using System.Text;
 
 namespace LightningRod.Libraries.Byml
 {
-    internal readonly ref struct TemporarySeekHandle
-        (Stream stream, long retpos)
+    internal readonly ref struct TemporarySeekHandle(Stream stream, long retpos)
     {
         private readonly Stream Stream = stream;
         private readonly long RetPos = retpos;
@@ -18,7 +17,8 @@ namespace LightningRod.Libraries.Byml
 
     internal static class Utils
     {
-        public static Span<byte> AsSpan<T>(ref T val) where T : unmanaged
+        public static Span<byte> AsSpan<T>(ref T val)
+            where T : unmanaged
         {
             Span<T> valSpan = MemoryMarshal.CreateSpan(ref val, 1);
             return MemoryMarshal.Cast<T, byte>(valSpan);
@@ -36,6 +36,7 @@ namespace LightningRod.Libraries.Byml
 
             return v;
         }
+
         public static void WriteUInt24(this BinaryWriter writer, uint value)
         {
             /* Build a byte array from the value. */
@@ -49,7 +50,9 @@ namespace LightningRod.Libraries.Byml
             /* Write array. */
             writer.BaseStream.Write(bytes);
         }
-        public static T[] ReadArray<T>(this Stream stream, uint count) where T : struct
+
+        public static T[] ReadArray<T>(this Stream stream, uint count)
+            where T : struct
         {
             /* Read data. */
             T[] data = new T[count];
@@ -60,7 +63,8 @@ namespace LightningRod.Libraries.Byml
             return data;
         }
 
-        public static void WriteArray<T>(this Stream stream, ReadOnlySpan<T> array) where T : struct
+        public static void WriteArray<T>(this Stream stream, ReadOnlySpan<T> array)
+            where T : struct
         {
             stream.Write(MemoryMarshal.Cast<T, byte>(array));
         }
@@ -70,14 +74,19 @@ namespace LightningRod.Libraries.Byml
             return stream.TemporarySeek(0, SeekOrigin.Begin);
         }
 
-        public static TemporarySeekHandle TemporarySeek(this Stream stream, long offset, SeekOrigin origin)
+        public static TemporarySeekHandle TemporarySeek(
+            this Stream stream,
+            long offset,
+            SeekOrigin origin
+        )
         {
             long ret = stream.Position;
             stream.Seek(offset, origin);
             return new TemporarySeekHandle(stream, ret);
         }
 
-        public static int BinarySearch<T, K>(IList<T> arr, K v) where T : IComparable<K>
+        public static int BinarySearch<T, K>(IList<T> arr, K v)
+            where T : IComparable<K>
         {
             var start = 0;
             var end = arr.Count - 1;
@@ -98,10 +107,12 @@ namespace LightningRod.Libraries.Byml
 
             return ~start;
         }
+
         public static BinaryReader AsBinaryReader(this Stream stream)
         {
             return new BinaryReader(stream);
         }
+
         public static BinaryWriter AsBinaryWriter(this Stream stream)
         {
             return new BinaryWriter(stream);

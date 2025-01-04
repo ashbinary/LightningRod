@@ -16,7 +16,8 @@ namespace LightningRod.Libraries.Byml.Writer
 
             public int CompareTo(string? other)
             {
-                if (other == null) return 1;
+                if (other == null)
+                    return 1;
                 return string.CompareOrdinal(Key, other);
             }
 
@@ -36,11 +37,7 @@ namespace LightningRod.Libraries.Byml.Writer
         {
             HashKeyStringTable.TryAdd(key);
 
-            Pair pair = new()
-            {
-                Key = key,
-                Data = data
-            };
+            Pair pair = new() { Key = key, Data = data };
 
             var idx = Utils.BinarySearch(PairList, pair);
             if (idx >= 0)
@@ -50,17 +47,37 @@ namespace LightningRod.Libraries.Byml.Writer
 
             PairList.Insert(idx, pair);
         }
-        public override void AddBool(string key, bool value) => AddData(key, new BymlBoolData(value));
+
+        public override void AddBool(string key, bool value) =>
+            AddData(key, new BymlBoolData(value));
+
         public override void AddInt(string key, int value) => AddData(key, new BymlIntData(value));
-        public override void AddUInt(string key, uint value) => AddData(key, new BymlUIntData(value));
-        public override void AddFloat(string key, float value) => AddData(key, new BymlFloatData(value));
-        public override void AddInt64(string key, long value, BymlBigDataList bigDataList) => AddData(key, new BymlInt64Data(value, bigDataList));
-        public override void AddUInt64(string key, ulong value, BymlBigDataList bigDataList) => AddData(key, new BymlUInt64Data(value, bigDataList));
-        public override void AddDouble(string key, double value, BymlBigDataList bigDataList) => AddData(key, new BymlDoubleData(value, bigDataList));
-        public override void AddBinary(string key, byte[] value, BymlBigDataList bigDataList) => AddData(key, new BymlBinaryData(value, bigDataList));
-        public override void AddString(string key, string value) => AddData(key, new BymlStringData(value, StringTable));
+
+        public override void AddUInt(string key, uint value) =>
+            AddData(key, new BymlUIntData(value));
+
+        public override void AddFloat(string key, float value) =>
+            AddData(key, new BymlFloatData(value));
+
+        public override void AddInt64(string key, long value, BymlBigDataList bigDataList) =>
+            AddData(key, new BymlInt64Data(value, bigDataList));
+
+        public override void AddUInt64(string key, ulong value, BymlBigDataList bigDataList) =>
+            AddData(key, new BymlUInt64Data(value, bigDataList));
+
+        public override void AddDouble(string key, double value, BymlBigDataList bigDataList) =>
+            AddData(key, new BymlDoubleData(value, bigDataList));
+
+        public override void AddBinary(string key, byte[] value, BymlBigDataList bigDataList) =>
+            AddData(key, new BymlBinaryData(value, bigDataList));
+
+        public override void AddString(string key, string value) =>
+            AddData(key, new BymlStringData(value, StringTable));
+
         public override void AddHash(string key, BymlHash hash) => AddData(key, hash);
+
         public override void AddArray(string key, BymlArray array) => AddData(key, array);
+
         public override void AddNull(string key) => AddData(key, new BymlNullData());
 
         public override int CalcPackSize()
@@ -83,13 +100,17 @@ namespace LightningRod.Libraries.Byml.Writer
                 pair.Data.Write(stream);
             }
         }
+
         public override bool IsHash() => true;
+
         public override bool IsArray() => false;
+
         public override void DeleteData()
         {
             /* TODO: check this is right? */
             PairList.Clear();
         }
+
         public override BymlNodeId GetTypeCode() => BymlNodeId.Hash;
 
         public override void Write(Stream stream)

@@ -2,6 +2,4 @@
 
 namespace LightningRod.Frontend.ViewModels;
 
-public class ViewModelBase : ObservableObject
-{
-}
+public class ViewModelBase : ObservableObject { }

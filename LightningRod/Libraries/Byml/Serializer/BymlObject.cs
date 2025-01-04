@@ -11,7 +11,8 @@ namespace LightningRod.Libraries.Byml.Serializer
     {
         public BymlHashTable HashTable;
 
-        public void Load(BymlHashTable bymlHashTable) {
+        public void Load(BymlHashTable bymlHashTable)
+        {
             this.HashTable = bymlHashTable;
             this.Deserialize();
         }

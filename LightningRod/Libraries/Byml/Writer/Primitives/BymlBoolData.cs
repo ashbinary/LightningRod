@@ -3,6 +3,7 @@
     public class BymlBoolData : BymlData
     {
         private readonly bool Value;
+
         public BymlBoolData(bool value)
         {
             Value = value;

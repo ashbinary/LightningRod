@@ -1,7 +1,9 @@
 namespace LightningRod.Randomizers;
-class CoopRandomizer {
 
-    public CoopRandomizer() {
+class CoopRandomizer
+{
+    public CoopRandomizer()
+    {
         throw new NotImplementedException();
     }
 }

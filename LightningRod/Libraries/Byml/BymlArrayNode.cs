@@ -10,7 +10,8 @@
 
         public IBymlNode this[int i] => Array[i];
 
-        public BymlArrayNode() {
+        public BymlArrayNode()
+        {
             Array = new List<IBymlNode>();
         }
 

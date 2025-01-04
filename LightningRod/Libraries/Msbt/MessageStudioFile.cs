@@ -6,15 +6,9 @@ namespace LightningRod.Libraries.Msbt;
 
 public abstract class MessageStudioFile
 {
-    protected abstract string FileMagic
-    {
-        get;
-    }
-    
-    protected abstract string FileType
-    {
-        get;
-    }
+    protected abstract string FileMagic { get; }
+
+    protected abstract string FileType { get; }
 
     protected ByteOrder FileByteOrder;
     protected Encoding FileEncoding;
@@ -24,7 +18,7 @@ public abstract class MessageStudioFile
         public string Label;
         public int Index;
     }
-    
+
     protected MessageStudioFile(byte[] data)
     {
         using (MemoryStream memoryStream = new MemoryStream(data))
@@ -32,12 +26,12 @@ public abstract class MessageStudioFile
             Read(memoryStream);
         }
     }
-    
+
     protected MessageStudioFile(Stream stream)
     {
         Read(stream);
     }
-    
+
     private void Read(Stream stream)
     {
         ByteOrder byteOrder = ByteOrder.BigEndian;
@@ -97,7 +91,7 @@ public abstract class MessageStudioFile
         {
             throw new MessageStudioException($"Unsupported version '{version}'");
         }
-        
+
         ushort sectionCount = reader.ReadUInt16();
 
         reader.Seek(2); // padding?
@@ -123,7 +117,7 @@ public abstract class MessageStudioFile
             reader.Seek(sectionStart + sectionSize, SeekOrigin.Begin);
             reader.Align(0x10);
         }
-        
+
         FinalizeRead(reader);
     }
 
@@ -147,11 +141,7 @@ public abstract class MessageStudioFile
                     string label = reader.ReadString(stringLength, Encoding.UTF8);
                     int index = reader.ReadInt32();
 
-                    entries.Add(new HashTableEntry()
-                    {
-                        Label = label,
-                        Index = index
-                    });
+                    entries.Add(new HashTableEntry() { Label = label, Index = index });
                 }
             }
         }
@@ -159,7 +149,11 @@ public abstract class MessageStudioFile
         return entries;
     }
 
-    protected abstract void ReadSection(BinaryDataReader reader, string sectionMagic, int sectionSize);
+    protected abstract void ReadSection(
+        BinaryDataReader reader,
+        string sectionMagic,
+        int sectionSize
+    );
 
     protected abstract void FinalizeRead(BinaryDataReader reader);
 }

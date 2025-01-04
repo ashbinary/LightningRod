@@ -11,8 +11,11 @@ namespace OatmealDome.BinaryData.Extensions
     {
         // ---- FIELDS -------------------------------------------------------------------------------------------------
 
-        [ThreadStatic] private static byte[] _buffer;
-        [ThreadStatic] private static char[] _charBuffer;
+        [ThreadStatic]
+        private static byte[] _buffer;
+
+        [ThreadStatic]
+        private static char[] _charBuffer;
 
         private static readonly DateTime _cTimeBase = new DateTime(1970, 1, 1);
 
@@ -52,7 +55,10 @@ namespace OatmealDome.BinaryData.Extensions
         {
             if (alignment <= 0)
                 throw new ArgumentOutOfRangeException("Alignment must be bigger than 0.");
-            long position = stream.Seek((-stream.Position % alignment + alignment) % alignment, SeekOrigin.Current);
+            long position = stream.Seek(
+                (-stream.Position % alignment + alignment) % alignment,
+                SeekOrigin.Current
+            );
             if (grow && position > stream.Length)
             {
                 stream.SetLength(position);
@@ -124,7 +130,9 @@ namespace OatmealDome.BinaryData.Extensions
         {
             if (!EnumExtensions.IsValid(enumType, value))
             {
-                throw new InvalidDataException($"Read value {value} is not defined in the enum type {enumType}.");
+                throw new InvalidDataException(
+                    $"Read value {value} is not defined in the enum type {enumType}."
+                );
             }
         }
     }

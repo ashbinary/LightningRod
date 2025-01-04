@@ -20,7 +20,7 @@ namespace OatmealDome.BinaryData
         /// <summary>
         /// The boolean is stored in 4 bytes and is <c>true</c> when the value is not 0.
         /// </summary>
-        Dword
+        Dword,
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace OatmealDome.BinaryData
         /// This is an <see cref="Int64"/> which can store the seconds from 1970-01-01 until approx.
         /// 292277026596-12-04.
         /// </summary>
-        CTime64
+        CTime64,
     }
 
     /// <summary>
@@ -86,6 +86,6 @@ namespace OatmealDome.BinaryData
         /// The string has neither prefix nor postfix. This format is only valid for writing strings. For reading
         /// strings, the length has to be specified manually.
         /// </summary>
-        Raw
+        Raw,
     }
 }

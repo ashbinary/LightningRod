@@ -13,7 +13,9 @@ namespace OatmealDome.BinaryData
     /// <summary>
     /// Represents an extended <see cref="BinaryWriter"/> supporting special file format data types.
     /// </summary>
-    [DebuggerDisplay(nameof(BinaryDataWriter) + ", " + nameof(Position) + "={" + nameof(Position) + "}")]
+    [DebuggerDisplay(
+        nameof(BinaryDataWriter) + ", " + nameof(Position) + "={" + nameof(Position) + "}"
+    )]
     public class BinaryDataWriter : BinaryWriter
     {
         // ---- CONSTRUCTORS -------------------------------------------------------------------------------------------
@@ -25,7 +27,8 @@ namespace OatmealDome.BinaryData
         /// <param name="output">The output stream.</param>
         /// <exception cref="ArgumentException">The stream does not support writing or is already closed.</exception>
         /// <exception cref="ArgumentNullException">output is null.</exception>
-        public BinaryDataWriter(Stream output) : this(output, new UTF8Encoding(), false) { }
+        public BinaryDataWriter(Stream output)
+            : this(output, new UTF8Encoding(), false) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryDataWriter"/> class based on the specified stream, UTF-8
@@ -36,7 +39,8 @@ namespace OatmealDome.BinaryData
         /// is disposed; otherwise <c>false</c>.</param>
         /// <exception cref="ArgumentException">The stream does not support writing or is already closed.</exception>
         /// <exception cref="ArgumentNullException">output is null.</exception>
-        public BinaryDataWriter(Stream output, bool leaveOpen) : this(output, new UTF8Encoding(), leaveOpen) { }
+        public BinaryDataWriter(Stream output, bool leaveOpen)
+            : this(output, new UTF8Encoding(), leaveOpen) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryDataWriter"/> class based on the specified stream and
@@ -46,7 +50,8 @@ namespace OatmealDome.BinaryData
         /// <param name="encoding">The character encoding to use.</param>
         /// <exception cref="ArgumentException">The stream does not support writing or is already closed.</exception>
         /// <exception cref="ArgumentNullException">output or encoding is null.</exception>
-        public BinaryDataWriter(Stream output, Encoding encoding) : this(output, encoding, false) { }
+        public BinaryDataWriter(Stream output, Encoding encoding)
+            : this(output, encoding, false) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryDataWriter"/> class based on the specified stream and
@@ -58,7 +63,8 @@ namespace OatmealDome.BinaryData
         /// is disposed; otherwise <c>false</c>.</param>
         /// <exception cref="ArgumentException">The stream does not support writing or is already closed.</exception>
         /// <exception cref="ArgumentNullException">output or encoding is null.</exception>
-        public BinaryDataWriter(Stream output, Encoding encoding, bool leaveOpen) : base(output, encoding, leaveOpen)
+        public BinaryDataWriter(Stream output, Encoding encoding, bool leaveOpen)
+            : base(output, encoding, leaveOpen)
         {
             Encoding = encoding;
             ByteOrder = ByteConverter.System.ByteOrder;
@@ -99,7 +105,7 @@ namespace OatmealDome.BinaryData
             get => BaseStream.Length;
             set => BaseStream.SetLength(value);
         }
-        
+
         /// <summary>
         /// Gets or sets the position within the current stream. This is a shortcut to the base stream Position
         /// property.
@@ -109,7 +115,7 @@ namespace OatmealDome.BinaryData
             get => BaseStream.Position;
             set => BaseStream.Position = value;
         }
-        
+
         // ---- METHODS (PUBLIC) ---------------------------------------------------------------------------------------
 
         /// <summary>
@@ -141,7 +147,7 @@ namespace OatmealDome.BinaryData
             }
             return offsets;
         }
-        
+
         /// <summary>
         /// Sets the position within the current stream. This is a shortcut to the base stream Seek method.
         /// </summary>
@@ -180,8 +186,9 @@ namespace OatmealDome.BinaryData
         /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain
         /// the new position.</param>
         /// <returns>A <see cref="SeekTask"/> to be disposed to undo the seek.</returns>
-        public SeekTask TemporarySeek(long offset, SeekOrigin origin) => BaseStream.TemporarySeek(offset, origin);
-        
+        public SeekTask TemporarySeek(long offset, SeekOrigin origin) =>
+            BaseStream.TemporarySeek(offset, origin);
+
         // ---- Boolean ----
 
         /// <summary>
@@ -190,7 +197,8 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="value">The <see cref="Boolean"/> value to write.</param>
         /// <param name="format">The binary format in which the <see cref="Boolean"/> will be written.</param>
-        public void Write(Boolean value, BooleanDataFormat format) => BaseStream.Write(value, format, ByteConverter);
+        public void Write(Boolean value, BooleanDataFormat format) =>
+            BaseStream.Write(value, format, ByteConverter);
 
         /// <summary>
         /// Writes an enumeration of <see cref="Boolean"/> values to the current stream, with 0 representing
@@ -198,8 +206,10 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="values">The <see cref="Boolean"/> values to write.</param>
         /// <param name="format">The binary format in which the <see cref="Boolean"/> will be written.</param>
-        public void Write(IEnumerable<Boolean> values, BooleanDataFormat format = BooleanDataFormat.Byte)
-            => BaseStream.Write(values, format, ByteConverter);
+        public void Write(
+            IEnumerable<Boolean> values,
+            BooleanDataFormat format = BooleanDataFormat.Byte
+        ) => BaseStream.Write(values, format, ByteConverter);
 
         // ---- DateTime ----
 
@@ -209,17 +219,21 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="value">The <see cref="DateTime"/> value to write.</param>
         /// <param name="format">The binary format in which the <see cref="DateTime"/> will be written.</param>
-        public void Write(DateTime value, DateTimeDataFormat format = DateTimeDataFormat.NetTicks)
-            => BaseStream.Write(value, format, ByteConverter);
-        
+        public void Write(
+            DateTime value,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks
+        ) => BaseStream.Write(value, format, ByteConverter);
+
         /// <summary>
         /// Writes an enumeration of <see cref="DateTime"/> values to this stream. The <see cref="DateTime"/> values
         /// will be available in the specified binary format.
         /// </summary>
         /// <param name="values">The <see cref="DateTime"/> values to write.</param>
         /// <param name="format">The binary format in which the <see cref="DateTime"/> values will be written.</param>
-        public void Write(IEnumerable<DateTime> values, DateTimeDataFormat format = DateTimeDataFormat.NetTicks)
-            => BaseStream.Write(values, format, ByteConverter);
+        public void Write(
+            IEnumerable<DateTime> values,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks
+        ) => BaseStream.Write(values, format, ByteConverter);
 
         // ---- Decimal ----
 
@@ -263,8 +277,8 @@ namespace OatmealDome.BinaryData
         /// <param name="strict"><c>true</c> to raise an <see cref="ArgumentOutOfRangeException"/> if the value is not
         /// defined in the enum type.</param>
         public void WriteEnum<T>(T value, bool strict = false)
-            where T : struct, IComparable, IFormattable
-            => BaseStream.WriteEnum(value, strict, ByteConverter);
+            where T : struct, IComparable, IFormattable =>
+            BaseStream.WriteEnum(value, strict, ByteConverter);
 
         /// <summary>
         /// Writes an enumeration of enum values to this stream and advances the current position of the stream by the
@@ -275,8 +289,8 @@ namespace OatmealDome.BinaryData
         /// <param name="strict"><c>true</c> to raise an <see cref="ArgumentOutOfRangeException"/> if a value is not
         /// defined in the enum type.</param>
         public void WriteEnums<T>(IEnumerable<T> values, bool strict = false)
-            where T : struct, IComparable, IFormattable
-            => BaseStream.WriteEnums(values, strict, ByteConverter);
+            where T : struct, IComparable, IFormattable =>
+            BaseStream.WriteEnums(values, strict, ByteConverter);
 
         // ---- Int16 ----
 
@@ -292,7 +306,7 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="values">The <see cref="Int16"/> values to write.</param>
         public void Write(IEnumerable<Int16> values) => BaseStream.Write(values, ByteConverter);
-        
+
         // ---- Int32 ----
 
         /// <summary>
@@ -308,7 +322,7 @@ namespace OatmealDome.BinaryData
         /// </summary>
         /// <param name="values">The <see cref="Int32"/> values to write.</param>
         public void Write(IEnumerable<Int32> values) => BaseStream.Write(values, ByteConverter);
-        
+
         // ---- Int64 ----
 
         /// <summary>
@@ -359,8 +373,8 @@ namespace OatmealDome.BinaryData
         /// <param name="value">The <see cref="String"/> value to write.</param>
         /// <param name="format">The binary format in which the string will be written.</param>
         /// <param name="encoding">The encoding used for converting the string.</param>
-        public void Write(String value, StringDataFormat format, Encoding encoding = null)
-            => BaseStream.Write(value, format, encoding, ByteConverter);
+        public void Write(String value, StringDataFormat format, Encoding encoding = null) =>
+            BaseStream.Write(value, format, encoding, ByteConverter);
 
         /// <summary>
         /// Writes an enumeration of <see cref="String"/> values to this stream with the given encoding. The strings
@@ -369,9 +383,11 @@ namespace OatmealDome.BinaryData
         /// <param name="values">The <see cref="String"/> values to write.</param>
         /// <param name="format">The binary format in which the strings will be written.</param>
         /// <param name="encoding">The encoding used for converting the strings.</param>
-        public void Write(IEnumerable<String> values, StringDataFormat format = StringDataFormat.DynamicByteCount,
-            Encoding encoding = null)
-            => BaseStream.Write(values, format, encoding);
+        public void Write(
+            IEnumerable<String> values,
+            StringDataFormat format = StringDataFormat.DynamicByteCount,
+            Encoding encoding = null
+        ) => BaseStream.Write(values, format, encoding);
 
         // ---- UInt16 ----
 

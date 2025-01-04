@@ -7,7 +7,7 @@ using System.Text;
 using OatmealDome.BinaryData.Core;
 
 namespace OatmealDome.BinaryData.Extensions
-{  
+{
     public static partial class StreamExtensions
     {
         // ---- METHODS (PUBLIC) ---------------------------------------------------------------------------------------
@@ -20,8 +20,10 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="format">The <see cref="BooleanDataFormat"/> format in which the data is stored.</param>
         /// <returns>The value read from the current stream.</returns>
-        public static Boolean ReadBoolean(this Stream stream,
-            BooleanDataFormat format = BooleanDataFormat.Byte)
+        public static Boolean ReadBoolean(
+            this Stream stream,
+            BooleanDataFormat format = BooleanDataFormat.Byte
+        )
         {
             switch (format)
             {
@@ -32,7 +34,10 @@ namespace OatmealDome.BinaryData.Extensions
                 case BooleanDataFormat.Dword:
                     return ReadInt32(stream) != 0;
                 default:
-                    throw new ArgumentException($"Invalid {nameof(BooleanDataFormat)}.", nameof(format));
+                    throw new ArgumentException(
+                        $"Invalid {nameof(BooleanDataFormat)}.",
+                        nameof(format)
+                    );
             }
         }
 
@@ -43,8 +48,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="format">The <see cref="BooleanDataFormat"/> format in which the data is stored.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Boolean[] ReadBooleans(this Stream stream, int count,
-            BooleanDataFormat format = BooleanDataFormat.Byte)
+        public static Boolean[] ReadBooleans(
+            this Stream stream,
+            int count,
+            BooleanDataFormat format = BooleanDataFormat.Byte
+        )
         {
             var values = new Boolean[count];
             lock (stream)
@@ -70,7 +78,10 @@ namespace OatmealDome.BinaryData.Extensions
                         }
                         break;
                     default:
-                        throw new ArgumentException($"Invalid {nameof(BooleanDataFormat)}.", nameof(format));
+                        throw new ArgumentException(
+                            $"Invalid {nameof(BooleanDataFormat)}.",
+                            nameof(format)
+                        );
                 }
             }
             return values;
@@ -110,8 +121,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="format">The <see cref="DateTimeDataFormat"/> format in which the data is stored.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The value read from the current stream.</returns>
-        public static DateTime ReadDateTime(this Stream stream,
-            DateTimeDataFormat format = DateTimeDataFormat.NetTicks, ByteConverter converter = null)
+        public static DateTime ReadDateTime(
+            this Stream stream,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks,
+            ByteConverter converter = null
+        )
         {
             switch (format)
             {
@@ -122,7 +136,10 @@ namespace OatmealDome.BinaryData.Extensions
                 case DateTimeDataFormat.CTime64:
                     return _cTimeBase.AddSeconds(ReadInt64(stream, converter));
                 default:
-                    throw new ArgumentException($"Invalid {nameof(DateTimeDataFormat)}.", nameof(format));
+                    throw new ArgumentException(
+                        $"Invalid {nameof(DateTimeDataFormat)}.",
+                        nameof(format)
+                    );
             }
         }
 
@@ -134,8 +151,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="format">The <see cref="DateTimeDataFormat"/> format in which the data is stored.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static DateTime[] ReadDateTimes(this Stream stream, int count,
-            DateTimeDataFormat format = DateTimeDataFormat.NetTicks, ByteConverter converter = null)
+        public static DateTime[] ReadDateTimes(
+            this Stream stream,
+            int count,
+            DateTimeDataFormat format = DateTimeDataFormat.NetTicks,
+            ByteConverter converter = null
+        )
         {
             var values = new DateTime[count];
             lock (stream)
@@ -161,7 +182,10 @@ namespace OatmealDome.BinaryData.Extensions
                         }
                         break;
                     default:
-                        throw new ArgumentException($"Invalid {nameof(BooleanDataFormat)}.", nameof(format));
+                        throw new ArgumentException(
+                            $"Invalid {nameof(BooleanDataFormat)}.",
+                            nameof(format)
+                        );
                 }
             }
             return values;
@@ -188,7 +212,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Decimal[] ReadDecimals(this Stream stream, int count, ByteConverter converter = null)
+        public static Decimal[] ReadDecimals(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new Decimal[count];
@@ -225,7 +253,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Double[] ReadDoubles(this Stream stream, int count, ByteConverter converter = null)
+        public static Double[] ReadDoubles(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new Double[count];
@@ -252,9 +284,13 @@ namespace OatmealDome.BinaryData.Extensions
         /// defined in the enum type.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The value read from the current stream.</returns>
-        public static T ReadEnum<T>(this Stream stream, bool strict = false, ByteConverter converter = null)
-            where T : struct, IComparable, IFormattable
-            => (T)ReadEnum(stream, typeof(T), strict, converter);
+        public static T ReadEnum<T>(
+            this Stream stream,
+            bool strict = false,
+            ByteConverter converter = null
+        )
+            where T : struct, IComparable, IFormattable =>
+            (T)ReadEnum(stream, typeof(T), strict, converter);
 
         /// <summary>
         /// Returns an array of <see cref="Enum"/> instances of type <typeparamref name="T"/> read from the
@@ -267,8 +303,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// defined in the enum type.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static T[] ReadEnums<T>(this Stream stream, int count, bool strict = false,
-            ByteConverter converter = null)
+        public static T[] ReadEnums<T>(
+            this Stream stream,
+            int count,
+            bool strict = false,
+            ByteConverter converter = null
+        )
             where T : struct, IComparable, IFormattable
         {
             converter = converter ?? ByteConverter.System;
@@ -305,7 +345,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Int16[] ReadInt16s(this Stream stream, int count, ByteConverter converter = null)
+        public static Int16[] ReadInt16s(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new Int16[count];
@@ -342,7 +386,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Int32[] ReadInt32s(this Stream stream, int count, ByteConverter converter = null)
+        public static Int32[] ReadInt32s(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new Int32[count];
@@ -379,7 +427,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Int64[] ReadInt64s(this Stream stream, int count, ByteConverter converter = null)
+        public static Int64[] ReadInt64s(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new Int64[count];
@@ -404,8 +456,8 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="stream">The extended <see cref="Stream"/> instance.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The value read from the current stream.</returns>
-        public static T ReadObject<T>(this Stream stream, ByteConverter converter = null)
-            => (T)ReadObject(stream, null, BinaryMemberAttribute.Default, typeof(T), converter);
+        public static T ReadObject<T>(this Stream stream, ByteConverter converter = null) =>
+            (T)ReadObject(stream, null, BinaryMemberAttribute.Default, typeof(T), converter);
 
         /// <summary>
         /// Returns an array of objects of type <typeparamref name="T"/> read from the <paramref name="stream"/>.
@@ -415,7 +467,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static T[] ReadObjects<T>(this Stream stream, int count, ByteConverter converter = null)
+        public static T[] ReadObjects<T>(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new T[count];
@@ -483,7 +539,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static Single[] ReadSingles(this Stream stream, int count, ByteConverter converter = null)
+        public static Single[] ReadSingles(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new Single[count];
@@ -511,26 +571,47 @@ namespace OatmealDome.BinaryData.Extensions
         /// <see cref="Encoding.UTF8"/>.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The value read from the current stream.</returns>
-        public static String ReadString(this Stream stream,
-            StringDataFormat format = StringDataFormat.DynamicByteCount, Encoding encoding = null,
-            ByteConverter converter = null)
+        public static String ReadString(
+            this Stream stream,
+            StringDataFormat format = StringDataFormat.DynamicByteCount,
+            Encoding encoding = null,
+            ByteConverter converter = null
+        )
         {
             encoding = encoding ?? Encoding.UTF8;
             converter = converter ?? ByteConverter.System;
             switch (format)
             {
                 case StringDataFormat.DynamicByteCount:
-                    return ReadStringWithLength(stream, Read7BitEncodedInt32(stream), false, encoding);
+                    return ReadStringWithLength(
+                        stream,
+                        Read7BitEncodedInt32(stream),
+                        false,
+                        encoding
+                    );
                 case StringDataFormat.ByteCharCount:
                     return ReadStringWithLength(stream, stream.ReadByte(), true, encoding);
                 case StringDataFormat.Int16CharCount:
-                    return ReadStringWithLength(stream, ReadInt16(stream, converter), true, encoding);
+                    return ReadStringWithLength(
+                        stream,
+                        ReadInt16(stream, converter),
+                        true,
+                        encoding
+                    );
                 case StringDataFormat.Int32CharCount:
-                    return ReadStringWithLength(stream, ReadInt32(stream, converter), true, encoding);
+                    return ReadStringWithLength(
+                        stream,
+                        ReadInt32(stream, converter),
+                        true,
+                        encoding
+                    );
                 case StringDataFormat.ZeroTerminated:
                     return ReadStringZeroPostfix(stream, encoding);
                 default:
-                    throw new ArgumentException($"Invalid {nameof(StringDataFormat)}.", nameof(format));
+                    throw new ArgumentException(
+                        $"Invalid {nameof(StringDataFormat)}.",
+                        nameof(format)
+                    );
             }
         }
 
@@ -545,9 +626,13 @@ namespace OatmealDome.BinaryData.Extensions
         /// <see cref="Encoding.UTF8"/>.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static String[] ReadStrings(this Stream stream, int count,
-            StringDataFormat format = StringDataFormat.DynamicByteCount, Encoding encoding = null,
-            ByteConverter converter = null)
+        public static String[] ReadStrings(
+            this Stream stream,
+            int count,
+            StringDataFormat format = StringDataFormat.DynamicByteCount,
+            Encoding encoding = null,
+            ByteConverter converter = null
+        )
         {
             encoding = encoding ?? Encoding.UTF8;
             converter = converter ?? ByteConverter.System;
@@ -559,25 +644,45 @@ namespace OatmealDome.BinaryData.Extensions
                     case StringDataFormat.DynamicByteCount:
                         for (int i = 0; i < count; i++)
                         {
-                            values[i] = ReadStringWithLength(stream, Read7BitEncodedInt32(stream), false, encoding);
+                            values[i] = ReadStringWithLength(
+                                stream,
+                                Read7BitEncodedInt32(stream),
+                                false,
+                                encoding
+                            );
                         }
                         break;
                     case StringDataFormat.ByteCharCount:
                         for (int i = 0; i < count; i++)
                         {
-                            values[i] = ReadStringWithLength(stream, stream.ReadByte(), true, encoding);
+                            values[i] = ReadStringWithLength(
+                                stream,
+                                stream.ReadByte(),
+                                true,
+                                encoding
+                            );
                         }
                         break;
                     case StringDataFormat.Int16CharCount:
                         for (int i = 0; i < count; i++)
                         {
-                            values[i] = ReadStringWithLength(stream, ReadInt16(stream, converter), true, encoding);
+                            values[i] = ReadStringWithLength(
+                                stream,
+                                ReadInt16(stream, converter),
+                                true,
+                                encoding
+                            );
                         }
                         break;
                     case StringDataFormat.Int32CharCount:
                         for (int i = 0; i < count; i++)
                         {
-                            values[i] = ReadStringWithLength(stream, ReadInt32(stream, converter), true, encoding);
+                            values[i] = ReadStringWithLength(
+                                stream,
+                                ReadInt32(stream, converter),
+                                true,
+                                encoding
+                            );
                         }
                         break;
                     case StringDataFormat.ZeroTerminated:
@@ -587,7 +692,10 @@ namespace OatmealDome.BinaryData.Extensions
                         }
                         break;
                     default:
-                        throw new ArgumentException($"Invalid {nameof(StringDataFormat)}.", nameof(format));
+                        throw new ArgumentException(
+                            $"Invalid {nameof(StringDataFormat)}.",
+                            nameof(format)
+                        );
                 }
             }
             return values;
@@ -615,7 +723,12 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="encoding">The <see cref="Encoding"/> to parse the bytes with, or <c>null</c> to use
         /// <see cref="Encoding.UTF8"/>.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static String[] ReadStrings(this Stream stream, int count, int length, Encoding encoding = null)
+        public static String[] ReadStrings(
+            this Stream stream,
+            int count,
+            int length,
+            Encoding encoding = null
+        )
         {
             encoding = encoding ?? Encoding.UTF8;
             var values = new String[count];
@@ -650,7 +763,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static UInt16[] ReadUInt16s(this Stream stream, int count, ByteConverter converter = null)
+        public static UInt16[] ReadUInt16s(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new UInt16[count];
@@ -687,7 +804,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static UInt32[] ReadUInt32s(this Stream stream, int count, ByteConverter converter = null)
+        public static UInt32[] ReadUInt32s(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new UInt32[count];
@@ -724,7 +845,11 @@ namespace OatmealDome.BinaryData.Extensions
         /// <param name="count">The number of values to read.</param>
         /// <param name="converter">The <see cref="ByteConverter"/> to use for converting multibyte data.</param>
         /// <returns>The array of values read from the current stream.</returns>
-        public static UInt64[] ReadUInt64s(this Stream stream, int count, ByteConverter converter = null)
+        public static UInt64[] ReadUInt64s(
+            this Stream stream,
+            int count,
+            ByteConverter converter = null
+        )
         {
             converter = converter ?? ByteConverter.System;
             var values = new UInt64[count];
@@ -767,7 +892,12 @@ namespace OatmealDome.BinaryData.Extensions
             throw new InvalidDataException("Invalid 7-bit encoded integer.");
         }
 
-        private static object ReadEnum(Stream stream, Type enumType, bool strict, ByteConverter converter)
+        private static object ReadEnum(
+            Stream stream,
+            Type enumType,
+            bool strict,
+            ByteConverter converter
+        )
         {
             converter = converter ?? ByteConverter.System;
 
@@ -813,7 +943,7 @@ namespace OatmealDome.BinaryData.Extensions
             {
                 throw new NotImplementedException($"Unsupported enum type {valueType}.");
             }
-            
+
             // Check if the value is defined in the enumeration, if requested.
             if (strict)
             {
@@ -822,8 +952,13 @@ namespace OatmealDome.BinaryData.Extensions
             return value;
         }
 
-        private static object ReadObject(Stream stream, object instance, BinaryMemberAttribute attribute,
-            Type type, ByteConverter converter)
+        private static object ReadObject(
+            Stream stream,
+            object instance,
+            BinaryMemberAttribute attribute,
+            Type type,
+            ByteConverter converter
+        )
         {
             if (attribute.Converter == null)
             {
@@ -836,7 +971,9 @@ namespace OatmealDome.BinaryData.Extensions
                 }
                 else if (type.IsEnumerable())
                 {
-                    throw new InvalidOperationException("Multidimensional arrays cannot be read directly.");
+                    throw new InvalidOperationException(
+                        "Multidimensional arrays cannot be read directly."
+                    );
                 }
                 else if (type == typeof(Boolean))
                 {
@@ -905,13 +1042,20 @@ namespace OatmealDome.BinaryData.Extensions
             else
             {
                 // Let a binary converter do all the work.
-                IBinaryConverter binaryConverter = BinaryConverterCache.GetConverter(attribute.Converter);
+                IBinaryConverter binaryConverter = BinaryConverterCache.GetConverter(
+                    attribute.Converter
+                );
                 return binaryConverter.Read(stream, instance, attribute, converter);
             }
         }
 
-        private static object ReadCustomObject(Stream stream, Type type, object instance, long startOffset,
-            ByteConverter converter)
+        private static object ReadCustomObject(
+            Stream stream,
+            Type type,
+            object instance,
+            long startOffset,
+            ByteConverter converter
+        )
         {
             TypeData typeData = TypeData.GetTypeData(type);
             instance = instance ?? typeData.GetInstance();
@@ -935,8 +1079,13 @@ namespace OatmealDome.BinaryData.Extensions
             return instance;
         }
 
-        private static void ReadMember(Stream stream, object instance, long startOffset, ByteConverter converter,
-            MemberData member)
+        private static void ReadMember(
+            Stream stream,
+            object instance,
+            long startOffset,
+            ByteConverter converter,
+            MemberData member
+        )
         {
             // If possible, reposition the stream according to offset.
             if (stream.CanSeek)
@@ -948,8 +1097,13 @@ namespace OatmealDome.BinaryData.Extensions
             }
             else
             {
-                if (member.Attribute.OffsetOrigin == OffsetOrigin.Begin || member.Attribute.Offset < 0)
-                    throw new NotSupportedException("Cannot reposition the stream as it is not seekable.");
+                if (
+                    member.Attribute.OffsetOrigin == OffsetOrigin.Begin
+                    || member.Attribute.Offset < 0
+                )
+                    throw new NotSupportedException(
+                        "Cannot reposition the stream as it is not seekable."
+                    );
                 else if (member.Attribute.Offset > 0) // Simulate moving forward by reading bytes.
                     stream.ReadBytes(member.Attribute.Offset);
             }
@@ -966,7 +1120,10 @@ namespace OatmealDome.BinaryData.Extensions
                 Array values = Array.CreateInstance(elementType, member.Attribute.Length);
                 for (int i = 0; i < values.Length; i++)
                 {
-                    values.SetValue(ReadObject(stream, instance, member.Attribute, elementType, converter), i);
+                    values.SetValue(
+                        ReadObject(stream, instance, member.Attribute, elementType, converter),
+                        i
+                    );
                 }
                 value = values;
             }
@@ -983,7 +1140,12 @@ namespace OatmealDome.BinaryData.Extensions
             }
         }
 
-        private static string ReadStringWithLength(Stream stream, int length, bool lengthInChars, Encoding encoding)
+        private static string ReadStringWithLength(
+            Stream stream,
+            int length,
+            bool lengthInChars,
+            Encoding encoding
+        )
         {
             if (length == 0)
                 return String.Empty;
@@ -1004,7 +1166,9 @@ namespace OatmealDome.BinaryData.Extensions
                         // Read raw bytes from the stream.
                         int bytesRead = stream.Read(buffer, bufferOffset++, 1);
                         if (bytesRead == 0)
-                            throw new EndOfStreamException("Incomplete string data, missing requested length.");
+                            throw new EndOfStreamException(
+                                "Incomplete string data, missing requested length."
+                            );
                         totalBytesRead += bytesRead;
                         // Convert the bytes to chars and append them to the string being built.
                         charsDecoded = decoder.GetCharCount(buffer, 0, bufferOffset);
@@ -1014,7 +1178,10 @@ namespace OatmealDome.BinaryData.Extensions
                             builder.Append(charBuffer, 0, charsDecoded);
                         }
                     }
-                } while ((lengthInChars && builder.Length < length) || (!lengthInChars && totalBytesRead < length));
+                } while (
+                    (lengthInChars && builder.Length < length)
+                    || (!lengthInChars && totalBytesRead < length)
+                );
             }
             return builder.ToString();
         }
@@ -1055,7 +1222,8 @@ namespace OatmealDome.BinaryData.Extensions
                         break;
                     default:
                         throw new NotImplementedException(
-                            "Unhandled character byte count. Only 1- or 2-byte encodings are support at the moment.");
+                            "Unhandled character byte count. Only 1- or 2-byte encodings are support at the moment."
+                        );
                 }
             }
             // Convert to string.

@@ -4,6 +4,7 @@
     {
         private const BymlNodeId HashKeyTableId = BymlNodeId.StringTable;
         private const BymlNodeId StringTableId = BymlNodeId.StringTable;
+
         public static bool IsValidBymlNodeId(byte id) => Enum.IsDefined(typeof(BymlNodeId), id);
 
         /* Value nodes only store their data adjacent to the node. */
@@ -11,14 +12,14 @@
         {
             return id switch
             {
-                BymlNodeId.String or
-                BymlNodeId.Bool or
-                BymlNodeId.Int or
-                BymlNodeId.Float or
-                BymlNodeId.UInt or
-                BymlNodeId.UInt64 or
-                BymlNodeId.Int64 or
-                BymlNodeId.Null => true,
+                BymlNodeId.String
+                or BymlNodeId.Bool
+                or BymlNodeId.Int
+                or BymlNodeId.Float
+                or BymlNodeId.UInt
+                or BymlNodeId.UInt64
+                or BymlNodeId.Int64
+                or BymlNodeId.Null => true,
                 _ => false,
             };
         }
@@ -27,10 +28,10 @@
         {
             return id switch
             {
-                BymlNodeId.StringTable or
-                BymlNodeId.PathArray or
-                BymlNodeId.Hash or
-                BymlNodeId.Array => true,
+                BymlNodeId.StringTable
+                or BymlNodeId.PathArray
+                or BymlNodeId.Hash
+                or BymlNodeId.Array => true,
                 _ => false,
             };
         }
@@ -52,6 +53,7 @@
         public IBymlNode? PathArray;
 
         private BymlHeader Header;
+
         public Byml(MemoryStream stream)
         {
             stream.Read(Utils.AsSpan(ref Header));
@@ -125,6 +127,7 @@
                 ParseRootNode(Header.RootOrPathArrayOffset);
             }
         }
+
         public Byml(IBymlNode root)
         {
             this.Root = root;
@@ -213,7 +216,10 @@
             var pos = stream.Position;
             IBymlNode node = id switch
             {
-                BymlNodeId.String => new BymlNode<string>(id, GetFromStringTable(reader.ReadUInt32())),
+                BymlNodeId.String => new BymlNode<string>(
+                    id,
+                    GetFromStringTable(reader.ReadUInt32())
+                ),
                 BymlNodeId.Bin => new BymlNode<byte[]>(id, reader.ReadBytes(reader.ReadInt32())),
                 BymlNodeId.Array => new BymlArrayNode(this, stream),
                 BymlNodeId.Hash => new BymlHashTable(this, stream),
