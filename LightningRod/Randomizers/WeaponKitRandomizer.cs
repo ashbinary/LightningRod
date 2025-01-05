@@ -3,16 +3,9 @@ using LightningRod.Libraries.Byml;
 
 namespace LightningRod.Randomizers;
 
-public class WeaponKitRandomizer
+public static class WeaponKitRandomizer
 {
-    private static WeaponKitConfig? config;
-
-    public WeaponKitRandomizer(WeaponKitConfig kitConfig)
-    {
-        config = kitConfig;
-    }
-
-    public void Randomize()
+    public static void Randomize()
     {
         BymlArrayNode weaponMain = GameData.FileSystem.ReadCompressedByml(
             $"/RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs"
@@ -28,24 +21,24 @@ public class WeaponKitRandomizer
         List<string> SubBanList = ["_Mission", "_Rival", "_Sdodr", "SalmonBuddy"];
         List<string> SpecialBanList = ["_Mission", "Sdodr", "_Rival", "_Coop"];
 
-        if (!config.heroSubSelection)
+        if (!Options.GetOption("heroSubSelection"))
             SubBanList.Add("_Hero");
-        if (!config.coopSplatBomb)
+        if (!Options.GetOption("coopSplatBomb"))
             SubBanList.Add("_Coop");
-        if (config.allSubWeapons)
+        if (Options.GetOption("allSubWeapons"))
             SubBanList = [""];
 
-        if (!config.heroModeSuperLanding)
+        if (!Options.GetOption("heroModeSuperLanding"))
             SpecialBanList.Add("SuperLanding");
-        if (!config.useRainmaker)
+        if (!Options.GetOption("useRainmaker"))
             SpecialBanList.Add("Gachihoko");
-        if (!config.useIkuraShoot)
+        if (!Options.GetOption("useIkuraShoot"))
             SpecialBanList.Add("IkuraShoot");
-        if (config.useAllSpecials)
+        if (Options.GetOption("useAllSpecials"))
             SpecialBanList = [""];
 
-        int minPFS = config.include170To220p ? 170 : 180;
-        int maxPFS = config.include170To220p ? 220 : 210;
+        int minPFS = Options.GetOption("include170To220p") ? 170 : 180;
+        int maxPFS = Options.GetOption("include170To220p") ? 220 : 210;
 
         List<string> subList = [];
         List<string> specialList = [];
@@ -76,7 +69,7 @@ public class WeaponKitRandomizer
                 continue;
 
             int pfs = GameData.Random.NextInt(maxPFS - minPFS) + minPFS + 5; // better odds towards 220 (sorry machine mains)
-            if (!config.noPFSIncrementation)
+            if (!Options.GetOption("noPFSIncrementation"))
                 pfs = pfs / 10 * 10;
 
             ((BymlNode<int>)mainData["SpecialPoint"]).Data = pfs;
@@ -87,7 +80,7 @@ public class WeaponKitRandomizer
                 $"Work/Gyml/{specialList[GameData.Random.NextInt(specialList.Count)]}.spl__WeaponInfoSpecial.gyml";
 
             if (
-                config.matchPeriscopeKits
+                Options.GetOption("matchPeriscopeKits")
                 && (mainData["__RowId"] as BymlNode<string>).Data.Contains("Charger")
             )
             {
@@ -95,7 +88,7 @@ public class WeaponKitRandomizer
             }
         }
 
-        if (config.matchPeriscopeKits)
+        if (Options.GetOption("matchPeriscopeKits"))
         {
             foreach (string key in periscopeIndexes.Keys)
             {
@@ -123,37 +116,10 @@ public class WeaponKitRandomizer
 
         RandomizerUtil.CreateFolder("RSDB");
 
-        if (config.randomizeKits)
+        if (Options.GetOption("randomizeKits"))
             GameData.CommitToFileSystem(
                 $"RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs", 
                 weaponMain.ToBytes().CompressZSTDBytes()
             );
-    }
-
-    public class WeaponKitConfig(
-        bool hss,
-        bool csb,
-        bool asw,
-        bool hmsl,
-        bool ur,
-        bool uis,
-        bool uas,
-        bool i1t2,
-        bool npi,
-        bool mpk,
-        bool rk
-    )
-    {
-        public bool heroSubSelection = hss; // Initial value
-        public bool coopSplatBomb = csb;
-        public bool allSubWeapons = asw;
-        public bool heroModeSuperLanding = hmsl;
-        public bool useRainmaker = ur;
-        public bool useIkuraShoot = uis;
-        public bool useAllSpecials = uas;
-        public bool include170To220p = i1t2;
-        public bool noPFSIncrementation = npi;
-        public bool matchPeriscopeKits = mpk;
-        public bool randomizeKits = rk;
     }
 }

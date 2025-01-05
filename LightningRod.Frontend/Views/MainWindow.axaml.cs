@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LibHac.Arp.Impl;
 using LibHac.Common;
 using LibHac.Common.Keys;
@@ -24,6 +26,7 @@ using LibHac.Tools.Fs;
 using LibHac.Tools.FsSystem;
 using LibHac.Tools.FsSystem.NcaUtils;
 using LightningRod.Frontend.ViewModels;
+using LightningRod.Randomizers;
 using Microsoft.CodeAnalysis;
 
 namespace LightningRod.Frontend.Views;
@@ -206,44 +209,16 @@ public partial class MainWindow : Window
     {
         var gameFilePath = await OpenPickerPathAndReturn(true);
 
-        Randomizers.WeaponKitRandomizer.WeaponKitConfig weaponKitConfig = new(
-            Model.HeroSubSelection,
-            Model.CoopSplatBomb,
-            Model.AllSubWeapons,
-            Model.HeroModeSuperLanding,
-            Model.UseRainmaker,
-            Model.UseIkuraShoot,
-            Model.UseAllSpecials,
-            Model.Include170To220p,
-            Model.NoPFSIncrementation,
-            Model.MatchPeriscopeKits,
-            Model.RandomizeKits
-        );
+        var observableFields = typeof(MainWindowViewModel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+            .Where(field => Attribute.IsDefined(field, typeof(ObservablePropertyAttribute)));
 
-        Randomizers.VSStageRandomizer.VSStageConfig versusStageConfig = new(
-            Model.RandomFogLevels,
-            Model.RandomStageEnv,
-            Model.TweakStageLayouts,
-            Model.TweakLevel,
-            Model.TweakStageLayoutPos,
-            Model.TweakStageLayoutRot,
-            Model.TweakStageLayoutSiz,
-            Model.MismatchedStages
-        );
-
-        Randomizers.ParameterRandomizer.ParameterConfig parameterConfig = new(
-            Model.RandomizeParameters,
-            Model.ParameterSeverity,
-            Model.MaxInkConsume,
-            Model.RandomizeInkColors,
-            Model.RandomizeInkColorLock
-        );
+        foreach (var field in observableFields)
+        {
+            Options.SetOption(field.Name, field.GetValue(Model));
+        }
 
         thunderBackend.TriggerRandomizers(
             Convert.ToInt64(Model.RandomizerSeed),
-            weaponKitConfig,
-            versusStageConfig,
-            parameterConfig,
             gameFilePath
         );
     }

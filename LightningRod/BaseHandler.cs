@@ -11,9 +11,6 @@ public class BaseHandler(IFileSystem baseFs)
 {
     public void TriggerRandomizers(
         long seed,
-        WeaponKitRandomizer.WeaponKitConfig weaponKitConfig,
-        VSStageRandomizer.VSStageConfig versusStageConfig,
-        ParameterRandomizer.ParameterConfig parameterConfig,
         string saveFolder
     )
     {
@@ -32,16 +29,12 @@ public class BaseHandler(IFileSystem baseFs)
 
         RandomizerUtil.DebugPrint($"Using game version {GameData.GameVersion}");
 
-        if (weaponKitConfig.randomizeKits)
+        if (Options.GetOption("randomizeKits"))
         {
-            WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig);
-            weaponKitRandom.Randomize();
+            WeaponKitRandomizer.Randomize();
         }
 
-        VSStageRandomizer versusStageRandomizer = new(versusStageConfig);
-        versusStageRandomizer.Randomize();
-
-        ParameterRandomizer parameterRandomizer = new(parameterConfig);
-        parameterRandomizer.Randomize();
+        VSStageRandomizer.Randomize();
+        ParameterRandomizer.Randomize();
     }
 }

@@ -4,16 +4,9 @@ using LightningRod.Libraries.Sarc;
 
 namespace LightningRod.Randomizers;
 
-public class VSStageRandomizer
+public static class VSStageRandomizer
 {
-    private static VSStageConfig? config;
-
-    public VSStageRandomizer(VSStageConfig sceneConfig)
-    {
-        config = sceneConfig;
-    }
-
-    public void Randomize()
+    public static void Randomize()
     {
         dynamic versusSceneInfo = GameData.FileSystem.ReadCompressedByml(
             $"/RSDB/VersusSceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
@@ -58,23 +51,23 @@ public class VSStageRandomizer
 
             List<string> positionData = [];
 
-            if (config.tweakStageLayoutPos)
+            if (Options.GetOption("tweakStageLayoutPos"))
                 positionData.Add("Translate");
-            if (config.tweakStageLayoutSiz)
+            if (Options.GetOption("tweakStageLayoutSiz"))
                 positionData.Add("Scale");
-            if (config.tweakStageLayoutRot)
+            if (Options.GetOption("tweakStageLayoutRot"))
                 positionData.Add("Rotate");
 
             foreach (BymlHashTable actorData in stageActors.Array)
             {
-                if (config.tweakStageLayouts)
+                if (Options.GetOption("tweakStageLayouts"))
                 {
                     foreach (string positionType in positionData)
                     {
                         if (actorData.ContainsKey(positionType))
                         {
                             ((BymlArrayNode)actorData[positionType]).VSStageRandomizePositions(
-                                (1.0f, (float)config.tweakLevel / 100),
+                                (1.0f, (float)Options.GetOption("tweakLevel") / 100),
                                 GameData.Random.NextFloatArray(3)
                             );
                         }
@@ -82,8 +75,8 @@ public class VSStageRandomizer
                         {
                             BymlArrayNode positionNode = new BymlArrayNode();
                             (float, float) dataPoints = positionType.Contains("Scale")
-                                ? (1.0f, (float)config.tweakLevel / 100)
-                                : (0.0f, (float)config.tweakLevel / 100);
+                                ? (1.0f, (float)Options.GetOption("tweakLevel") / 100)
+                                : (0.0f, (float)Options.GetOption("tweakLevel") / 100);
                             positionNode.VSStageRandomizePositions(
                                 dataPoints,
                                 GameData.Random.NextFloatArray(3)
@@ -97,7 +90,7 @@ public class VSStageRandomizer
             string[] sceneInfoLabels = ["StageIconBanner", "StageIconL", "StageIconS"];
             BymlArrayNode newSceneInfo = new();
 
-            if (config.mismatchedStages)
+            if (Options.GetOption("mismatchedStages"))
             {
                 foreach (BymlHashTable scene in sceneInfo.Array)
                 {
@@ -130,33 +123,14 @@ public class VSStageRandomizer
         RandomizerUtil.CreateFolder("Pack");
         RandomizerUtil.DebugPrint("VS Stage handling complete");
 
-        if (config.mismatchedStages)
+        if (Options.GetOption("mismatchedStages"))
         {
             GameData.CommitToFileSystem($"RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs", sceneInfo.ToBytes().CompressZSTDBytes());
         }
 
-        if (config.tweakStageLayouts)
+        if (Options.GetOption("tweakStageLayouts"))
         {
             GameData.CommitToFileSystem("Pack/Params.pack.zs", SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
         }
-    }
-
-    public class VSStageConfig(
-        bool rfl,
-        bool rse,
-        bool tsl,
-        int tl,
-        bool tslp,
-        bool tslr,
-        bool tsls,
-        bool ms
-    )
-    {
-        public bool tweakStageLayouts = tsl;
-        public int tweakLevel = tl;
-        public bool tweakStageLayoutPos = tslp;
-        public bool tweakStageLayoutRot = tslr;
-        public bool tweakStageLayoutSiz = tsls;
-        public bool mismatchedStages = ms;
     }
 }

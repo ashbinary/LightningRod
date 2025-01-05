@@ -9,16 +9,9 @@ using OatmealDome.BinaryData;
 
 namespace LightningRod.Randomizers;
 
-public class ParameterRandomizer
+public static class ParameterRandomizer
 {
-    private static ParameterConfig? config;
-
-    public ParameterRandomizer(ParameterConfig sceneConfig)
-    {
-        config = sceneConfig;
-    }
-
-    public void Randomize()
+    public static void Randomize()
     {
         Sarc paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs");
         List<(string, Memory<byte>)> sarcBuilderFileList = []; // Essentially taken from VSStageRandomizer
@@ -52,7 +45,7 @@ public class ParameterRandomizer
             $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
-        if (config.randomizeInkColors)
+        if (Options.GetOption("randomizeInkColors"))
         {
             string[] teamNames = ["AlphaTeam", "BravoTeam", "CharlieTeam", "Neutral"];
             string[] colorTypes = ["R", "G", "B"];
@@ -61,7 +54,7 @@ public class ParameterRandomizer
             {
                 BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
 
-                if (!config.randomizeInkColorLock
+                if (!Options.GetOption("randomizeInkColorLock")
                     && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support"))
                     continue;
 
@@ -134,7 +127,7 @@ public class ParameterRandomizer
         {
             foreach (string paramKey in paramData.Keys)
             {
-                if (paramKey.Contains("InkConsume") && config.maxInkConsume)
+                if (paramKey.Contains("InkConsume") && Options.GetOption("maxInkConsume"))
                     paramData.SetNode(
                         paramKey,
                         new BymlNode<float>(BymlNodeId.Float, GameData.Random.NextFloat())
@@ -159,7 +152,7 @@ public class ParameterRandomizer
             dynamic typedParam = paramData;
 
             double[] severityValues = [1.5, 2.0, 3.0];
-            float severity = (float)severityValues[config.parameterSeverity - 1];
+            float severity = (float)severityValues[Options.GetOption("parameterSeverity") - 1];
 
             RandomizerUtil.DebugPrint($"Current Typed param data: {typedParam.Data}");
             switch (paramData.Id)
