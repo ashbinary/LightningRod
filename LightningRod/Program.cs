@@ -52,7 +52,6 @@ public class Program
         }
 
         handler.TriggerRandomizers(
-            0123456789012345,
             @"C:\Users\Ash\Documents\TestData"
         );
     }

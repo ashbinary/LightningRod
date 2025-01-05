@@ -218,7 +218,6 @@ public partial class MainWindow : Window
         }
 
         thunderBackend.TriggerRandomizers(
-            Convert.ToInt64(Model.RandomizerSeed),
             gameFilePath
         );
     }

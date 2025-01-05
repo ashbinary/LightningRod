@@ -10,13 +10,12 @@ namespace LightningRod;
 public class BaseHandler(IFileSystem baseFs)
 {
     public void TriggerRandomizers(
-        long seed,
         string saveFolder
     )
     {
         GameData.DataPath = $"{saveFolder}/romfs/";
         GameData.FileSystem = new LayeredFileSystem(baseFs, new LocalFileSystem(GameData.DataPath));
-        GameData.Random = new LongRNG(seed);
+        GameData.Random = new LongRNG(Convert.ToInt64(Options.GetOption("randomizerSeed")));
 
         if (Directory.Exists(GameData.DataPath))
             Directory.Delete(GameData.DataPath, true);
