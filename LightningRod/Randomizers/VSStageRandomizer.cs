@@ -7,31 +7,22 @@ namespace LightningRod.Randomizers;
 public class VSStageRandomizer
 {
     private static VSStageConfig? config;
-    private static IFileSystem files;
-    private readonly string savePath;
 
-    public VSStageRandomizer(VSStageConfig sceneConfig, IFileSystem fileSys, string save)
+    public VSStageRandomizer(VSStageConfig sceneConfig)
     {
         config = sceneConfig;
-        files = fileSys;
-        savePath = save;
     }
 
-    public void Randomize(long seed, string version)
+    public void Randomize()
     {
-        LongRNG rand = new(seed);
-        RandomizerUtil.DebugPrint(
-            "Loading VS Scene randomizer with seed " + seed + " & file version " + version
+        dynamic versusSceneInfo = GameData.FileSystem.ReadCompressedByml(
+            $"/RSDB/VersusSceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
+        );
+        BymlArrayNode sceneInfo = GameData.FileSystem.ReadCompressedByml(
+            $"/RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
-        dynamic versusSceneInfo = files.ReadCompressedByml(
-            $"/RSDB/VersusSceneInfo.Product.{version}.rstbl.byml.zs"
-        );
-        BymlArrayNode sceneInfo = files.ReadCompressedByml(
-            $"/RSDB/SceneInfo.Product.{version}.rstbl.byml.zs"
-        );
-
-        Sarc paramPack = files.ReadCompressedSarc($"/Pack/Params.pack.zs");
+        Sarc paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs");
         List<(string, Memory<byte>)> sarcBuilderFileList = [];
 
         foreach (Sarc.FileNode node in paramPack.FileNodes)
@@ -55,7 +46,7 @@ public class VSStageRandomizer
             }
             else
             { // Index does not exist (Mincemeat in 610, Lemuria/Barnacle/Hammerhead in 800-810, Undertow in 710-810)
-                Sarc actorPack = files.ReadCompressedSarc($"/Pack/Scene/{versusSceneName}.pack.zs");
+                Sarc actorPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Scene/{versusSceneName}.pack.zs");
                 rawBancData = actorPack.GetFileInSarc($"Banc/{versusSceneName}.bcett.byml");
             }
 
@@ -63,7 +54,6 @@ public class VSStageRandomizer
 
             RandomizerUtil.DebugPrint($"Accessing SARC {versusSceneName}...");
             BymlHashTable stageBancRoot = (BymlHashTable)stageBanc.Root;
-
             BymlArrayNode stageActors = (BymlArrayNode)stageBancRoot.Values[0]; // get Actors
 
             List<string> positionData = [];
@@ -85,7 +75,7 @@ public class VSStageRandomizer
                         {
                             ((BymlArrayNode)actorData[positionType]).VSStageRandomizePositions(
                                 (1.0f, (float)config.tweakLevel / 100),
-                                rand.NextFloatArray(3)
+                                GameData.Random.NextFloatArray(3)
                             );
                         }
                         else
@@ -96,7 +86,7 @@ public class VSStageRandomizer
                                 : (0.0f, (float)config.tweakLevel / 100);
                             positionNode.VSStageRandomizePositions(
                                 dataPoints,
-                                rand.NextFloatArray(3)
+                                GameData.Random.NextFloatArray(3)
                             );
                             actorData.AddNode(BymlNodeId.Array, positionNode, positionType);
                         }
@@ -116,7 +106,7 @@ public class VSStageRandomizer
 
                     for (int i = 0; i < sceneInfoLabels.Length; i++)
                     {
-                        string newStage = versusSceneInfo[rand.NextInt(versusSceneInfo.Length)][
+                        string newStage = versusSceneInfo[GameData.Random.NextInt(versusSceneInfo.Length)][
                             "__RowId"
                         ].Data;
                         newStage = newStage.TrimEnd(['0', '1', '2', '3', '4', '5']);
@@ -133,25 +123,21 @@ public class VSStageRandomizer
             stageBanc.Save(bancStream);
 
             sarcBuilderFileList.Add(
-                ($"Banc/{versusSceneName}.bcett.byml", bancStream.ToArray().AsMemory<byte>())
+                ($"Banc/{versusSceneName}.bcett.byml", bancStream.ToArray().AsMemory())
             );
         }
 
-        Directory.CreateDirectory(savePath + "/romfs/Pack");
+        RandomizerUtil.CreateFolder("Pack");
         RandomizerUtil.DebugPrint("VS Stage handling complete");
 
         if (config.mismatchedStages)
         {
-            using FileStream sceneInfoSaver = File.Create(
-                $"{savePath}/romfs/RSDB/SceneInfo.Product.{version}.rstbl.byml.zs"
-            );
-            sceneInfoSaver.Write(sceneInfo.ToBytes().CompressZSTDBytes());
+            GameData.CommitToFileSystem($"RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs", sceneInfo.ToBytes().CompressZSTDBytes());
         }
 
         if (config.tweakStageLayouts)
         {
-            using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
-            fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+            GameData.CommitToFileSystem("Pack/Params.pack.zs", SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
         }
     }
 

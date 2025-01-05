@@ -1,3 +1,5 @@
+using System.Text;
+using LibHac;
 using LibHac.Common;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
@@ -35,6 +37,11 @@ public static class RandomizerUtil
         {
             return compressor.Wrap(data);
         }
+    }
+
+    public static void CreateFolder(string folderName)
+    {
+        Directory.CreateDirectory($"{GameData.DataPath}/{folderName}");
     }
 
     public static BymlArrayNode randomizeValues(this BymlArrayNode arrayNode, LongRNG rand)
@@ -91,6 +98,15 @@ public static class RandomizerUtil
         using MemoryStream dataStream = new();
         new Byml(file).Save(dataStream);
         return dataStream.ToArray();
+    }
+
+    public static bool FileExists(IFileSystem fileSystem, string filePath)
+    {
+        LibHac.Fs.Path hacPath = new();
+        hacPath.InitializeWithNormalization(Encoding.UTF8.GetBytes(filePath));
+
+        Result result = fileSystem.GetEntryType(out DirectoryEntryType entryType, in hacPath);
+        return result.IsSuccess() && entryType == DirectoryEntryType.File;
     }
 
     // --------------------------

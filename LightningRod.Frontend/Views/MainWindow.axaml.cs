@@ -127,22 +127,22 @@ public partial class MainWindow : Window
             switch (System.IO.Path.GetExtension(gameFilePath))
             {
                 case ".nsp":
-                    if (isUpdateFile)
+                    if (!isUpdateFile)
                     {
                         new PartitionFileSystemCreator()
                             .Create(ref HoianTempBase, ref LibHacFile)
                             .ThrowIfFailure();
-                        Model.DataUpdateUnloaded = false;
-                        this.FindControl<Button>("LoadUpdateNSP").Content =
-                            "Update NSP file loaded!";
+                        Model.DataUnloaded = false;
+                        this.FindControl<Button>("LoadBaseNSP").Content = "NSP file loaded!";
                     }
                     else
                     {
                         new PartitionFileSystemCreator()
                             .Create(ref HoianTempUpdate, ref LibHacFile)
                             .ThrowIfFailure();
-                        Model.DataUnloaded = false;
-                        this.FindControl<Button>("LoadBaseNSP").Content = "NSP file loaded!";
+                        Model.DataUpdateUnloaded = false;
+                        this.FindControl<Button>("LoadUpdateNSP").Content =
+                            "Update NSP file loaded!";
                     }
 
                     break;
@@ -239,7 +239,7 @@ public partial class MainWindow : Window
             Model.RandomizeInkColorLock
         );
 
-        thunderBackend.triggerRandomizers(
+        thunderBackend.TriggerRandomizers(
             Convert.ToInt64(Model.RandomizerSeed),
             weaponKitConfig,
             versusStageConfig,

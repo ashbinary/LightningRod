@@ -10,17 +10,13 @@ namespace LightningRod.Randomizers;
 public class MiscRandomizer
 {
     private static MiscConfig? config;
-    private static IFileSystem files;
-    private readonly string savePath;
 
-    public MiscRandomizer(MiscConfig sceneConfig, IFileSystem fileSys, string save)
+    public MiscRandomizer(MiscConfig sceneConfig)
     {
         config = sceneConfig;
-        files = fileSys;
-        savePath = save;
     }
 
-    public void Randomize(long seed, string version)
+    public void Randomize()
     {
         throw new Exception();
     }

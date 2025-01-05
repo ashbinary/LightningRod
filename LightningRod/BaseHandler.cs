@@ -7,12 +7,9 @@ using LightningRod.Randomizers;
 
 namespace LightningRod;
 
-public class BaseHandler(IFileSystem fileSystem)
+public class BaseHandler(IFileSystem baseFs)
 {
-    private readonly IFileSystem nspFS = fileSystem;
-    private LayeredFileSystem layeredFS;
-
-    public void triggerRandomizers(
+    public void TriggerRandomizers(
         long seed,
         WeaponKitRandomizer.WeaponKitConfig weaponKitConfig,
         VSStageRandomizer.VSStageConfig versusStageConfig,
@@ -20,29 +17,31 @@ public class BaseHandler(IFileSystem fileSystem)
         string saveFolder
     )
     {
-        string fsPath = $"{saveFolder}/romfs/";
+        GameData.DataPath = $"{saveFolder}/romfs/";
+        GameData.FileSystem = new LayeredFileSystem(baseFs, new LocalFileSystem(GameData.DataPath));
+        GameData.Random = new LongRNG(seed);
 
-        if (Directory.Exists(fsPath))
-            Directory.Delete(fsPath, true);
-        Directory.CreateDirectory(fsPath);
-        layeredFS = new LayeredFileSystem(nspFS, new LocalFileSystem(fsPath));
+        if (Directory.Exists(GameData.DataPath))
+            Directory.Delete(GameData.DataPath, true);
+        Directory.CreateDirectory(GameData.DataPath);
 
         string RegionLangData = System.Text.Encoding.UTF8.GetString(
-            layeredFS.ReadWholeFile("/System/RegionLangMask.txt")
+            GameData.FileSystem.ReadWholeFile("/System/RegionLangMask.txt")
         );
-        var version = RegionLangData.Split("\n")[2][..3];
-        RandomizerUtil.DebugPrint($"Using game version {version}");
+        GameData.GameVersion = RegionLangData.Split("\n")[2][..3];
+
+        RandomizerUtil.DebugPrint($"Using game version {GameData.GameVersion}");
 
         if (weaponKitConfig.randomizeKits)
         {
-            WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig, layeredFS, saveFolder);
-            weaponKitRandom.Randomize(seed, version);
+            WeaponKitRandomizer weaponKitRandom = new(weaponKitConfig);
+            weaponKitRandom.Randomize();
         }
 
-        VSStageRandomizer versusStageRandomizer = new(versusStageConfig, layeredFS, saveFolder);
-        versusStageRandomizer.Randomize(seed, version);
+        VSStageRandomizer versusStageRandomizer = new(versusStageConfig);
+        versusStageRandomizer.Randomize();
 
-        ParameterRandomizer parameterRandomizer = new(parameterConfig, layeredFS, saveFolder);
-        parameterRandomizer.Randomize(seed, version);
+        ParameterRandomizer parameterRandomizer = new(parameterConfig);
+        parameterRandomizer.Randomize();
     }
 }

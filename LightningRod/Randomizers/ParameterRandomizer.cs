@@ -12,24 +12,15 @@ namespace LightningRod.Randomizers;
 public class ParameterRandomizer
 {
     private static ParameterConfig? config;
-    private static IFileSystem files;
-    private readonly string savePath;
 
-    public ParameterRandomizer(ParameterConfig sceneConfig, IFileSystem fileSys, string save)
+    public ParameterRandomizer(ParameterConfig sceneConfig)
     {
         config = sceneConfig;
-        files = fileSys;
-        savePath = save;
     }
 
-    public void Randomize(long seed, string version)
+    public void Randomize()
     {
-        LongRNG rand = new LongRNG(seed);
-        RandomizerUtil.DebugPrint(
-            $"Loading parameter randomizer with seed {seed} and version {version}"
-        );
-
-        Sarc paramPack = files.ReadCompressedSarc($"/Pack/Params.pack.zs");
+        Sarc paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs");
         List<(string, Memory<byte>)> sarcBuilderFileList = []; // Essentially taken from VSStageRandomizer
 
         foreach (Sarc.FileNode node in paramPack.FileNodes)
@@ -48,18 +39,17 @@ public class ParameterRandomizer
             BymlHashTable paramFile = (BymlHashTable)
                 new Byml(new MemoryStream(paramPack.GetFileInSarc(paramFileName))).Root;
 
-            BymlIterator paramIterator = new(seed);
+            BymlIterator paramIterator = new();
             paramFile = paramIterator.IterateParams(paramFile);
             RandomizerUtil.DebugPrint("Handled param file");
 
             sarcBuilderFileList.Add((paramFileName, paramFile.ToBytes().AsMemory()));
         }
 
-        using FileStream fileSaver = File.Create($"{savePath}/romfs/Pack/Params.pack.zs");
-        fileSaver.Write(SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+        GameData.CommitToFileSystem("Pack/Params.pack.zs", SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
 
-        BymlArrayNode inkColorByml = files.ReadCompressedByml(
-            $"/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs"
+        BymlArrayNode inkColorByml = GameData.FileSystem.ReadCompressedByml(
+            $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
         if (config.randomizeInkColors)
@@ -71,27 +61,28 @@ public class ParameterRandomizer
             {
                 BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
 
-                if (
-                    !config.randomizeInkColorLock
-                    && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support")
-                )
+                if (!config.randomizeInkColorLock
+                    && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support"))
                     continue;
 
                 //if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains)) continue;
                 for (int t = 0; t < teamNames.Length; t++)
-                for (int j = 0; j < colorTypes.Length; j++)
-                    (
-                        (colorData[$"{teamNames[t]}Color"] as BymlHashTable)[colorTypes[j]]
-                        as BymlNode<float>
-                    ).Data = rand.NextFloat();
+                {
+                    BymlHashTable? colorHashTable = colorData[$"{teamNames[t]}Color"] as BymlHashTable;
+                    for (int j = 0; j < colorTypes.Length; j++)
+                    {
+                        (colorHashTable[colorTypes[j]] as BymlNode<float>).Data = GameData.Random.NextFloat();
+                    }
 
+                }
+    
                 RandomizerUtil.DebugPrint("Handled ink color");
             }
 
-            using FileStream bymlStream = File.Create(
-                $"{savePath}/romfs/RSDB/TeamColorDataSet.Product.{version}.rstbl.byml.zs"
+            GameData.CommitToFileSystem(
+                $"RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs", 
+                inkColorByml.ToBytes().CompressZSTDBytes()
             );
-            bymlStream.Write(inkColorByml.ToBytes().CompressZSTDBytes());
         }
     }
 
@@ -106,13 +97,6 @@ public class ParameterRandomizer
 
     public class BymlIterator
     {
-        private LongRNG rand;
-
-        public BymlIterator(long seed)
-        {
-            rand = new LongRNG(seed);
-        }
-
         public BymlHashTable IterateParams(BymlHashTable paramFile)
         {
             if (!paramFile.ContainsKey("GameParameters"))
@@ -153,7 +137,7 @@ public class ParameterRandomizer
                 if (paramKey.Contains("InkConsume") && config.maxInkConsume)
                     paramData.SetNode(
                         paramKey,
-                        new BymlNode<float>(BymlNodeId.Float, rand.NextFloat())
+                        new BymlNode<float>(BymlNodeId.Float, GameData.Random.NextFloat())
                     );
                 paramData.SetNode(paramKey, CheckType(paramData[paramKey]));
             }
@@ -182,17 +166,17 @@ public class ParameterRandomizer
             {
                 case BymlNodeId.Int:
                     if (typedParam.Data > 0)
-                        typedParam.Data = rand.NextInt((int)(typedParam.Data * severity)) + 1;
+                        typedParam.Data = GameData.Random.NextInt((int)(typedParam.Data * severity)) + 1;
                     else if (typedParam.Data == 0)
-                        typedParam.Data = rand.NextInt((int)severity); //unfortunate rare edge case
+                        typedParam.Data = GameData.Random.NextInt((int)severity); //unfortunate rare edge case
                     else
-                        typedParam.Data = -1 * rand.NextInt(Math.Abs(typedParam.Data));
+                        typedParam.Data = -1 * GameData.Random.NextInt(Math.Abs(typedParam.Data));
                     break;
                 case BymlNodeId.Float:
-                    typedParam.Data = rand.NextFloat() * (typedParam.Data * severity);
+                    typedParam.Data = GameData.Random.NextFloat() * (typedParam.Data * severity);
                     break;
                 case BymlNodeId.Bool:
-                    typedParam.Data = rand.NextBoolean();
+                    typedParam.Data = GameData.Random.NextBoolean();
                     break;
             }
             RandomizerUtil.DebugPrint($"Handling, {typedParam.Data}");

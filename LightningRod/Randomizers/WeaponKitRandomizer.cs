@@ -6,31 +6,22 @@ namespace LightningRod.Randomizers;
 public class WeaponKitRandomizer
 {
     private static WeaponKitConfig? config;
-    private static IFileSystem files;
-    private readonly string savePath;
 
-    public WeaponKitRandomizer(WeaponKitConfig kitConfig, IFileSystem fileSys, string save)
+    public WeaponKitRandomizer(WeaponKitConfig kitConfig)
     {
         config = kitConfig;
-        files = fileSys;
-        savePath = save;
     }
 
-    public void Randomize(long seed, string version)
+    public void Randomize()
     {
-        LongRNG rand = new(seed);
-        RandomizerUtil.DebugPrint(
-            "Loading Weapon Kit randomizer with seed " + seed + " & file version " + version
+        BymlArrayNode weaponMain = GameData.FileSystem.ReadCompressedByml(
+            $"/RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
-
-        BymlArrayNode weaponMain = files.ReadCompressedByml(
-            $"/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs"
+        BymlArrayNode weaponSub = GameData.FileSystem.ReadCompressedByml(
+            $"/RSDB/WeaponInfoSub.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
-        BymlArrayNode weaponSub = files.ReadCompressedByml(
-            $"/RSDB/WeaponInfoSub.Product.{version}.rstbl.byml.zs"
-        );
-        BymlArrayNode weaponSpecial = files.ReadCompressedByml(
-            $"/RSDB/WeaponInfoSpecial.Product.{version}.rstbl.byml.zs"
+        BymlArrayNode weaponSpecial = GameData.FileSystem.ReadCompressedByml(
+            $"/RSDB/WeaponInfoSpecial.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
         List<string> MainBanList = ["_Coop", "_Msn", "_Sdodr", "RivalLv1", "RivalLv2"];
@@ -84,16 +75,16 @@ public class WeaponKitRandomizer
             if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains))
                 continue;
 
-            int pfs = rand.NextInt(maxPFS - minPFS) + minPFS + 5; // better odds towards 220 (sorry machine mains)
+            int pfs = GameData.Random.NextInt(maxPFS - minPFS) + minPFS + 5; // better odds towards 220 (sorry machine mains)
             if (!config.noPFSIncrementation)
                 pfs = pfs / 10 * 10;
 
             ((BymlNode<int>)mainData["SpecialPoint"]).Data = pfs;
 
             (mainData["SubWeapon"] as BymlNode<string>).Data =
-                $"Work/Gyml/{subList[rand.NextInt(subList.Count)]}.spl__WeaponInfoSub.gyml";
+                $"Work/Gyml/{subList[GameData.Random.NextInt(subList.Count)]}.spl__WeaponInfoSub.gyml";
             (mainData["SpecialWeapon"] as BymlNode<string>).Data =
-                $"Work/Gyml/{specialList[rand.NextInt(specialList.Count)]}.spl__WeaponInfoSpecial.gyml";
+                $"Work/Gyml/{specialList[GameData.Random.NextInt(specialList.Count)]}.spl__WeaponInfoSpecial.gyml";
 
             if (
                 config.matchPeriscopeKits
@@ -130,15 +121,13 @@ public class WeaponKitRandomizer
             }
         }
 
-        Directory.CreateDirectory(savePath + "/romfs/RSDB");
+        RandomizerUtil.CreateFolder("RSDB");
 
         if (config.randomizeKits)
-        {
-            using FileStream bymlStream = File.Create(
-                $"{savePath}/romfs/RSDB/WeaponInfoMain.Product.{version}.rstbl.byml.zs"
+            GameData.CommitToFileSystem(
+                $"RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs", 
+                weaponMain.ToBytes().CompressZSTDBytes()
             );
-            bymlStream.Write(weaponMain.ToBytes().CompressZSTDBytes());
-        }
     }
 
     public class WeaponKitConfig(
