@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
-using LightningRod.Libraries.Sarc;
+using NintendoTools.FileFormats.Sarc;
 using OatmealDome.BinaryData;
 
 namespace LightningRod.Randomizers;
@@ -13,33 +13,21 @@ public static class ParameterRandomizer
 {
     public static void Randomize()
     {
-        Sarc paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs");
-        List<(string, Memory<byte>)> sarcBuilderFileList = []; // Essentially taken from VSStageRandomizer
+        Logger.Log("Starting parameter randomizer!");
+        SarcFile paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs"); 
 
-        foreach (Sarc.FileNode node in paramPack.FileNodes)
-        { // Setup SARC builder data
-            string fileName = paramPack.GetNodeFilename(node);
-            if (fileName.StartsWith("Component/GameParameterTable/Weapon"))
-                continue;
-            sarcBuilderFileList.Add((fileName, paramPack.GetFileInSarc(fileName).AsMemory()));
-        }
-
-        foreach (Sarc.FileNode paramNode in paramPack.FileNodes)
+        foreach (SarcContent paramFileSarc in paramPack.Files)
         {
-            string paramFileName = paramPack.GetNodeFilename(paramNode);
-            if (!paramFileName.StartsWith("Component/GameParameterTable/Weapon"))
+            if (!paramFileSarc.Name.StartsWith("Component/GameParameterTable/Weapon"))
                 continue; // exact opposite as above
             BymlHashTable paramFile = (BymlHashTable)
-                new Byml(new MemoryStream(paramPack.GetFileInSarc(paramFileName))).Root;
+                new Byml(new MemoryStream(paramFileSarc.Data)).Root;
 
             BymlIterator paramIterator = new();
-            paramFile = paramIterator.IterateParams(paramFile);
-            RandomizerUtil.DebugPrint("Handled param file");
-
-            sarcBuilderFileList.Add((paramFileName, paramFile.ToBytes().AsMemory()));
+            paramFileSarc.Data = paramIterator.IterateParams(paramFile).ToBytes();
         }
 
-        GameData.CommitToFileSystem("Pack/Params.pack.zs", SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+        GameData.CommitToFileSystem("Pack/Params.pack.zs", paramPack.CompileSarc().CompressZSTDBytes());
 
         BymlArrayNode inkColorByml = GameData.FileSystem.ReadCompressedByml(
             $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs"
@@ -68,8 +56,6 @@ public static class ParameterRandomizer
                     }
 
                 }
-    
-                RandomizerUtil.DebugPrint("Handled ink color");
             }
 
             GameData.CommitToFileSystem(
@@ -104,7 +90,6 @@ public static class ParameterRandomizer
         public IBymlNode CheckType(IBymlNode paramData)
         {
             BymlNodeId dataType = paramData.Id;
-            RandomizerUtil.DebugPrint($"Checking param data ID {paramData.Id}");
             switch (dataType)
             {
                 case BymlNodeId.Hash:
@@ -154,7 +139,6 @@ public static class ParameterRandomizer
             double[] severityValues = [1.5, 2.0, 3.0];
             float severity = (float)severityValues[Options.GetOption("parameterSeverity") - 1];
 
-            RandomizerUtil.DebugPrint($"Current Typed param data: {typedParam.Data}");
             switch (paramData.Id)
             {
                 case BymlNodeId.Int:
@@ -172,7 +156,6 @@ public static class ParameterRandomizer
                     typedParam.Data = GameData.Random.NextBoolean();
                     break;
             }
-            RandomizerUtil.DebugPrint($"Handling, {typedParam.Data}");
             return paramData;
         }
     }

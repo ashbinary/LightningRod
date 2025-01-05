@@ -1,6 +1,6 @@
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
-using LightningRod.Libraries.Sarc;
+using NintendoTools.FileFormats.Sarc;
 
 namespace LightningRod.Randomizers;
 
@@ -8,6 +8,8 @@ public static class VSStageRandomizer
 {
     public static void Randomize()
     {
+        Logger.Log("Starting versus stage randomizer!");
+
         dynamic versusSceneInfo = GameData.FileSystem.ReadCompressedByml(
             $"/RSDB/VersusSceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
@@ -15,16 +17,7 @@ public static class VSStageRandomizer
             $"/RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
-        Sarc paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs");
-        List<(string, Memory<byte>)> sarcBuilderFileList = [];
-
-        foreach (Sarc.FileNode node in paramPack.FileNodes)
-        { // Setup SARC builder data
-            string fileName = paramPack.GetNodeFilename(node);
-            if (fileName.StartsWith("Banc"))
-                continue;
-            sarcBuilderFileList.Add((fileName, paramPack.GetFileInSarc(fileName).AsMemory()));
-        }
+        SarcFile paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs");
 
         foreach (dynamic versusScene in versusSceneInfo.Array)
         {
@@ -33,19 +26,19 @@ public static class VSStageRandomizer
             Byml stageBanc = null;
             byte[] rawBancData = [];
 
-            if (paramPack.GetNodeIndex($"Banc/{versusSceneName}.bcett.byml") >= 0)
-            { // Index does exist
+            if (paramPack.GetFileInSarc($"Banc/{versusSceneName}.bcett.byml") != null) // Index does exist
+            {
                 rawBancData = paramPack.GetFileInSarc($"Banc/{versusSceneName}.bcett.byml");
             }
-            else
-            { // Index does not exist (Mincemeat in 610, Lemuria/Barnacle/Hammerhead in 800-810, Undertow in 710-810)
-                Sarc actorPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Scene/{versusSceneName}.pack.zs");
+            else // Index does not exist (Mincemeat in 610, Lemuria/Barnacle/Hammerhead in 800-810, Undertow in 710-810)
+            {
+                Logger.Log($"Unable to find Versus Scene {versusSceneName} in Params.pack.zs");
+                SarcFile actorPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Scene/{versusSceneName}.pack.zs");
                 rawBancData = actorPack.GetFileInSarc($"Banc/{versusSceneName}.bcett.byml");
             }
 
             stageBanc = new Byml(new MemoryStream(rawBancData));
 
-            RandomizerUtil.DebugPrint($"Accessing SARC {versusSceneName}...");
             BymlHashTable stageBancRoot = (BymlHashTable)stageBanc.Root;
             BymlArrayNode stageActors = (BymlArrayNode)stageBancRoot.Values[0]; // get Actors
 
@@ -103,9 +96,6 @@ public static class VSStageRandomizer
                             "__RowId"
                         ].Data;
                         newStage = newStage.TrimEnd(['0', '1', '2', '3', '4', '5']);
-                        RandomizerUtil.DebugPrint(
-                            $"Checking for {newStage} in scene {((BymlNode<string>)scene["__RowId"]).Data}"
-                        );
                         ((BymlNode<string>)scene[sceneInfoLabels[i]]).Data = newStage;
                     }
                     break;
@@ -114,14 +104,10 @@ public static class VSStageRandomizer
 
             using MemoryStream bancStream = new();
             stageBanc.Save(bancStream);
-
-            sarcBuilderFileList.Add(
-                ($"Banc/{versusSceneName}.bcett.byml", bancStream.ToArray().AsMemory())
-            );
+            paramPack.SetFileInSarc($"/Pack/Scene/{versusSceneName}.pack.zs", bancStream.ToBytes());
         }
 
         RandomizerUtil.CreateFolder("Pack");
-        RandomizerUtil.DebugPrint("VS Stage handling complete");
 
         if (Options.GetOption("mismatchedStages"))
         {
@@ -130,7 +116,7 @@ public static class VSStageRandomizer
 
         if (Options.GetOption("tweakStageLayouts"))
         {
-            GameData.CommitToFileSystem("Pack/Params.pack.zs", SarcBuilder.Build(sarcBuilderFileList).CompressZSTDBytes());
+            GameData.CommitToFileSystem("Pack/Params.pack.zs", paramPack.CompileSarc().CompressZSTDBytes());
         }
     }
 }

@@ -7,6 +7,8 @@ public static class WeaponKitRandomizer
 {
     public static void Randomize()
     {
+        Logger.Log("Starting weapon kit randomizer!");
+
         BymlArrayNode weaponMain = GameData.FileSystem.ReadCompressedByml(
             $"/RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
@@ -36,6 +38,9 @@ public static class WeaponKitRandomizer
             SpecialBanList.Add("IkuraShoot");
         if (Options.GetOption("useAllSpecials"))
             SpecialBanList = [""];
+
+        Logger.Log($"Banned Subs: {string.Join(", ", SubBanList)}");
+        Logger.Log($"Banned Specials: {string.Join(", ", SpecialBanList)}");
 
         int minPFS = Options.GetOption("include170To220p") ? 170 : 180;
         int maxPFS = Options.GetOption("include170To220p") ? 220 : 210;

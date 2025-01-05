@@ -26,7 +26,8 @@ public class BaseHandler(IFileSystem baseFs)
         );
         GameData.GameVersion = RegionLangData.Split("\n")[2][..3];
 
-        RandomizerUtil.DebugPrint($"Using game version {GameData.GameVersion}");
+        Logger.Log($"Game Version: {GameData.GameVersion}");
+        Logger.Log($"Randomizer Seed: {Options.GetOption("randomizerSeed")}");
 
         if (Options.GetOption("randomizeKits"))
         {
@@ -35,5 +36,7 @@ public class BaseHandler(IFileSystem baseFs)
 
         VSStageRandomizer.Randomize();
         ParameterRandomizer.Randomize();
+
+        Logger.MakeFile();
     }
 }

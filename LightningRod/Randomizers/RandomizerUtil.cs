@@ -5,7 +5,8 @@ using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LibHac.Tools.FsSystem;
 using LightningRod.Libraries.Byml;
-using LightningRod.Libraries.Sarc;
+using NintendoTools.FileFormats;
+using NintendoTools.FileFormats.Sarc;
 using ZstdNet;
 
 namespace LightningRod.Randomizers;
@@ -39,6 +40,12 @@ public static class RandomizerUtil
         }
     }
 
+    public static byte[] CompileSarc(this SarcFile data)
+    {
+        var compiler = new SarcFileCompiler();
+        return compiler.Compile(data);
+    }
+
     public static void CreateFolder(string folderName)
     {
         Directory.CreateDirectory($"{GameData.DataPath}/{folderName}");
@@ -49,7 +56,6 @@ public static class RandomizerUtil
         foreach (BymlNode<float> bymlNode in arrayNode.Array)
         {
             bymlNode.Data = (rand.NextFloat() * 2) * bymlNode.Data;
-            DebugPrint($"Returned array node with float unk and RNG unk");
         }
         return arrayNode;
     }
@@ -86,10 +92,6 @@ public static class RandomizerUtil
                     (float)((randInfo[i] * modPoint) + basePoint)
                     * (node[i] as BymlNode<float>).Data;
         }
-
-        DebugPrint(
-            $"{isNewNode} Node Log: ArrayNode with Value 1 {(node[0] as BymlNode<float>).Data} from RNG set {randInfo[0]} and Datapoints {basePoint} and {modPoint}"
-        );
         return node;
     }
 
@@ -98,6 +100,13 @@ public static class RandomizerUtil
         using MemoryStream dataStream = new();
         new Byml(file).Save(dataStream);
         return dataStream.ToArray();
+    }
+
+    public static byte[] ToBytes(this MemoryStream memoryStream)
+    {
+        byte[] bytes = new byte[memoryStream.Length];
+        memoryStream.Read(bytes, 0, (int)memoryStream.Length);
+        return bytes;
     }
 
     public static bool FileExists(IFileSystem fileSystem, string filePath)
@@ -113,27 +122,37 @@ public static class RandomizerUtil
 
     public static BymlArrayNode ReadCompressedByml(this IFileSystem fs, string path)
     {
-        DebugPrint($"Loading {path}...");
+        Logger.Log($"Opening and reading BYML: {path}");
         var data = fs.ReadWholeFile(path);
         Byml byml = new(new MemoryStream(data.DecompressZSTDBytes()));
         return (BymlArrayNode)byml.Root;
     }
 
-    public static Sarc ReadCompressedSarc(this IFileSystem fs, string path)
+    public static SarcFile ReadCompressedSarc(this IFileSystem fs, string path)
     {
-        DebugPrint($"Loading {path}...");
+        Logger.Log($"Opening and reading SARC: {path}");
         var data = fs.ReadWholeFile(path);
-        return new Sarc(data.DecompressZSTDBytes());
+
+        SarcFileParser fileParser = new();
+        return fileParser.Parse(new MemoryStream(data.DecompressZSTDBytes()));
     }
 
-    public static byte[] GetFileInSarc(this Sarc sarc, string path)
+    public static byte[] GetFileInSarc(this SarcFile sarc, string path)
     {
-        var sceneIndex = sarc.GetNodeIndex(path);
-        return sarc.OpenFile(sceneIndex).ToArray();
+        foreach (SarcContent sarcData in sarc.Files)
+            if (sarcData.Name == path) return sarcData.Data;
+
+        return null;
+    }
+
+    public static void SetFileInSarc(this SarcFile sarc, string path, byte[] data)
+    {
+        foreach (SarcContent sarcData in sarc.Files)
+            if (sarcData.Name == path) sarcData.Data = data;
     }
 
     public static void DebugPrint(string info)
     {
-        Console.WriteLine("[LightningRod] " + info); // it's cute
+        Logger.Log(info);
     }
 }
