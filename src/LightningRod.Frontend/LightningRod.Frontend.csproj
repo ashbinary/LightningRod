@@ -3,6 +3,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <OutputPath>$(SolutionDir).build\bin\</OutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir).build\obj\</BaseIntermediateOutputPath>
+    <RestoreOutputPath>$(SolutionDir).build\obj\</RestoreOutputPath>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>

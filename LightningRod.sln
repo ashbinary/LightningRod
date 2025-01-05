@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightningRod", "LightningRod\LightningRod.csproj", "{AB74F69B-1A8A-4F65-9C1B-06CE1EA36D4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightningRod", "src\LightningRod\LightningRod.csproj", "{AB74F69B-1A8A-4F65-9C1B-06CE1EA36D4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightningRod.Frontend", "LightningRod.Frontend\LightningRod.Frontend.csproj", "{2E6DC2A8-69CA-46F4-8BDA-B6BCDE145BF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightningRod.Frontend", "src\LightningRod.Frontend\LightningRod.Frontend.csproj", "{2E6DC2A8-69CA-46F4-8BDA-B6BCDE145BF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
