@@ -12,7 +12,8 @@ public class BmgMessage
 {
     #region private members
     private static readonly IBmgTagMap DefaultTagMap = new BmgDefaultTagMap();
-    private static readonly IBmgFormatProvider DefaultFormatProvider = new BmgDefaultFormatProvider();
+    private static readonly IBmgFormatProvider DefaultFormatProvider =
+        new BmgDefaultFormatProvider();
     #endregion
 
     #region public properties
@@ -53,7 +54,8 @@ public class BmgMessage
     /// Converts the message text to a clean string. All tag templates are removed.
     /// </summary>
     /// <returns>A cleaned string.</returns>
-    public string ToCleanString() => Regex.Replace(Text, @"{{\d+}}", string.Empty, RegexOptions.Compiled);
+    public string ToCleanString() =>
+        Regex.Replace(Text, @"{{\d+}}", string.Empty, RegexOptions.Compiled);
 
     /// <summary>
     /// Converts the message text, adding tag declarations and values.
@@ -62,7 +64,8 @@ public class BmgMessage
     /// <param name="bigEndian">Whether to use big endian for parsing argument values.</param>
     /// <param name="encoding">The encoding to use for string values in tag arguments.</param>
     /// <returns>A converted string.</returns>
-    public string ToCompiledString(bool bigEndian, Encoding encoding) => ToCompiledString(DefaultTagMap, DefaultFormatProvider, bigEndian, encoding);
+    public string ToCompiledString(bool bigEndian, Encoding encoding) =>
+        ToCompiledString(DefaultTagMap, DefaultFormatProvider, bigEndian, encoding);
 
     /// <summary>
     /// Converts the message text, adding tag declarations and values.
@@ -72,24 +75,35 @@ public class BmgMessage
     /// <param name="bigEndian">Whether to use big endian for parsing argument values.</param>
     /// <param name="encoding">The encoding to use for string values in tag arguments.</param>
     /// <returns>A converted string.</returns>
-    public string ToCompiledString(IBmgTagMap tagMap, IBmgFormatProvider formatProvider, bool bigEndian, Encoding encoding)
+    public string ToCompiledString(
+        IBmgTagMap tagMap,
+        IBmgFormatProvider formatProvider,
+        bool bigEndian,
+        Encoding encoding
+    )
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(tagMap, nameof(tagMap));
         ArgumentNullException.ThrowIfNull(formatProvider, nameof(formatProvider));
         ArgumentNullException.ThrowIfNull(encoding, nameof(encoding));
-        #else
-        if (tagMap is null) throw new ArgumentNullException(nameof(tagMap));
-        if (formatProvider is null) throw new ArgumentNullException(nameof(formatProvider));
-        if (encoding is null) throw new ArgumentNullException(nameof(encoding));
-        #endif
+#else
+        if (tagMap is null)
+            throw new ArgumentNullException(nameof(tagMap));
+        if (formatProvider is null)
+            throw new ArgumentNullException(nameof(formatProvider));
+        if (encoding is null)
+            throw new ArgumentNullException(nameof(encoding));
+#endif
 
         var result = new StringBuilder(formatProvider.FormatMessage(this, Text));
 
         for (var i = 0; i < Tags.Count; ++i)
         {
             tagMap.GetTag(Tags[i], bigEndian, encoding, out var tagName, out var tagArgs);
-            result = result.Replace("{{" + i + "}}", formatProvider.FormatTag(this, tagName, tagArgs));
+            result = result.Replace(
+                "{{" + i + "}}",
+                formatProvider.FormatTag(this, tagName, tagArgs)
+            );
         }
 
         return result.ToString();

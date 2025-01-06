@@ -44,5 +44,10 @@ public class DataType
     /// <param name="isBigEndian">Whether the value is in big endian.</param>
     /// <param name="encoding">The encoding to use for the string value.</param>
     /// <returns>The deserialized string value and the number of bytes read from the array.</returns>
-    public delegate (string, int) DeserializeMethod(byte[] value, int offset, bool isBigEndian, Encoding encoding);
+    public delegate (string, int) DeserializeMethod(
+        byte[] value,
+        int offset,
+        bool isBigEndian,
+        Encoding encoding
+    );
 }

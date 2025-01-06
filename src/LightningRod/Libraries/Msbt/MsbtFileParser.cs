@@ -16,11 +16,12 @@ public class MsbtFileParser : IFileParser<MsbtFile>
     /// <exception cref="ArgumentNullException"></exception>
     public static bool CanParseStatic(Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream, true);
         return CanParse(reader);
@@ -37,14 +38,16 @@ public class MsbtFileParser : IFileParser<MsbtFile>
     /// <exception cref="InvalidDataException"></exception>
     public MsbtFile Parse(Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream);
-        if (!CanParse(reader)) throw new InvalidDataException("File is not a MSBT file.");
+        if (!CanParse(reader))
+            throw new InvalidDataException("File is not a MSBT file.");
 
         //parse file metadata and header
         GetMetaData(reader, out var sectionCount, out _, out var version, out var encoding);
@@ -54,7 +57,7 @@ public class MsbtFileParser : IFileParser<MsbtFile>
         {
             BigEndian = reader.IsBigEndian,
             Version = version,
-            Encoding = encoding
+            Encoding = encoding,
         };
 
         var ids = Array.Empty<uint>();
@@ -86,7 +89,13 @@ public class MsbtFileParser : IFileParser<MsbtFile>
                     msbtFile.HasLbl1 = true;
                     break;
                 case "ATR1":
-                    ParseAtr1(reader, encoding, out attributes, out attributeTexts, out var additionalAttributeData);
+                    ParseAtr1(
+                        reader,
+                        encoding,
+                        out attributes,
+                        out attributeTexts,
+                        out var additionalAttributeData
+                    );
                     msbtFile.HasAtr1 = true;
                     msbtFile.AdditionalAttributeData = additionalAttributeData;
                     break;
@@ -114,11 +123,17 @@ public class MsbtFileParser : IFileParser<MsbtFile>
             {
                 Id = i < ids.Length ? ids[i] : 0,
                 Label = i < labels.Length ? labels[i] : string.Empty,
-                Attribute = i < attributes.Length ? attributes[i] : new byte[attributes.Length > 0 ? attributes[0].Length : 0],
-                AttributeText = i < attributeTexts.Length ? attributeTexts[i] : attributeTexts.Length > 0 ? string.Empty : null,
+                Attribute =
+                    i < attributes.Length
+                        ? attributes[i]
+                        : new byte[attributes.Length > 0 ? attributes[0].Length : 0],
+                AttributeText =
+                    i < attributeTexts.Length ? attributeTexts[i]
+                    : attributeTexts.Length > 0 ? string.Empty
+                    : null,
                 StyleIndex = i < styles.Length ? styles[i] : 0,
                 Text = content[i],
-                Tags = tags[i]
+                Tags = tags[i],
             };
 
             msbtFile.Messages.Add(message);
@@ -130,20 +145,28 @@ public class MsbtFileParser : IFileParser<MsbtFile>
 
     #region private methods
     //verifies that the file is a MSBT file
-    private static bool CanParse(FileReader reader) => reader.BaseStream.Length > 8 && reader.ReadStringAt(0, 8, Encoding.ASCII) == "MsgStdBn";
+    private static bool CanParse(FileReader reader) =>
+        reader.BaseStream.Length > 8 && reader.ReadStringAt(0, 8, Encoding.ASCII) == "MsgStdBn";
 
     //parses meta data
-    private static void GetMetaData(FileReader reader, out int sectionCount, out uint fileSize, out int version, out Encoding encoding)
+    private static void GetMetaData(
+        FileReader reader,
+        out int sectionCount,
+        out uint fileSize,
+        out int version,
+        out Encoding encoding
+    )
     {
         var byteOrder = reader.ReadByteAt(8);
-        if (byteOrder == 0xFE) reader.IsBigEndian = true;
+        if (byteOrder == 0xFE)
+            reader.IsBigEndian = true;
 
         encoding = reader.ReadByteAt(12) switch
         {
             0 => Encoding.UTF8,
             1 => reader.IsBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
             2 => Encoding.UTF32,
-            _ => reader.IsBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode
+            _ => reader.IsBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
         };
 
         version = reader.ReadByte();
@@ -194,11 +217,18 @@ public class MsbtFileParser : IFileParser<MsbtFile>
         }
 
         labels = new string[indices.Count];
-        for (var i = 0; i < indices.Count; ++i) labels[indices[i]] = labelValues[i];
+        for (var i = 0; i < indices.Count; ++i)
+            labels[indices[i]] = labelValues[i];
     }
 
     //parse ATR1 type sections (message attributes)
-    private static void ParseAtr1(FileReader reader, Encoding encoding, out byte[][] attributes, out string[] attributeTexts, out byte[] additionalData)
+    private static void ParseAtr1(
+        FileReader reader,
+        Encoding encoding,
+        out byte[][] attributes,
+        out string[] attributeTexts,
+        out byte[] additionalData
+    )
     {
         reader.Skip(-4);
         var sectionSize = reader.ReadUInt32();
@@ -208,14 +238,16 @@ public class MsbtFileParser : IFileParser<MsbtFile>
         var attributeSize = reader.ReadUInt32();
 
         var attributeLength = entryCount * attributeSize + 8;
-        var hasText = attributeSize == 4 && sectionSize >= attributeLength + entryCount * encoding.GetMinByteCount();
+        var hasText =
+            attributeSize == 4
+            && sectionSize >= attributeLength + entryCount * encoding.GetMinByteCount();
 
         attributes = new byte[entryCount][];
         attributeTexts = new string[hasText ? entryCount : 0];
 
         for (var i = 0; i < entryCount; ++i)
         {
-            attributes[i] = reader.ReadBytes((int) attributeSize);
+            attributes[i] = reader.ReadBytes((int)attributeSize);
 
             if (hasText)
             {
@@ -233,10 +265,11 @@ public class MsbtFileParser : IFileParser<MsbtFile>
             }
         }
 
-        if (!hasText) attributeTexts = [];
+        if (!hasText)
+            attributeTexts = [];
 
         var sectionDiff = startPos + sectionSize - reader.Position;
-        additionalData = !hasText && sectionDiff > 0 ? reader.ReadBytes((int) sectionDiff) : [];
+        additionalData = !hasText && sectionDiff > 0 ? reader.ReadBytes((int)sectionDiff) : [];
     }
 
     //parse ATO1 type sections (additional data)
@@ -246,7 +279,7 @@ public class MsbtFileParser : IFileParser<MsbtFile>
         var sectionSize = reader.ReadUInt32();
         reader.Skip(8);
 
-        data = reader.ReadBytes((int) sectionSize);
+        data = reader.ReadBytes((int)sectionSize);
     }
 
     //parse TSY1 type sections (text style)
@@ -264,17 +297,29 @@ public class MsbtFileParser : IFileParser<MsbtFile>
     }
 
     //parse TXT2 type sections (message content)
-    private static void ParseTxt2(FileReader reader, Encoding encoding, long sectionSize, out string[] content, out List<MsbtTag>[] tags)
+    private static void ParseTxt2(
+        FileReader reader,
+        Encoding encoding,
+        long sectionSize,
+        out string[] content,
+        out List<MsbtTag>[] tags
+    )
     {
         reader.Skip(8);
         var position = reader.Position;
         var entryCount = reader.ReadUInt32();
 
         var encodingWidth = encoding.GetMinByteCount();
-        TagCheck isFunctionTag = encodingWidth == 1 ? IsFunctionTagSingle : reader.IsBigEndian ? IsTagDoubleByteBE : IsTagDoubleByteLE;
-        TagCheck isEndTag = encodingWidth == 1 ? IsEndTagSingleByte : reader.IsBigEndian ? IsEndTagDoubleByteBE : IsEndTagDoubleByteLE;
+        TagCheck isFunctionTag =
+            encodingWidth == 1 ? IsFunctionTagSingle
+            : reader.IsBigEndian ? IsTagDoubleByteBE
+            : IsTagDoubleByteLE;
+        TagCheck isEndTag =
+            encodingWidth == 1 ? IsEndTagSingleByte
+            : reader.IsBigEndian ? IsEndTagDoubleByteBE
+            : IsEndTagDoubleByteLE;
 
-        var offsets = ReadArray(reader, (int) entryCount);
+        var offsets = ReadArray(reader, (int)entryCount);
         content = new string[entryCount];
         tags = new List<MsbtTag>[entryCount];
 
@@ -286,7 +331,7 @@ public class MsbtFileParser : IFileParser<MsbtFile>
 
             //parse message text
             reader.JumpTo(startPos);
-            var buffer = reader.ReadBytes((int) (endPos - startPos));
+            var buffer = reader.ReadBytes((int)(endPos - startPos));
 
             //check bytes for function calls
             var message = new StringBuilder();
@@ -297,18 +342,24 @@ public class MsbtFileParser : IFileParser<MsbtFile>
                 if (isFunctionTag(buffer, j))
                 {
                     //append text so far
-                    if (j > textIndex) message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
+                    if (j > textIndex)
+                        message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
                     message.Append("{{").Append(messageTags.Count).Append("}}");
 
                     //add function content
                     var tagDataOffset = j + encodingWidth;
-                    var argLength = tagDataOffset + 6 < buffer.Length ? ReadTagValue(buffer, tagDataOffset + 4, reader.IsBigEndian) : 0;
-                    messageTags.Add(new MsbtTag
-                    {
-                        Group = ReadTagValue(buffer, tagDataOffset, reader.IsBigEndian),
-                        Type = ReadTagValue(buffer, tagDataOffset + 2, reader.IsBigEndian),
-                        Args = ReadArgArray(buffer, tagDataOffset + 6, argLength)
-                    });
+                    var argLength =
+                        tagDataOffset + 6 < buffer.Length
+                            ? ReadTagValue(buffer, tagDataOffset + 4, reader.IsBigEndian)
+                            : 0;
+                    messageTags.Add(
+                        new MsbtTag
+                        {
+                            Group = ReadTagValue(buffer, tagDataOffset, reader.IsBigEndian),
+                            Type = ReadTagValue(buffer, tagDataOffset + 2, reader.IsBigEndian),
+                            Args = ReadArgArray(buffer, tagDataOffset + 6, argLength),
+                        }
+                    );
 
                     j += 6 + argLength;
                     textIndex = j + encodingWidth;
@@ -316,17 +367,20 @@ public class MsbtFileParser : IFileParser<MsbtFile>
                 else if (isEndTag(buffer, j))
                 {
                     //append text so far
-                    if (j > textIndex) message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
+                    if (j > textIndex)
+                        message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
                     message.Append("{{").Append(messageTags.Count).Append("}}");
 
                     //add function content
                     var tagDataOffset = j + encodingWidth;
-                    messageTags.Add(new MsbtTag
-                    {
-                        Group = 0x0F,
-                        Type = ReadTagValue(buffer, tagDataOffset, reader.IsBigEndian),
-                        Args = ReadArgArray(buffer, tagDataOffset + 2, 2) //always 2 bytes long?
-                    });
+                    messageTags.Add(
+                        new MsbtTag
+                        {
+                            Group = 0x0F,
+                            Type = ReadTagValue(buffer, tagDataOffset, reader.IsBigEndian),
+                            Args = ReadArgArray(buffer, tagDataOffset + 2, 2), //always 2 bytes long?
+                        }
+                    );
 
                     j += 4;
                     textIndex = j + encodingWidth;
@@ -334,7 +388,8 @@ public class MsbtFileParser : IFileParser<MsbtFile>
             }
 
             //append remaining text
-            if (textIndex < buffer.Length) message.Append(encoding.GetString(buffer, textIndex, buffer.Length - textIndex));
+            if (textIndex < buffer.Length)
+                message.Append(encoding.GetString(buffer, textIndex, buffer.Length - textIndex));
 
             content[i] = message.ToString().TrimEnd('\0');
             tags[i] = messageTags;
@@ -345,34 +400,49 @@ public class MsbtFileParser : IFileParser<MsbtFile>
     private static uint[] ReadArray(FileReader reader, int count)
     {
         var result = new uint[count];
-        for (var i = 0; i < result.Length; ++i) result[i] = reader.ReadUInt32();
+        for (var i = 0; i < result.Length; ++i)
+            result[i] = reader.ReadUInt32();
         return result;
     }
 
     //check for tags
     private delegate bool TagCheck(byte[] buffer, int index);
+
     private static bool IsFunctionTagSingle(byte[] buffer, int index) => buffer[index] == 0x0E;
-    private static bool IsTagDoubleByteLE(byte[] buffer, int index) => buffer[index] == 0x0E && buffer[index + 1] == 0x00;
-    private static bool IsTagDoubleByteBE(byte[] buffer, int index) => buffer[index] == 0x00 && buffer[index + 1] == 0x0E;
+
+    private static bool IsTagDoubleByteLE(byte[] buffer, int index) =>
+        buffer[index] == 0x0E && buffer[index + 1] == 0x00;
+
+    private static bool IsTagDoubleByteBE(byte[] buffer, int index) =>
+        buffer[index] == 0x00 && buffer[index + 1] == 0x0E;
+
     private static bool IsEndTagSingleByte(byte[] buffer, int index) => buffer[index] == 0x0F;
-    private static bool IsEndTagDoubleByteLE(byte[] buffer, int index) => buffer[index] == 0x0F && buffer[index + 1] == 0x00;
-    private static bool IsEndTagDoubleByteBE(byte[] buffer, int index) => buffer[index] == 0x00 && buffer[index + 1] == 0x0F;
+
+    private static bool IsEndTagDoubleByteLE(byte[] buffer, int index) =>
+        buffer[index] == 0x0F && buffer[index + 1] == 0x00;
+
+    private static bool IsEndTagDoubleByteBE(byte[] buffer, int index) =>
+        buffer[index] == 0x00 && buffer[index + 1] == 0x0F;
 
     //read tag value (or return max value on error)
     private static ushort ReadTagValue(byte[] buffer, int index, bool bigEndian)
     {
-        if (index + 2 > buffer.Length) return ushort.MaxValue;
+        if (index + 2 > buffer.Length)
+            return ushort.MaxValue;
 
         var bytes = buffer[index..(index + 2)];
-        if (bigEndian == BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        if (bigEndian == BitConverter.IsLittleEndian)
+            Array.Reverse(bytes);
         return BitConverter.ToUInt16(bytes);
     }
 
     //read raw byte array
     private static byte[] ReadArgArray(byte[] buffer, int index, int length)
     {
-        if (length == 0) return [];
-        if (index + length > buffer.Length) length = buffer.Length - index;
+        if (length == 0)
+            return [];
+        if (index + length > buffer.Length)
+            length = buffer.Length - index;
 
         return buffer[index..(index + length)];
     }

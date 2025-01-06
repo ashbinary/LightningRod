@@ -16,5 +16,11 @@ public interface IBmgTagMap
     /// <param name="encoding">The encoding to use for string values.</param>
     /// <param name="tagName">The name of the tag.</param>
     /// <param name="tagArgs">A list of tag arguments.</param>
-    public void GetTag(BmgTag tag, bool bigEndian, Encoding encoding, out string tagName, out IEnumerable<BmgTagArgument> tagArgs);
+    public void GetTag(
+        BmgTag tag,
+        bool bigEndian,
+        Encoding encoding,
+        out string tagName,
+        out IEnumerable<BmgTagArgument> tagArgs
+    );
 }

@@ -26,5 +26,11 @@ public class MsbtTag
     /// Converts a <see cref="BmgTag"/> instance into a new instance of the <see cref="MsbtTag"/> class.
     /// </summary>
     /// <param name="tag">The <see cref="BmgTag"/> instance to convert.</param>
-    public static implicit operator MsbtTag(BmgTag tag) => new() {Group = tag.Group, Type = tag.Type, Args = tag.Args};
+    public static implicit operator MsbtTag(BmgTag tag) =>
+        new()
+        {
+            Group = tag.Group,
+            Type = tag.Type,
+            Args = tag.Args,
+        };
 }

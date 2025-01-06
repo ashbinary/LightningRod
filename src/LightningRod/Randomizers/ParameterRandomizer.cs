@@ -4,8 +4,8 @@ using System.Runtime.CompilerServices;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
-using LightningRod.Utilities;
 using LightningRod.Libraries.Sarc;
+using LightningRod.Utilities;
 
 namespace LightningRod.Randomizers;
 

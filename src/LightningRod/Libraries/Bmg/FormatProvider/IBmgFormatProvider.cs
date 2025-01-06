@@ -22,5 +22,9 @@ public interface IBmgFormatProvider
     /// <param name="tagName">The name of the tag.</param>
     /// <param name="arguments">The list of tag arguments.</param>
     /// <returns>A formatted string representing a BMG tag.</returns>
-    public string FormatTag(BmgMessage message, string tagName, IEnumerable<BmgTagArgument> arguments);
+    public string FormatTag(
+        BmgMessage message,
+        string tagName,
+        IEnumerable<BmgTagArgument> arguments
+    );
 }

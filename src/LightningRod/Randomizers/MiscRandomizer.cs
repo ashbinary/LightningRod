@@ -11,14 +11,17 @@ public static class MiscRandomizer
     {
         Logger.Log("Starting miscellaneous randomizer!");
 
-        SarcFile msbtSarc = GameData.FileSystem.ParseSarc($"/Mals/USen.Product.{GameData.GameVersion}.sarc.zs");
+        SarcFile msbtSarc = GameData.FileSystem.ParseSarc(
+            $"/Mals/USen.Product.{GameData.GameVersion}.sarc.zs"
+        );
         List<MsbtMessage> dialogueText = [];
 
         foreach (SarcContent msbtData in msbtSarc.Files)
         {
             MsbtFile msbtFile = msbtData.Data.ParseMsbt();
 
-            if (!msbtData.Name.Contains("LogicMsg") && !msbtData.Name.Contains("EventFlowMsg")) continue;
+            if (!msbtData.Name.Contains("LogicMsg") && !msbtData.Name.Contains("EventFlowMsg"))
+                continue;
 
             foreach (MsbtMessage messageData in msbtFile.Messages)
                 dialogueText.Add(messageData);
@@ -28,7 +31,10 @@ public static class MiscRandomizer
         {
             MsbtFile msbtFile = msbtData.Data.ParseMsbt();
 
-            if ((msbtData.Name.Contains("LogicMsg") || msbtData.Name.Contains("EventFlowMsg")) && true)
+            if (
+                (msbtData.Name.Contains("LogicMsg") || msbtData.Name.Contains("EventFlowMsg"))
+                && true
+            )
             {
                 foreach (MsbtMessage messageData in msbtFile.Messages)
                 {
@@ -55,8 +61,8 @@ public static class MiscRandomizer
         MiscUtils.CreateFolder("Mals");
 
         GameData.CommitToFileSystem(
-                $"Mals/USen.Product.{GameData.GameVersion}.sarc.zs",
-                FileUtils.SaveSarc(msbtSarc).CompressZSTD()
-            );
+            $"Mals/USen.Product.{GameData.GameVersion}.sarc.zs",
+            FileUtils.SaveSarc(msbtSarc).CompressZSTD()
+        );
     }
 }

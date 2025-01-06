@@ -17,7 +17,11 @@ public sealed class MsbtValueMap : IEnumerable<MsbtValueInfo>
     #endregion
 
     #region constructor
-    private MsbtValueMap(List<MsbtValueInfo> valueList, Dictionary<string, MsbtValueInfo> lookupTable, DataType dataType)
+    private MsbtValueMap(
+        List<MsbtValueInfo> valueList,
+        Dictionary<string, MsbtValueInfo> lookupTable,
+        DataType dataType
+    )
     {
         _valueList = valueList;
         _lookupTable = lookupTable;
@@ -56,7 +60,8 @@ public sealed class MsbtValueMap : IEnumerable<MsbtValueInfo>
     /// <param name="value">The value to find.</param>
     /// <param name="valueInfo">The found <see cref="MsbtValueInfo"/> element.</param>
     /// <returns><see langword="true"/> if the element was found; otherwise <see langword="false"/>.</returns>
-    public bool TryGetValue(string value, [MaybeNullWhen(false)] out MsbtValueInfo valueInfo) => _lookupTable.TryGetValue(value, out valueInfo);
+    public bool TryGetValue(string value, [MaybeNullWhen(false)] out MsbtValueInfo valueInfo) =>
+        _lookupTable.TryGetValue(value, out valueInfo);
 
     /// <summary>
     /// Creates a new <see cref="MsbtValueMap"/> instance from a collection of <see cref="MsbtValueInfo"/> elements.
@@ -68,13 +73,15 @@ public sealed class MsbtValueMap : IEnumerable<MsbtValueInfo>
     /// <exception cref="ArgumentException"></exception>
     public static MsbtValueMap Create(IEnumerable<MsbtValueInfo> values, DataType dataType)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(values, nameof(values));
         ArgumentNullException.ThrowIfNull(dataType, nameof(dataType));
-        #else
-        if (values is null) throw new ArgumentNullException(nameof(values));
-        if (dataType is null) throw new ArgumentNullException(nameof(dataType));
-        #endif
+#else
+        if (values is null)
+            throw new ArgumentNullException(nameof(values));
+        if (dataType is null)
+            throw new ArgumentNullException(nameof(dataType));
+#endif
 
         var valueList = new List<MsbtValueInfo>();
         var lookupTable = new Dictionary<string, MsbtValueInfo>(StringComparer.OrdinalIgnoreCase);
@@ -91,8 +98,14 @@ public sealed class MsbtValueMap : IEnumerable<MsbtValueInfo>
             {
                 throw new ArgumentException($"Failed to parse value as {dataType.Name}.");
             }
-            if (!lookupTable.TryAdd(val, value)) throw new ArgumentException($"Entry with the value {value.Value} already exists.");
-            if (!string.IsNullOrEmpty(value.Name) && !value.Name.Equals(value.Value, StringComparison.OrdinalIgnoreCase) && !lookupTable.TryAdd(value.Name, value)) throw new ArgumentException($"Entry with the name {value.Name} already exists.");
+            if (!lookupTable.TryAdd(val, value))
+                throw new ArgumentException($"Entry with the value {value.Value} already exists.");
+            if (
+                !string.IsNullOrEmpty(value.Name)
+                && !value.Name.Equals(value.Value, StringComparison.OrdinalIgnoreCase)
+                && !lookupTable.TryAdd(value.Name, value)
+            )
+                throw new ArgumentException($"Entry with the name {value.Name} already exists.");
             valueList.Add(value);
         }
 

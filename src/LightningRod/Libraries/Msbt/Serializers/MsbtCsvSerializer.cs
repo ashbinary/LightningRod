@@ -38,22 +38,28 @@ public class MsbtCsvSerializer : IMsbtSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, MsbtFile file)
     {
-        if (string.IsNullOrEmpty(Separator)) throw new FormatException("CSV separator cannot be empty.");
-        if (Separator.Contains('=')) throw new FormatException($"\"{Separator}\" cannot be used as CSV separator.");
-        #if NET6_0_OR_GREATER
+        if (string.IsNullOrEmpty(Separator))
+            throw new FormatException("CSV separator cannot be empty.");
+        if (Separator.Contains('='))
+            throw new FormatException($"\"{Separator}\" cannot be used as CSV separator.");
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(file, nameof(file));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (file is null) throw new ArgumentNullException(nameof(file));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (file is null)
+            throw new ArgumentNullException(nameof(file));
+#endif
 
         //write header
-        var useIndex = file is {HasNli1: false, HasLbl1: false};
+        var useIndex = file is { HasNli1: false, HasLbl1: false };
         if (useIndex)
         {
             writer.Write("Index");
@@ -125,9 +131,15 @@ public class MsbtCsvSerializer : IMsbtSerializer
             }
 
             writer.Write(Separator);
-            var text = message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding);
+            var text = message.ToCompiledString(
+                TagMap,
+                FormatProvider,
+                file.BigEndian,
+                file.Encoding
+            );
             var wrapText = text.Contains(Separator) || text.Contains('\n');
-            if (wrapText && text.Contains('"')) text = text.Replace("\"", "\"\"");
+            if (wrapText && text.Contains('"'))
+                text = text.Replace("\"", "\"\"");
             writer.WriteLine(wrapText ? '"' + text + '"' : text);
         }
 
@@ -140,19 +152,25 @@ public class MsbtCsvSerializer : IMsbtSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, IDictionary<string, MsbtFile> files)
     {
-        if (string.IsNullOrEmpty(Separator)) throw new FormatException("CSV separator cannot be empty.");
-        if (Separator.Contains('=')) throw new FormatException($"\"{Separator}\" cannot be used as CSV separator.");
-        #if NET6_0_OR_GREATER
+        if (string.IsNullOrEmpty(Separator))
+            throw new FormatException("CSV separator cannot be empty.");
+        if (Separator.Contains('='))
+            throw new FormatException($"\"{Separator}\" cannot be used as CSV separator.");
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(files, nameof(files));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (files is null) throw new ArgumentNullException(nameof(files));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (files is null)
+            throw new ArgumentNullException(nameof(files));
+#endif
 
         //sort languages
         var languages = files.Keys.ToArray();
@@ -166,8 +184,10 @@ public class MsbtCsvSerializer : IMsbtSerializer
         {
             var index = Array.IndexOf(languages, language);
             var sortedMessages = file.Messages.ToList();
-            if (firstFile.HasNli1) sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
-            else if (firstFile.HasLbl1) sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
+            if (firstFile.HasNli1)
+                sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
+            else if (firstFile.HasLbl1)
+                sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
 
             for (var i = 0; i < sortedMessages.Count; ++i)
             {
@@ -176,7 +196,7 @@ public class MsbtCsvSerializer : IMsbtSerializer
         }
 
         //write header
-        var useIndex = firstFile is {HasNli1: false, HasLbl1: false};
+        var useIndex = firstFile is { HasNli1: false, HasLbl1: false };
         if (useIndex)
         {
             writer.Write("Index");
@@ -210,7 +230,8 @@ public class MsbtCsvSerializer : IMsbtSerializer
         }
         for (var i = 0; i < languages.Length; ++i)
         {
-            if (i > 0) writer.Write(Separator);
+            if (i > 0)
+                writer.Write(Separator);
             writer.Write(languages[i]);
         }
         writer.WriteLine();
@@ -243,7 +264,9 @@ public class MsbtCsvSerializer : IMsbtSerializer
                 if (firstFile.HasAtr1)
                 {
                     writer.Write(Separator);
-                    writer.Write(messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true));
+                    writer.Write(
+                        messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true)
+                    );
                 }
                 if (firstFile.HasTsy1)
                 {
@@ -254,11 +277,19 @@ public class MsbtCsvSerializer : IMsbtSerializer
 
             for (var j = 0; j < languages.Length; ++j)
             {
-                if (j > 0) writer.Write(Separator);
+                if (j > 0)
+                    writer.Write(Separator);
 
-                var text = messages[j].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding);
+                var text = messages[j]
+                    .ToCompiledString(
+                        TagMap,
+                        FormatProvider,
+                        firstFile.BigEndian,
+                        firstFile.Encoding
+                    );
                 var wrapText = text.Contains(Separator) || text.Contains('\n');
-                if (wrapText && text.Contains('"')) text = text.Replace("\"", "\"\"");
+                if (wrapText && text.Contains('"'))
+                    text = text.Replace("\"", "\"\"");
                 writer.Write(wrapText ? '"' + text + '"' : text);
             }
 

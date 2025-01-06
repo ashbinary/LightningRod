@@ -22,5 +22,9 @@ public interface IMsbtFormatProvider
     /// <param name="tagName">The name of the tag.</param>
     /// <param name="arguments">The list of tag arguments.</param>
     /// <returns>A formatted string representing a MSBT tag.</returns>
-    public string FormatTag(MsbtMessage message, string tagName, IEnumerable<MsbtTagArgument> arguments);
+    public string FormatTag(
+        MsbtMessage message,
+        string tagName,
+        IEnumerable<MsbtTagArgument> arguments
+    );
 }

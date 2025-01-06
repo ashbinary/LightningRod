@@ -54,15 +54,16 @@ public class MsbtTagInfo
     /// Converts a <see cref="BmgTagInfo"/> instance into a new instance of the <see cref="MsbtTagInfo"/> class.
     /// </summary>
     /// <param name="info">The <see cref="BmgTagInfo"/> instance to convert.</param>
-    public static implicit operator MsbtTagInfo(BmgTagInfo info) => new()
-    {
-        Group = info.Group,
-        Type = info.Type,
-        TypeList = info.TypeList,
-        TypeMap = info.TypeMap,
-        HasDiscard = info.HasDiscard,
-        Name = info.Name,
-        Description = info.Description,
-        Arguments = info.Arguments
-    };
+    public static implicit operator MsbtTagInfo(BmgTagInfo info) =>
+        new()
+        {
+            Group = info.Group,
+            Type = info.Type,
+            TypeList = info.TypeList,
+            TypeMap = info.TypeMap,
+            HasDiscard = info.HasDiscard,
+            Name = info.Name,
+            Description = info.Description,
+            Arguments = info.Arguments,
+        };
 }

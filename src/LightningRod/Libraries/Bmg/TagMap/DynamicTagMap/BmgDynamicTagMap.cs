@@ -22,10 +22,16 @@ public class BmgDynamicTagMap : IBmgTagMap, IEnumerable<BmgTagInfo>
     /// <inheritdoc/>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="FormatException"></exception>
-    public void GetTag(BmgTag tag, bool bigEndian, Encoding encoding, out string tagName, out IEnumerable<BmgTagArgument> tagArgs)
+    public void GetTag(
+        BmgTag tag,
+        bool bigEndian,
+        Encoding encoding,
+        out string tagName,
+        out IEnumerable<BmgTagArgument> tagArgs
+    )
     {
         _map.GetTag(tag, bigEndian, encoding, out tagName, out var msbtTagArgs);
-        tagArgs = msbtTagArgs.Select(arg => (BmgTagArgument) arg);
+        tagArgs = msbtTagArgs.Select(arg => (BmgTagArgument)arg);
     }
     #endregion
 
@@ -45,13 +51,14 @@ public class BmgDynamicTagMap : IBmgTagMap, IEnumerable<BmgTagInfo>
     /// <exception cref="ArgumentException"></exception>
     public void AddInfo(BmgTagInfo tag)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(tag, nameof(tag));
-        #else
-        if (tag is null) throw new ArgumentNullException(nameof(tag));
-        #endif
+#else
+        if (tag is null)
+            throw new ArgumentNullException(nameof(tag));
+#endif
 
-        var msbtTag = (MsbtTagInfo) tag;
+        var msbtTag = (MsbtTagInfo)tag;
         _map.AddInfo(msbtTag);
         _referenceMap[msbtTag] = tag;
     }
@@ -66,7 +73,8 @@ public class BmgDynamicTagMap : IBmgTagMap, IEnumerable<BmgTagInfo>
     public bool TryGetInfo(ushort group, ushort type, [MaybeNullWhen(false)] out BmgTagInfo tag)
     {
         tag = null;
-        if (!_map.TryGetInfo(group, type, out var msbtTag)) return false;
+        if (!_map.TryGetInfo(group, type, out var msbtTag))
+            return false;
         tag = _referenceMap[msbtTag];
         return true;
     }
@@ -80,7 +88,8 @@ public class BmgDynamicTagMap : IBmgTagMap, IEnumerable<BmgTagInfo>
     public bool TryGetInfo(string tagName, [MaybeNullWhen(false)] out BmgTagInfo tag)
     {
         tag = null;
-        if (!_map.TryGetInfo(tagName, out var msbtTag)) return false;
+        if (!_map.TryGetInfo(tagName, out var msbtTag))
+            return false;
         tag = _referenceMap[msbtTag];
         return true;
     }

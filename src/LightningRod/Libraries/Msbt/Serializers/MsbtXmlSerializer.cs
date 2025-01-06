@@ -56,17 +56,21 @@ public class MsbtXmlSerializer : IMsbtSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, MsbtFile file)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(file, nameof(file));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (file is null) throw new ArgumentNullException(nameof(file));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (file is null)
+            throw new ArgumentNullException(nameof(file));
+#endif
 
         using var xmlWriter = new XmlTextWriter(writer);
 
@@ -76,7 +80,8 @@ public class MsbtXmlSerializer : IMsbtSerializer
             xmlWriter.Indentation = Indentation;
             xmlWriter.IndentChar = IndentChar;
         }
-        else xmlWriter.Formatting = Formatting.None;
+        else
+            xmlWriter.Formatting = Formatting.None;
 
         xmlWriter.WriteStartDocument();
         xmlWriter.WriteStartElement(RootNode);
@@ -89,27 +94,38 @@ public class MsbtXmlSerializer : IMsbtSerializer
             xmlWriter.WriteAttributeString("hasNli1", file.HasNli1.ToString());
             xmlWriter.WriteAttributeString("hasLbl1", file.HasLbl1.ToString());
             xmlWriter.WriteAttributeString("hasAtr1", file.HasAtr1.ToString());
-            if (file.AdditionalAttributeData.Length > 0) xmlWriter.WriteAttributeString("additionalAttributeData", file.AdditionalAttributeData.ToHexString(true));
+            if (file.AdditionalAttributeData.Length > 0)
+                xmlWriter.WriteAttributeString(
+                    "additionalAttributeData",
+                    file.AdditionalAttributeData.ToHexString(true)
+                );
             xmlWriter.WriteAttributeString("hasTsy1", file.HasTsy1.ToString());
         }
 
         foreach (var message in file.Messages)
         {
             xmlWriter.WriteStartElement("message");
-            if (file.HasNli1) xmlWriter.WriteAttributeString("id", message.Id.ToString());
-            if (file.HasLbl1) xmlWriter.WriteAttributeString("label", message.Label);
+            if (file.HasNli1)
+                xmlWriter.WriteAttributeString("id", message.Id.ToString());
+            if (file.HasLbl1)
+                xmlWriter.WriteAttributeString("label", message.Label);
             if (!SkipMessageMetadata)
             {
                 if (file.HasAtr1)
                 {
-                    xmlWriter.WriteAttributeString("attribute", message.AttributeText ?? message.Attribute.ToHexString(true));
+                    xmlWriter.WriteAttributeString(
+                        "attribute",
+                        message.AttributeText ?? message.Attribute.ToHexString(true)
+                    );
                 }
                 if (file.HasTsy1)
                 {
                     xmlWriter.WriteAttributeString("styleIndex", message.StyleIndex.ToString());
                 }
             }
-            xmlWriter.WriteRaw(message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding));
+            xmlWriter.WriteRaw(
+                message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding)
+            );
             xmlWriter.WriteEndElement();
         }
 
@@ -124,17 +140,21 @@ public class MsbtXmlSerializer : IMsbtSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, IDictionary<string, MsbtFile> files)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(files, nameof(files));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (files is null) throw new ArgumentNullException(nameof(files));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (files is null)
+            throw new ArgumentNullException(nameof(files));
+#endif
 
         //sort languages
         var languages = files.Keys.ToArray();
@@ -148,8 +168,10 @@ public class MsbtXmlSerializer : IMsbtSerializer
         {
             var index = Array.IndexOf(languages, language);
             var sortedMessages = file.Messages.ToList();
-            if (firstFile.HasNli1) sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
-            else if (firstFile.HasLbl1) sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
+            if (firstFile.HasNli1)
+                sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
+            else if (firstFile.HasLbl1)
+                sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
 
             for (var i = 0; i < sortedMessages.Count; ++i)
             {
@@ -165,7 +187,8 @@ public class MsbtXmlSerializer : IMsbtSerializer
             xmlWriter.Indentation = Indentation;
             xmlWriter.IndentChar = IndentChar;
         }
-        else xmlWriter.Formatting = Formatting.None;
+        else
+            xmlWriter.Formatting = Formatting.None;
 
         xmlWriter.WriteStartDocument();
         xmlWriter.WriteStartElement(RootNode);
@@ -178,21 +201,30 @@ public class MsbtXmlSerializer : IMsbtSerializer
             xmlWriter.WriteAttributeString("hasNli1", firstFile.HasNli1.ToString());
             xmlWriter.WriteAttributeString("hasLbl1", firstFile.HasLbl1.ToString());
             xmlWriter.WriteAttributeString("hasAtr1", firstFile.HasAtr1.ToString());
-            if (firstFile.AdditionalAttributeData.Length > 0) xmlWriter.WriteAttributeString("additionalAttributeData", firstFile.AdditionalAttributeData.ToHexString(true));
+            if (firstFile.AdditionalAttributeData.Length > 0)
+                xmlWriter.WriteAttributeString(
+                    "additionalAttributeData",
+                    firstFile.AdditionalAttributeData.ToHexString(true)
+                );
             xmlWriter.WriteAttributeString("hasTsy1", firstFile.HasTsy1.ToString());
         }
 
         foreach (var messages in mergedMessages)
         {
             xmlWriter.WriteStartElement("message");
-            if (firstFile.HasNli1) xmlWriter.WriteAttributeString("id", messages[0].Id.ToString());
-            if (firstFile.HasLbl1) xmlWriter.WriteAttributeString("label", messages[0].Label);
+            if (firstFile.HasNli1)
+                xmlWriter.WriteAttributeString("id", messages[0].Id.ToString());
+            if (firstFile.HasLbl1)
+                xmlWriter.WriteAttributeString("label", messages[0].Label);
 
             if (!SkipMessageMetadata)
             {
                 if (firstFile.HasAtr1)
                 {
-                    xmlWriter.WriteAttributeString("attribute", messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true));
+                    xmlWriter.WriteAttributeString(
+                        "attribute",
+                        messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true)
+                    );
                 }
                 if (firstFile.HasTsy1)
                 {
@@ -204,7 +236,15 @@ public class MsbtXmlSerializer : IMsbtSerializer
             {
                 xmlWriter.WriteStartElement("language");
                 xmlWriter.WriteAttributeString("type", languages[i]);
-                xmlWriter.WriteRaw(messages[i].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding));
+                xmlWriter.WriteRaw(
+                    messages[i]
+                        .ToCompiledString(
+                            TagMap,
+                            FormatProvider,
+                            firstFile.BigEndian,
+                            firstFile.Encoding
+                        )
+                );
                 xmlWriter.WriteEndElement();
             }
 

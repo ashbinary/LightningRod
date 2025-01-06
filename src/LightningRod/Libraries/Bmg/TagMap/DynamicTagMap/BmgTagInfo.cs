@@ -58,17 +58,21 @@ public class BmgTagInfo
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static implicit operator BmgTagInfo(MsbtTagInfo info)
     {
-        if (info.Group > byte.MaxValue) throw new ArgumentOutOfRangeException(nameof(info), "BMG tag group value cannot be greater than 255.");
+        if (info.Group > byte.MaxValue)
+            throw new ArgumentOutOfRangeException(
+                nameof(info),
+                "BMG tag group value cannot be greater than 255."
+            );
         return new BmgTagInfo
         {
-            Group = (byte) info.Group,
+            Group = (byte)info.Group,
             Type = info.Type,
             TypeList = info.TypeList,
             TypeMap = info.TypeMap,
             HasDiscard = info.HasDiscard,
             Name = info.Name,
             Description = info.Description,
-            Arguments = info.Arguments
+            Arguments = info.Arguments,
         };
     }
 }

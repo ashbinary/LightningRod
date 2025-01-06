@@ -55,17 +55,21 @@ public class BmgXmlSerializer : IBmgSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, BmgFile file)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(file, nameof(file));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (file is null) throw new ArgumentNullException(nameof(file));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (file is null)
+            throw new ArgumentNullException(nameof(file));
+#endif
 
         using var xmlWriter = new XmlTextWriter(writer);
 
@@ -75,7 +79,8 @@ public class BmgXmlSerializer : IBmgSerializer
             xmlWriter.Indentation = Indentation;
             xmlWriter.IndentChar = IndentChar;
         }
-        else xmlWriter.Formatting = Formatting.None;
+        else
+            xmlWriter.Formatting = Formatting.None;
 
         xmlWriter.WriteStartDocument();
         xmlWriter.WriteStartElement(RootNode);
@@ -87,17 +92,23 @@ public class BmgXmlSerializer : IBmgSerializer
             xmlWriter.WriteAttributeString("fileId", file.FileId.ToString());
             xmlWriter.WriteAttributeString("defaultColor", file.DefaultColor.ToString());
             xmlWriter.WriteAttributeString("hasMid1", file.HasMid1.ToString());
-            if (file.HasMid1) xmlWriter.WriteAttributeString("mid1Format", file.Mid1Format.ToHexString(true));
+            if (file.HasMid1)
+                xmlWriter.WriteAttributeString("mid1Format", file.Mid1Format.ToHexString(true));
             xmlWriter.WriteAttributeString("hasStr1", file.HasStr1.ToString());
         }
 
         foreach (var message in file.Messages)
         {
             xmlWriter.WriteStartElement("message");
-            if (file.HasMid1) xmlWriter.WriteAttributeString("id", message.Id.ToString());
-            if (file.HasStr1) xmlWriter.WriteAttributeString("label", message.Label);
-            if (!IgnoreAttributes) xmlWriter.WriteAttributeString("attribute", message.Attribute.ToHexString(true));
-            xmlWriter.WriteRaw(message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding));
+            if (file.HasMid1)
+                xmlWriter.WriteAttributeString("id", message.Id.ToString());
+            if (file.HasStr1)
+                xmlWriter.WriteAttributeString("label", message.Label);
+            if (!IgnoreAttributes)
+                xmlWriter.WriteAttributeString("attribute", message.Attribute.ToHexString(true));
+            xmlWriter.WriteRaw(
+                message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding)
+            );
             xmlWriter.WriteEndElement();
         }
 
@@ -112,17 +123,21 @@ public class BmgXmlSerializer : IBmgSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, IDictionary<string, BmgFile> files)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(files, nameof(files));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (files is null) throw new ArgumentNullException(nameof(files));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (files is null)
+            throw new ArgumentNullException(nameof(files));
+#endif
 
         //sort languages
         var languages = files.Keys.ToArray();
@@ -136,8 +151,10 @@ public class BmgXmlSerializer : IBmgSerializer
         {
             var index = Array.IndexOf(languages, language);
             var sortedMessages = file.Messages.ToList();
-            if (firstFile.HasMid1) sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
-            else if (firstFile.HasStr1) sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
+            if (firstFile.HasMid1)
+                sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
+            else if (firstFile.HasStr1)
+                sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
 
             for (var i = 0; i < sortedMessages.Count; ++i)
             {
@@ -153,7 +170,8 @@ public class BmgXmlSerializer : IBmgSerializer
             xmlWriter.Indentation = Indentation;
             xmlWriter.IndentChar = IndentChar;
         }
-        else xmlWriter.Formatting = Formatting.None;
+        else
+            xmlWriter.Formatting = Formatting.None;
 
         xmlWriter.WriteStartDocument();
         xmlWriter.WriteStartElement(RootNode);
@@ -165,22 +183,40 @@ public class BmgXmlSerializer : IBmgSerializer
             xmlWriter.WriteAttributeString("fileId", firstFile.FileId.ToString());
             xmlWriter.WriteAttributeString("defaultColor", firstFile.DefaultColor.ToString());
             xmlWriter.WriteAttributeString("hasMid1", firstFile.HasMid1.ToString());
-            if (firstFile.HasMid1) xmlWriter.WriteAttributeString("mid1Format", firstFile.Mid1Format.ToHexString(true));
+            if (firstFile.HasMid1)
+                xmlWriter.WriteAttributeString(
+                    "mid1Format",
+                    firstFile.Mid1Format.ToHexString(true)
+                );
             xmlWriter.WriteAttributeString("hasStr1", firstFile.HasStr1.ToString());
         }
 
         foreach (var messages in mergedMessages)
         {
             xmlWriter.WriteStartElement("message");
-            if (firstFile.HasMid1) xmlWriter.WriteAttributeString("id", messages[0].Id.ToString());
-            if (firstFile.HasStr1) xmlWriter.WriteAttributeString("label", messages[0].Label);
-            if (!IgnoreAttributes) xmlWriter.WriteAttributeString("attribute", messages[0].Attribute.ToHexString(true));
+            if (firstFile.HasMid1)
+                xmlWriter.WriteAttributeString("id", messages[0].Id.ToString());
+            if (firstFile.HasStr1)
+                xmlWriter.WriteAttributeString("label", messages[0].Label);
+            if (!IgnoreAttributes)
+                xmlWriter.WriteAttributeString(
+                    "attribute",
+                    messages[0].Attribute.ToHexString(true)
+                );
 
             for (var i = 0; i < languages.Length; ++i)
             {
                 xmlWriter.WriteStartElement("language");
                 xmlWriter.WriteAttributeString("type", languages[i]);
-                xmlWriter.WriteRaw(messages[i].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding));
+                xmlWriter.WriteRaw(
+                    messages[i]
+                        .ToCompiledString(
+                            TagMap,
+                            FormatProvider,
+                            firstFile.BigEndian,
+                            firstFile.Encoding
+                        )
+                );
                 xmlWriter.WriteEndElement();
             }
 

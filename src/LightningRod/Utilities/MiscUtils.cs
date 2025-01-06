@@ -4,8 +4,8 @@ using LibHac.Common;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LibHac.Tools.FsSystem;
-using LightningRod.Libraries.Byml;
 using LightningRod.Libraries;
+using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 using ZstdNet;
 

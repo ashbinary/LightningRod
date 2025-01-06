@@ -20,11 +20,12 @@ public class BmgFileParser : IFileParser<BmgFile>
     /// <exception cref="ArgumentNullException"></exception>
     public static bool CanParseStatic(Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream, true);
         return CanParse(reader, out _);
@@ -41,14 +42,16 @@ public class BmgFileParser : IFileParser<BmgFile>
     /// <exception cref="InvalidDataException"></exception>
     public BmgFile Parse(Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream);
-        if (!CanParse(reader, out var bigEndianLabels)) throw new InvalidDataException("File is not a BMG file.");
+        if (!CanParse(reader, out var bigEndianLabels))
+            throw new InvalidDataException("File is not a BMG file.");
 
         //parse file metadata and header
         GetMetaData(reader, out var sectionCount, out _, out var encoding);
@@ -58,7 +61,7 @@ public class BmgFileParser : IFileParser<BmgFile>
         {
             BigEndian = reader.IsBigEndian,
             BigEndianLabels = bigEndianLabels,
-            Encoding = encoding
+            Encoding = encoding,
         };
         var ids = Array.Empty<uint>();
         var labels = Array.Empty<string>();
@@ -78,31 +81,37 @@ public class BmgFileParser : IFileParser<BmgFile>
 
             switch (type)
             {
-                case "INF1" or "1FNI":
+                case "INF1"
+                or "1FNI":
                     ParseInf1(reader, out messageInfo, out var fileId, out var defaultColor);
                     bmgFile.FileId = fileId;
                     bmgFile.DefaultColor = defaultColor;
                     break;
-                case "DAT1" or "1TAD":
+                case "DAT1"
+                or "1TAD":
                     ParseDat1(reader, sectionSize, messageInfo, encoding, out content, out tags);
                     break;
-                case "MID1" or "1DIM":
+                case "MID1"
+                or "1DIM":
                     ParseMid1(reader, out ids, out var midFormat);
                     bmgFile.HasMid1 = true;
                     bmgFile.Mid1Format = midFormat;
                     break;
-                case "STR1" or "1RTS":
+                case "STR1"
+                or "1RTS":
                     ParseStr1(reader, sectionSize, out labels);
                     bmgFile.HasStr1 = true;
                     break;
-                case "FLW1" or "1WLF":
+                case "FLW1"
+                or "1WLF":
                     ParseFlw1(reader, out var flowNodes, out var flowLabels);
                     bmgFile.HasFlw1 = true;
                     bmgFile.FlowData ??= new BmgFlowData();
                     bmgFile.FlowData.Nodes = flowNodes;
                     bmgFile.FlowData.Labels = flowLabels;
                     break;
-                case "FLI1" or "1ILF":
+                case "FLI1"
+                or "1ILF":
                     ParseFli1(reader, out var flowIndices);
                     bmgFile.FlowData ??= new BmgFlowData();
                     bmgFile.FlowData.Indices = flowIndices;
@@ -119,9 +128,12 @@ public class BmgFileParser : IFileParser<BmgFile>
             {
                 Id = i < ids.Length ? ids[i] : 0,
                 Label = i < labels.Length ? labels[i] : string.Empty,
-                Attribute = i < messageInfo.Length ? messageInfo[i].Item2 : new byte[messageInfo.Length > 0 ? messageInfo[0].Item2.Length : 0],
+                Attribute =
+                    i < messageInfo.Length
+                        ? messageInfo[i].Item2
+                        : new byte[messageInfo.Length > 0 ? messageInfo[0].Item2.Length : 0],
                 Text = content[i],
-                Tags = tags[i]
+                Tags = tags[i],
             };
 
             bmgFile.Messages.Add(message);
@@ -136,7 +148,8 @@ public class BmgFileParser : IFileParser<BmgFile>
     private static bool CanParse(FileReader reader, out bool bigEndianLabels)
     {
         bigEndianLabels = false;
-        if (reader.BaseStream.Length < 8) return false;
+        if (reader.BaseStream.Length < 8)
+            return false;
 
         switch (reader.ReadStringAt(0, 8, Encoding.ASCII))
         {
@@ -152,7 +165,12 @@ public class BmgFileParser : IFileParser<BmgFile>
     }
 
     //parses meta data
-    private static void GetMetaData(FileReader reader, out uint sectionCount, out uint fileSize, out Encoding encoding)
+    private static void GetMetaData(
+        FileReader reader,
+        out uint sectionCount,
+        out uint fileSize,
+        out Encoding encoding
+    )
     {
         fileSize = reader.ReadUInt32At(8);
         if (fileSize > reader.BaseStream.Length) //sanity check: if size is invalid -> file uses other endian (FLW1/FLI1 are not counted to the file size!)
@@ -170,12 +188,17 @@ public class BmgFileParser : IFileParser<BmgFile>
             2 => reader.IsBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
             3 => Encoding.GetEncoding("Shift-JIS"),
             4 => Encoding.UTF8,
-            _ => reader.IsBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode
+            _ => reader.IsBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
         };
     }
 
     //parse INF1 type sections (message info)
-    private static void ParseInf1(FileReader reader, out (uint, byte[])[] messageInfo, out ushort fileId, out byte defaultColor)
+    private static void ParseInf1(
+        FileReader reader,
+        out (uint, byte[])[] messageInfo,
+        out ushort fileId,
+        out byte defaultColor
+    )
     {
         var entryCount = reader.ReadUInt16();
         var entrySize = reader.ReadUInt16();
@@ -194,13 +217,23 @@ public class BmgFileParser : IFileParser<BmgFile>
     }
 
     //parse DAT1 type sections (message content)
-    private static void ParseDat1(FileReader reader, uint sectionSize, (uint, byte[])[] messageInfo, Encoding encoding, out string[] content, out List<BmgTag>[] tags)
+    private static void ParseDat1(
+        FileReader reader,
+        uint sectionSize,
+        (uint, byte[])[] messageInfo,
+        Encoding encoding,
+        out string[] content,
+        out List<BmgTag>[] tags
+    )
     {
         var sectionStart = reader.Position;
         var sectionEnd = reader.Position + sectionSize - 1;
 
         var encodingWidth = encoding.GetMinByteCount();
-        TagCheck isFunctionTag = encodingWidth == 1 ? IsTagSingleByte : reader.IsBigEndian ? IsTagDoubleByteBE : IsTagDoubleByteLE;
+        TagCheck isFunctionTag =
+            encodingWidth == 1 ? IsTagSingleByte
+            : reader.IsBigEndian ? IsTagDoubleByteBE
+            : IsTagDoubleByteLE;
         TagCheck isEndTag = encodingWidth == 1 ? IsEndTagSingleByte : IsEndTagDoubleByte;
 
         content = new string[messageInfo.Length];
@@ -214,7 +247,7 @@ public class BmgFileParser : IFileParser<BmgFile>
 
             //parse message text
             reader.JumpTo(sectionStart + startPos);
-            var buffer = reader.ReadBytes((int) (endPos - startPos));
+            var buffer = reader.ReadBytes((int)(endPos - startPos));
 
             //check bytes for function calls
             var message = new StringBuilder();
@@ -224,32 +257,39 @@ public class BmgFileParser : IFileParser<BmgFile>
             {
                 if (isEndTag(buffer, j))
                 {
-                    if (j > textIndex) message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
+                    if (j > textIndex)
+                        message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
                     textIndex = buffer.Length;
                     break;
                 }
-                if (!isFunctionTag(buffer, j)) continue;
+                if (!isFunctionTag(buffer, j))
+                    continue;
 
                 //append text so far
-                if (j > textIndex) message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
+                if (j > textIndex)
+                    message.Append(encoding.GetString(buffer, textIndex, j - textIndex));
                 message.Append("{{").Append(messageTags.Count).Append("}}");
 
                 //add function content
                 var tagDataOffset = j + encodingWidth;
-                var argLength = tagDataOffset < buffer.Length ? buffer[tagDataOffset] - 4 - encodingWidth : 0;
-                messageTags.Add(new BmgTag
-                {
-                    Group = ReadTagGroup(buffer, tagDataOffset + 1),
-                    Type = ReadTagType(buffer, tagDataOffset + 2, reader.IsBigEndian),
-                    Args = ReadArgArray(buffer, tagDataOffset + 4, argLength)
-                });
+                var argLength =
+                    tagDataOffset < buffer.Length ? buffer[tagDataOffset] - 4 - encodingWidth : 0;
+                messageTags.Add(
+                    new BmgTag
+                    {
+                        Group = ReadTagGroup(buffer, tagDataOffset + 1),
+                        Type = ReadTagType(buffer, tagDataOffset + 2, reader.IsBigEndian),
+                        Args = ReadArgArray(buffer, tagDataOffset + 4, argLength),
+                    }
+                );
 
                 j += 4 + argLength;
                 textIndex = j + encodingWidth;
             }
 
             //append remaining text
-            if (textIndex < buffer.Length) message.Append(encoding.GetString(buffer, textIndex, buffer.Length - textIndex));
+            if (textIndex < buffer.Length)
+                message.Append(encoding.GetString(buffer, textIndex, buffer.Length - textIndex));
 
             content[i] = message.ToString().TrimEnd('\0');
             tags[i] = messageTags;
@@ -258,30 +298,43 @@ public class BmgFileParser : IFileParser<BmgFile>
 
     //check for tags
     private delegate bool TagCheck(byte[] buffer, int index);
+
     private static bool IsTagSingleByte(byte[] buffer, int index) => buffer[index] == 0x1A;
-    private static bool IsTagDoubleByteLE(byte[] buffer, int index) => buffer[index] == 0x1A && buffer[index + 1] == 0x00;
-    private static bool IsTagDoubleByteBE(byte[] buffer, int index) => buffer[index] == 0x00 && buffer[index + 1] == 0x1A;
+
+    private static bool IsTagDoubleByteLE(byte[] buffer, int index) =>
+        buffer[index] == 0x1A && buffer[index + 1] == 0x00;
+
+    private static bool IsTagDoubleByteBE(byte[] buffer, int index) =>
+        buffer[index] == 0x00 && buffer[index + 1] == 0x1A;
+
     private static bool IsEndTagSingleByte(byte[] buffer, int index) => buffer[index] == 0x00;
-    private static bool IsEndTagDoubleByte(byte[] buffer, int index) => buffer[index] == 0x00 && buffer[index + 1] == 0x00;
+
+    private static bool IsEndTagDoubleByte(byte[] buffer, int index) =>
+        buffer[index] == 0x00 && buffer[index + 1] == 0x00;
 
     //read tag group (or return max value on error)
-    private static byte ReadTagGroup(byte[] buffer, int index) => index < buffer.Length ? buffer[index] : byte.MaxValue;
+    private static byte ReadTagGroup(byte[] buffer, int index) =>
+        index < buffer.Length ? buffer[index] : byte.MaxValue;
 
     //read tag type (or return max value on error)
     private static ushort ReadTagType(byte[] buffer, int index, bool bigEndian)
     {
-        if (index + 2 > buffer.Length) return ushort.MaxValue;
+        if (index + 2 > buffer.Length)
+            return ushort.MaxValue;
 
         var bytes = buffer[index..(index + 2)];
-        if (bigEndian == BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        if (bigEndian == BitConverter.IsLittleEndian)
+            Array.Reverse(bytes);
         return BitConverter.ToUInt16(bytes);
     }
 
     //read raw byte array
     private static byte[] ReadArgArray(byte[] buffer, int index, int length)
     {
-        if (length == 0) return [];
-        if (index + length > buffer.Length) length = buffer.Length - index;
+        if (length == 0)
+            return [];
+        if (index + length > buffer.Length)
+            length = buffer.Length - index;
 
         return buffer[index..(index + length)];
     }
@@ -314,7 +367,7 @@ public class BmgFileParser : IFileParser<BmgFile>
             labelList.Add(reader.ReadTerminatedString());
         }
 
-        labels = [..labelList];
+        labels = [.. labelList];
     }
 
     //parse FLW1 type sections
@@ -328,8 +381,10 @@ public class BmgFileParser : IFileParser<BmgFile>
         for (var i = 0; i < nodeCount; ++i)
         {
             var nodeData = reader.ReadBytes(8);
-            if (nodeData[0] > 0) nodeList.Add(nodeData);
-            else break; //padding
+            if (nodeData[0] > 0)
+                nodeList.Add(nodeData);
+            else
+                break; //padding
         }
 
         var labelOffset = reader.Position;
@@ -340,12 +395,14 @@ public class BmgFileParser : IFileParser<BmgFile>
             var labelData = new byte[3];
             reader.ReadBytesAt(labelOffset + i * 2, labelData, 0, 2);
             labelData[2] = reader.ReadByteAt(labelIndexOffset + i);
-            if (labelData is not [0, 0, 0]) labelList.Add(labelData);
-            else break; //padding
+            if (labelData is not [0, 0, 0])
+                labelList.Add(labelData);
+            else
+                break; //padding
         }
 
-        nodes = [..nodeList];
-        labels = [..labelList];
+        nodes = [.. nodeList];
+        labels = [.. labelList];
     }
 
     //parse FLI1 type sections

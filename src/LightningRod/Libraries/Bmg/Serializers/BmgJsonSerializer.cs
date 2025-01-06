@@ -56,17 +56,21 @@ public class BmgJsonSerializer : IBmgSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, BmgFile file)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(file, nameof(file));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (file is null) throw new ArgumentNullException(nameof(file));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (file is null)
+            throw new ArgumentNullException(nameof(file));
+#endif
 
         using var jsonWriter = new JsonTextWriter(writer);
 
@@ -76,7 +80,8 @@ public class BmgJsonSerializer : IBmgSerializer
             jsonWriter.Indentation = Indentation;
             jsonWriter.IndentChar = IndentChar;
         }
-        else jsonWriter.Formatting = Formatting.None;
+        else
+            jsonWriter.Formatting = Formatting.None;
 
         if (!SkipMetadata) //write meta data
         {
@@ -108,8 +113,14 @@ public class BmgJsonSerializer : IBmgSerializer
             for (var i = 0; i < file.Messages.Count; ++i)
             {
                 var message = file.Messages[i];
-                jsonWriter.WritePropertyName(file.HasMid1 ? message.Id.ToString() : file.HasStr1 ? message.Label : i.ToString());
-                jsonWriter.WriteValue(message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding));
+                jsonWriter.WritePropertyName(
+                    file.HasMid1 ? message.Id.ToString()
+                    : file.HasStr1 ? message.Label
+                    : i.ToString()
+                );
+                jsonWriter.WriteValue(
+                    message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding)
+                );
             }
 
             jsonWriter.WriteEndObject();
@@ -141,7 +152,9 @@ public class BmgJsonSerializer : IBmgSerializer
                 }
 
                 jsonWriter.WritePropertyName("text");
-                jsonWriter.WriteValue(message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding));
+                jsonWriter.WriteValue(
+                    message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding)
+                );
 
                 jsonWriter.WriteEndObject();
             }
@@ -149,7 +162,8 @@ public class BmgJsonSerializer : IBmgSerializer
             jsonWriter.WriteEndArray();
         }
 
-        if (!SkipMetadata) jsonWriter.WriteEndObject();
+        if (!SkipMetadata)
+            jsonWriter.WriteEndObject();
 
         jsonWriter.Flush();
         jsonWriter.Close();
@@ -159,17 +173,21 @@ public class BmgJsonSerializer : IBmgSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, IDictionary<string, BmgFile> files)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(files, nameof(files));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (files is null) throw new ArgumentNullException(nameof(files));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (files is null)
+            throw new ArgumentNullException(nameof(files));
+#endif
 
         //sort languages
         var languages = files.Keys.ToArray();
@@ -183,8 +201,10 @@ public class BmgJsonSerializer : IBmgSerializer
         {
             var index = Array.IndexOf(languages, language);
             var sortedMessages = file.Messages.ToList();
-            if (firstFile.HasMid1) sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
-            else if (firstFile.HasStr1) sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
+            if (firstFile.HasMid1)
+                sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
+            else if (firstFile.HasStr1)
+                sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
 
             for (var i = 0; i < sortedMessages.Count; ++i)
             {
@@ -200,7 +220,8 @@ public class BmgJsonSerializer : IBmgSerializer
             jsonWriter.Indentation = Indentation;
             jsonWriter.IndentChar = IndentChar;
         }
-        else jsonWriter.Formatting = Formatting.None;
+        else
+            jsonWriter.Formatting = Formatting.None;
 
         if (!SkipMetadata) //write meta data
         {
@@ -232,7 +253,11 @@ public class BmgJsonSerializer : IBmgSerializer
             for (var i = 0; i < mergedMessages.Length; ++i)
             {
                 var messages = mergedMessages[i];
-                jsonWriter.WritePropertyName(firstFile.HasMid1 ? messages[0].Id.ToString() : firstFile.HasStr1 ? messages[0].Label : i.ToString());
+                jsonWriter.WritePropertyName(
+                    firstFile.HasMid1 ? messages[0].Id.ToString()
+                    : firstFile.HasStr1 ? messages[0].Label
+                    : i.ToString()
+                );
                 jsonWriter.WriteStartObject();
 
                 if (!IgnoreAttributes)
@@ -246,10 +271,19 @@ public class BmgJsonSerializer : IBmgSerializer
                 for (var j = 0; j < languages.Length; ++j)
                 {
                     jsonWriter.WritePropertyName(languages[j]);
-                    jsonWriter.WriteValue(messages[j].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding));
+                    jsonWriter.WriteValue(
+                        messages[j]
+                            .ToCompiledString(
+                                TagMap,
+                                FormatProvider,
+                                firstFile.BigEndian,
+                                firstFile.Encoding
+                            )
+                    );
                 }
 
-                if (!IgnoreAttributes) jsonWriter.WriteEndObject();
+                if (!IgnoreAttributes)
+                    jsonWriter.WriteEndObject();
 
                 jsonWriter.WriteEndObject();
             }
@@ -287,7 +321,15 @@ public class BmgJsonSerializer : IBmgSerializer
                 for (var i = 0; i < languages.Length; ++i)
                 {
                     jsonWriter.WritePropertyName(languages[i]);
-                    jsonWriter.WriteValue(messages[i].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding));
+                    jsonWriter.WriteValue(
+                        messages[i]
+                            .ToCompiledString(
+                                TagMap,
+                                FormatProvider,
+                                firstFile.BigEndian,
+                                firstFile.Encoding
+                            )
+                    );
                 }
                 jsonWriter.WriteEndObject();
 
@@ -297,7 +339,8 @@ public class BmgJsonSerializer : IBmgSerializer
             jsonWriter.WriteEndArray();
         }
 
-        if (!SkipMetadata) jsonWriter.WriteEndObject();
+        if (!SkipMetadata)
+            jsonWriter.WriteEndObject();
 
         jsonWriter.Flush();
         jsonWriter.Close();

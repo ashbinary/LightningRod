@@ -57,17 +57,21 @@ public class MsbtJsonSerializer : IMsbtSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, MsbtFile file)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(file, nameof(file));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (file is null) throw new ArgumentNullException(nameof(file));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (file is null)
+            throw new ArgumentNullException(nameof(file));
+#endif
 
         using var jsonWriter = new JsonTextWriter(writer);
 
@@ -77,7 +81,8 @@ public class MsbtJsonSerializer : IMsbtSerializer
             jsonWriter.Indentation = Indentation;
             jsonWriter.IndentChar = IndentChar;
         }
-        else jsonWriter.Formatting = Formatting.None;
+        else
+            jsonWriter.Formatting = Formatting.None;
 
         if (!SkipMetadata) //write meta data
         {
@@ -111,8 +116,14 @@ public class MsbtJsonSerializer : IMsbtSerializer
             for (var i = 0; i < file.Messages.Count; ++i)
             {
                 var message = file.Messages[i];
-                jsonWriter.WritePropertyName(file.HasNli1 ? message.Id.ToString() : file.HasLbl1 ? message.Label : i.ToString());
-                jsonWriter.WriteValue(message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding));
+                jsonWriter.WritePropertyName(
+                    file.HasNli1 ? message.Id.ToString()
+                    : file.HasLbl1 ? message.Label
+                    : i.ToString()
+                );
+                jsonWriter.WriteValue(
+                    message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding)
+                );
             }
 
             jsonWriter.WriteEndObject();
@@ -142,7 +153,9 @@ public class MsbtJsonSerializer : IMsbtSerializer
                     if (file.HasAtr1)
                     {
                         jsonWriter.WritePropertyName("attribute");
-                        jsonWriter.WriteValue(message.AttributeText ?? message.Attribute.ToHexString(true));
+                        jsonWriter.WriteValue(
+                            message.AttributeText ?? message.Attribute.ToHexString(true)
+                        );
                     }
                     if (file.HasTsy1)
                     {
@@ -152,7 +165,9 @@ public class MsbtJsonSerializer : IMsbtSerializer
                 }
 
                 jsonWriter.WritePropertyName("text");
-                jsonWriter.WriteValue(message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding));
+                jsonWriter.WriteValue(
+                    message.ToCompiledString(TagMap, FormatProvider, file.BigEndian, file.Encoding)
+                );
 
                 jsonWriter.WriteEndObject();
             }
@@ -160,7 +175,8 @@ public class MsbtJsonSerializer : IMsbtSerializer
             jsonWriter.WriteEndArray();
         }
 
-        if (!SkipMetadata) jsonWriter.WriteEndObject();
+        if (!SkipMetadata)
+            jsonWriter.WriteEndObject();
 
         jsonWriter.Flush();
         jsonWriter.Close();
@@ -170,17 +186,21 @@ public class MsbtJsonSerializer : IMsbtSerializer
     /// <exception cref="ArgumentNullException"></exception>
     public void Serialize(TextWriter writer, IDictionary<string, MsbtFile> files)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(TagMap, nameof(TagMap));
         ArgumentNullException.ThrowIfNull(FormatProvider, nameof(FormatProvider));
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(files, nameof(files));
-        #else
-        if (TagMap is null) throw new ArgumentNullException(nameof(TagMap));
-        if (FormatProvider is null) throw new ArgumentNullException(nameof(FormatProvider));
-        if (writer is null) throw new ArgumentNullException(nameof(writer));
-        if (files is null) throw new ArgumentNullException(nameof(files));
-        #endif
+#else
+        if (TagMap is null)
+            throw new ArgumentNullException(nameof(TagMap));
+        if (FormatProvider is null)
+            throw new ArgumentNullException(nameof(FormatProvider));
+        if (writer is null)
+            throw new ArgumentNullException(nameof(writer));
+        if (files is null)
+            throw new ArgumentNullException(nameof(files));
+#endif
 
         //sort languages
         var languages = files.Keys.ToArray();
@@ -194,8 +214,10 @@ public class MsbtJsonSerializer : IMsbtSerializer
         {
             var index = Array.IndexOf(languages, language);
             var sortedMessages = file.Messages.ToList();
-            if (firstFile.HasNli1) sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
-            else if (firstFile.HasLbl1) sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
+            if (firstFile.HasNli1)
+                sortedMessages.Sort((m1, m2) => m1.Id.CompareTo(m2.Id));
+            else if (firstFile.HasLbl1)
+                sortedMessages.Sort((m1, m2) => string.CompareOrdinal(m1.Label, m2.Label));
 
             for (var i = 0; i < sortedMessages.Count; ++i)
             {
@@ -211,7 +233,8 @@ public class MsbtJsonSerializer : IMsbtSerializer
             jsonWriter.Indentation = Indentation;
             jsonWriter.IndentChar = IndentChar;
         }
-        else jsonWriter.Formatting = Formatting.None;
+        else
+            jsonWriter.Formatting = Formatting.None;
 
         if (!SkipMetadata) //write meta data
         {
@@ -245,7 +268,11 @@ public class MsbtJsonSerializer : IMsbtSerializer
             for (var i = 0; i < mergedMessages.Length; ++i)
             {
                 var messages = mergedMessages[i];
-                jsonWriter.WritePropertyName(firstFile.HasNli1 ? messages[0].Id.ToString() : firstFile.HasLbl1 ? messages[0].Label : i.ToString());
+                jsonWriter.WritePropertyName(
+                    firstFile.HasNli1 ? messages[0].Id.ToString()
+                    : firstFile.HasLbl1 ? messages[0].Label
+                    : i.ToString()
+                );
                 jsonWriter.WriteStartObject();
 
                 if (!SkipMetadata)
@@ -253,7 +280,9 @@ public class MsbtJsonSerializer : IMsbtSerializer
                     if (firstFile.HasAtr1)
                     {
                         jsonWriter.WritePropertyName("attribute");
-                        jsonWriter.WriteValue(messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true));
+                        jsonWriter.WriteValue(
+                            messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true)
+                        );
                     }
                     if (firstFile.HasTsy1)
                     {
@@ -271,10 +300,19 @@ public class MsbtJsonSerializer : IMsbtSerializer
                 for (var j = 0; j < languages.Length; ++j)
                 {
                     jsonWriter.WritePropertyName(languages[j]);
-                    jsonWriter.WriteValue(messages[j].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding));
+                    jsonWriter.WriteValue(
+                        messages[j]
+                            .ToCompiledString(
+                                TagMap,
+                                FormatProvider,
+                                firstFile.BigEndian,
+                                firstFile.Encoding
+                            )
+                    );
                 }
 
-                if (!SkipMetadata) jsonWriter.WriteEndObject();
+                if (!SkipMetadata)
+                    jsonWriter.WriteEndObject();
 
                 jsonWriter.WriteEndObject();
             }
@@ -306,7 +344,9 @@ public class MsbtJsonSerializer : IMsbtSerializer
                     if (firstFile.HasAtr1)
                     {
                         jsonWriter.WritePropertyName("attribute");
-                        jsonWriter.WriteValue(messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true));
+                        jsonWriter.WriteValue(
+                            messages[0].AttributeText ?? messages[0].Attribute.ToHexString(true)
+                        );
                     }
                     if (firstFile.HasTsy1)
                     {
@@ -320,7 +360,15 @@ public class MsbtJsonSerializer : IMsbtSerializer
                 for (var i = 0; i < languages.Length; ++i)
                 {
                     jsonWriter.WritePropertyName(languages[i]);
-                    jsonWriter.WriteValue(messages[i].ToCompiledString(TagMap, FormatProvider, firstFile.BigEndian, firstFile.Encoding));
+                    jsonWriter.WriteValue(
+                        messages[i]
+                            .ToCompiledString(
+                                TagMap,
+                                FormatProvider,
+                                firstFile.BigEndian,
+                                firstFile.Encoding
+                            )
+                    );
                 }
                 jsonWriter.WriteEndObject();
 
@@ -330,7 +378,8 @@ public class MsbtJsonSerializer : IMsbtSerializer
             jsonWriter.WriteEndArray();
         }
 
-        if (!SkipMetadata) jsonWriter.WriteEndObject();
+        if (!SkipMetadata)
+            jsonWriter.WriteEndObject();
 
         jsonWriter.Flush();
         jsonWriter.Close();
