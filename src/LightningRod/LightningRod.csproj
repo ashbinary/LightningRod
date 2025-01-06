@@ -4,11 +4,16 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <OutputPath>$(SolutionDir).build\bin\</OutputPath>
-    <BaseIntermediateOutputPath>$(SolutionDir).build\obj\</BaseIntermediateOutputPath>
-    <RestoreOutputPath>$(SolutionDir).build\obj\</RestoreOutputPath>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Output path for compiled binaries -->
+    <OutputPath>.\.build\bin\</OutputPath>
+
+    <!-- Output path for intermediate files (such as .obj files) -->
+    <BaseIntermediateOutputPath>.\.build\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,9 +3,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <OutputPath>$(SolutionDir).build\bin\</OutputPath>
-    <BaseIntermediateOutputPath>$(SolutionDir).build\obj\</BaseIntermediateOutputPath>
-    <RestoreOutputPath>$(SolutionDir).build\obj\</RestoreOutputPath>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -19,6 +16,14 @@
   <ItemGroup>
     <ProjectReference Include="..\LightningRod\LightningRod.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Output path for compiled binaries -->
+    <OutputPath>.\.build\bin\</OutputPath>
+
+    <!-- Output path for intermediate files (such as .obj files) -->
+    <BaseIntermediateOutputPath>.\.build\obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.1.0" />
