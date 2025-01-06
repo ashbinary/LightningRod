@@ -1,5 +1,6 @@
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
+using LightningRod.Utilities;
 
 namespace LightningRod.Randomizers;
 
@@ -9,13 +10,13 @@ public static class WeaponKitRandomizer
     {
         Logger.Log("Starting weapon kit randomizer!");
 
-        BymlArrayNode weaponMain = GameData.FileSystem.ReadCompressedByml(
+        BymlArrayNode weaponMain = GameData.FileSystem.ParseByml(
             $"/RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
-        BymlArrayNode weaponSub = GameData.FileSystem.ReadCompressedByml(
+        BymlArrayNode weaponSub = GameData.FileSystem.ParseByml(
             $"/RSDB/WeaponInfoSub.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
-        BymlArrayNode weaponSpecial = GameData.FileSystem.ReadCompressedByml(
+        BymlArrayNode weaponSpecial = GameData.FileSystem.ParseByml(
             $"/RSDB/WeaponInfoSpecial.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
@@ -119,12 +120,12 @@ public static class WeaponKitRandomizer
             }
         }
 
-        RandomizerUtil.CreateFolder("RSDB");
+        MiscUtils.CreateFolder("RSDB");
 
         if (Options.GetOption("randomizeKits"))
             GameData.CommitToFileSystem(
-                $"RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs", 
-                weaponMain.ToBytes().CompressZSTDBytes()
+                $"RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs",
+                FileUtils.SaveByml(weaponMain).CompressZSTD()
             );
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NintendoTools.FileFormats.Sarc;
+namespace LightningRod.Libraries.Sarc;
 
 /// <summary>
 /// A class holding information about a SARC archive file.

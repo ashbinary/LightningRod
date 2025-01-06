@@ -17,8 +17,8 @@ public class Mmh3Hash : IHashAlgorithm
     /// <summary>
     /// Initializes a new instance of the <see cref="Mmh3Hash"/> class with the default seed.
     /// </summary>
-    public Mmh3Hash() : this(0)
-    { }
+    public Mmh3Hash()
+        : this(0) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Mmh3Hash"/> class with the given seed.
@@ -32,15 +32,17 @@ public class Mmh3Hash : IHashAlgorithm
     /// <exception cref="ArgumentNullException"></exception>
     public byte[] Compute(Stream data)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        #else
-        if (data is null) throw new ArgumentNullException(nameof(data));
-        #endif
+#else
+        if (data is null)
+            throw new ArgumentNullException(nameof(data));
+#endif
 
         var hash = InternalCompute(data);
         var bytes = BitConverter.GetBytes(hash);
-        if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        if (BitConverter.IsLittleEndian)
+            Array.Reverse(bytes);
         return bytes;
     }
     #endregion

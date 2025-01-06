@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace NintendoTools.FileFormats;
+namespace LightningRod.Libraries;
 
 /// <summary>
 /// A table to map file extensions to archive data alignments.
@@ -25,7 +25,8 @@ public class AlignmentTable : IEnumerable<KeyValuePair<string, int>>
         get => _defaultValue;
         set
         {
-            if (value == 0) _defaultValue = 1;
+            if (value == 0)
+                _defaultValue = 1;
             _defaultValue = Math.Abs(value);
         }
     }
@@ -47,13 +48,17 @@ public class AlignmentTable : IEnumerable<KeyValuePair<string, int>>
     /// <exception cref="ArgumentNullException"></exception>
     public bool Add(string extension, int alignment)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(extension, nameof(extension));
-        #else
-        if (extension is null) throw new ArgumentNullException(nameof(extension));
-        #endif
+#else
+        if (extension is null)
+            throw new ArgumentNullException(nameof(extension));
+#endif
 
-        return _alignment.TryAdd(extension.StartsWith('.') ? extension : '.' + extension, alignment == 0 ? 1 : Math.Abs(alignment));
+        return _alignment.TryAdd(
+            extension.StartsWith('.') ? extension : '.' + extension,
+            alignment == 0 ? 1 : Math.Abs(alignment)
+        );
     }
 
     /// <summary>
@@ -68,7 +73,8 @@ public class AlignmentTable : IEnumerable<KeyValuePair<string, int>>
     /// </summary>
     /// <param name="extension">The file extension to remove.</param>
     /// <returns><see langword="true"/> if the alignment was found and removed successfully; otherwise <see langword="false"/>.</returns>
-    public bool Remove(string extension) => _alignment.Remove(extension.StartsWith('.') ? extension : '.' + extension);
+    public bool Remove(string extension) =>
+        _alignment.Remove(extension.StartsWith('.') ? extension : '.' + extension);
 
     /// <summary>
     /// Removes the alignments for all file extensions.
@@ -89,7 +95,8 @@ public class AlignmentTable : IEnumerable<KeyValuePair<string, int>>
     /// <param name="extension">The file extension to find.</param>
     /// <param name="alignment">The alignment in bytes for that file extension.</param>
     /// <returns><see langword="true"/> if the alignment was found; otherwise <see langword="false"/>.</returns>
-    public bool TryGet(string extension, out int alignment) => _alignment.TryGetValue(extension, out alignment);
+    public bool TryGet(string extension, out int alignment) =>
+        _alignment.TryGetValue(extension, out alignment);
 
     /// <summary>
     /// Gets the alignment in bytes for a given file name. Each '.' in the name will be considered as extension.
@@ -99,11 +106,12 @@ public class AlignmentTable : IEnumerable<KeyValuePair<string, int>>
     /// <returns>The alignment in bytes for that file extension.</returns>
     public int GetFromName(string fileName)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileName, nameof(fileName));
-        #else
-        if (fileName is null) throw new ArgumentNullException(nameof(fileName));
-        #endif
+#else
+        if (fileName is null)
+            throw new ArgumentNullException(nameof(fileName));
+#endif
 
         fileName = Path.GetFileName(fileName);
 

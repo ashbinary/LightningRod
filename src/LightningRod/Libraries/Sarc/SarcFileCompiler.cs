@@ -5,7 +5,7 @@ using System.Text;
 using NintendoTools.Hashing;
 using NintendoTools.Utils;
 
-namespace NintendoTools.FileFormats.Sarc;
+namespace LightningRod.Libraries.Sarc;
 
 /// <summary>
 /// A class for compiling SARC archives.
@@ -20,7 +20,7 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
     /// <summary>
     /// Gets or sets the alignment table to use.
     /// </summary>
-    public AlignmentTable Alignment { get; set; } = new() {Default = 8};
+    public AlignmentTable Alignment { get; set; } = new() { Default = 8 };
     #endregion
 
     #region IFileCompiler interface
@@ -28,29 +28,31 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
     /// <exception cref="ArgumentNullException"></exception>
     public void Compile(SarcFile file, Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(file, nameof(file));
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (file is null) throw new ArgumentNullException(nameof(file));
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (file is null)
+            throw new ArgumentNullException(nameof(file));
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var writer = new FileWriter(fileStream, true);
         writer.IsBigEndian = file.BigEndian;
 
         //write header
         writer.Write("SARC", Encoding.ASCII);
-        writer.Write((ushort) 0x14);
-        writer.Write((ushort) 0xFEFF);
+        writer.Write((ushort)0x14);
+        writer.Write((ushort)0xFEFF);
         writer.Pad(8);
-        writer.Write((ushort) file.Version);
+        writer.Write((ushort)file.Version);
         writer.Pad(2);
 
         //write SFAT header
         writer.Write("SFAT", Encoding.ASCII);
-        writer.Write((ushort) 0x0C);
-        writer.Write((ushort) file.Files.Count);
+        writer.Write((ushort)0x0C);
+        writer.Write((ushort)file.Files.Count);
         writer.Write(BitConverter.GetBytes(file.HashKey));
 
         //build hash map
@@ -73,7 +75,8 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
             }
 
             sortedFiles[i] = (content, BitConverter.ToUInt32(nameHash), alignment);
-            if (alignment > maxAlignment) maxAlignment = alignment;
+            if (alignment > maxAlignment)
+                maxAlignment = alignment;
         }
         Array.Sort(sortedFiles, (v1, v2) => v1.Item2.CompareTo(v2.Item2));
 
@@ -87,30 +90,33 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
             writer.Write(BitConverter.GetBytes(nameHash));
             if (file.HasFileNames)
             {
-                if (lastHash == nameHash) ++hashCollisionIndex;
-                else hashCollisionIndex = 1;
+                if (lastHash == nameHash)
+                    ++hashCollisionIndex;
+                else
+                    hashCollisionIndex = 1;
                 lastHash = nameHash;
 
-                writer.Write((hashCollisionIndex << 24) | ((uint) currentNameOffset / 4));
+                writer.Write((hashCollisionIndex << 24) | ((uint)currentNameOffset / 4));
 
                 currentNameOffset += content.Name.Length + 1;
                 currentNameOffset += BinaryUtils.GetOffset(currentNameOffset, 4);
             }
-            else writer.Pad(4);
+            else
+                writer.Pad(4);
             writer.Write(currentDataOffset += BinaryUtils.GetOffset(currentDataOffset, alignment));
             writer.Write(currentDataOffset += content.Data.Length);
         }
 
         //write SFNT header
         writer.Write("SFNT", Encoding.ASCII);
-        writer.Write((ushort) 0x08);
+        writer.Write((ushort)0x08);
         writer.Pad(2);
         if (file.HasFileNames)
         {
             foreach (var (content, _, _) in sortedFiles)
             {
                 writer.Write(content.Name);
-                writer.Write((byte) 0x00);
+                writer.Write((byte)0x00);
                 writer.Align(4);
             }
         }
@@ -121,7 +127,8 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
         for (var i = 0; i < sortedFiles.Length; ++i)
         {
             writer.Align(sortedFiles[i].Item3);
-            if (i == 0) dataOffset = writer.Position;
+            if (i == 0)
+                dataOffset = writer.Position;
 
             writer.Write(sortedFiles[i].Item1.Data);
         }
@@ -129,8 +136,8 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
         //write file size and data offset
         var fileSize = writer.Position;
         writer.JumpTo(0x08);
-        writer.Write((uint) fileSize);
-        writer.Write((uint) dataOffset);
+        writer.Write((uint)fileSize);
+        writer.Write((uint)dataOffset);
     }
     #endregion
 
@@ -138,19 +145,29 @@ public class SarcFileCompiler : IFileCompiler<SarcFile>
     private static int GetNameHash(string name, int hashKey)
     {
         var hash = 0;
-        foreach (var c in name) hash = hash * hashKey + c;
+        foreach (var c in name)
+            hash = hash * hashKey + c;
         return hash;
     }
 
     private static bool TryParseNameHash(string name, out byte[] hash)
     {
         hash = [];
-        if (!name.StartsWith("0x") || name.Length != 10) return false;
+        if (!name.StartsWith("0x") || name.Length != 10)
+            return false;
 
         hash = new byte[4];
         for (var i = 0; i < hash.Length; ++i)
         {
-            if (!byte.TryParse(name.AsSpan(2 + i * 2, 2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var value)) return false;
+            if (
+                !byte.TryParse(
+                    name.AsSpan(2 + i * 2, 2),
+                    NumberStyles.AllowHexSpecifier,
+                    CultureInfo.InvariantCulture,
+                    out var value
+                )
+            )
+                return false;
             hash[i] = value;
         }
 

@@ -1,17 +1,14 @@
-﻿using LibHac.Common;
-using LibHac.Fs;
-using LibHac.Fs.Fsa;
+﻿using LibHac.Fs.Fsa;
 using LibHac.FsSystem;
 using LibHac.Tools.FsSystem;
 using LightningRod.Randomizers;
+using LightningRod.Utilities;
 
 namespace LightningRod;
 
 public class BaseHandler(IFileSystem baseFs)
 {
-    public void TriggerRandomizers(
-        string saveFolder
-    )
+    public void TriggerRandomizers(string saveFolder)
     {
         GameData.DataPath = $"{saveFolder}/romfs/";
         GameData.FileSystem = new LayeredFileSystem(baseFs, new LocalFileSystem(GameData.DataPath));
@@ -22,7 +19,7 @@ public class BaseHandler(IFileSystem baseFs)
         Directory.CreateDirectory(GameData.DataPath);
 
         string RegionLangData = System.Text.Encoding.UTF8.GetString(
-            GameData.FileSystem.ReadWholeFile("/System/RegionLangMask.txt")
+            GameData.FileSystem.GetFile("/System/RegionLangMask.txt")
         );
         GameData.GameVersion = RegionLangData.Split("\n")[2][..3];
 
@@ -36,6 +33,8 @@ public class BaseHandler(IFileSystem baseFs)
 
         VSStageRandomizer.Randomize();
         ParameterRandomizer.Randomize();
+        MiscRandomizer.Randomize();
+        BigWorldRandomizer.Randomize();
 
         Logger.MakeFile();
     }

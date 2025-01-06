@@ -1,4 +1,4 @@
-﻿namespace NintendoTools.FileFormats;
+﻿namespace LightningRod.Libraries;
 
 /// <summary>
 /// A class holding alignment information about an archive file.

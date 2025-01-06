@@ -4,8 +4,8 @@ using System.Runtime.CompilerServices;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
-using NintendoTools.FileFormats.Sarc;
-using OatmealDome.BinaryData;
+using LightningRod.Utilities;
+using LightningRod.Libraries.Sarc;
 
 namespace LightningRod.Randomizers;
 
@@ -14,7 +14,7 @@ public static class ParameterRandomizer
     public static void Randomize()
     {
         Logger.Log("Starting parameter randomizer!");
-        SarcFile paramPack = GameData.FileSystem.ReadCompressedSarc($"/Pack/Params.pack.zs"); 
+        SarcFile paramPack = GameData.FileSystem.ParseSarc($"/Pack/Params.pack.zs");
 
         foreach (SarcContent paramFileSarc in paramPack.Files)
         {
@@ -24,12 +24,15 @@ public static class ParameterRandomizer
                 new Byml(new MemoryStream(paramFileSarc.Data)).Root;
 
             BymlIterator paramIterator = new();
-            paramFileSarc.Data = paramIterator.IterateParams(paramFile).ToBytes();
+            paramFileSarc.Data = FileUtils.SaveByml(paramIterator.IterateParams(paramFile));
         }
 
-        GameData.CommitToFileSystem("Pack/Params.pack.zs", paramPack.CompileSarc().CompressZSTDBytes());
+        GameData.CommitToFileSystem(
+            "Pack/Params.pack.zs",
+            FileUtils.SaveSarc(paramPack).CompressZSTD()
+        );
 
-        BymlArrayNode inkColorByml = GameData.FileSystem.ReadCompressedByml(
+        BymlArrayNode inkColorByml = GameData.FileSystem.ParseByml(
             $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
@@ -42,25 +45,28 @@ public static class ParameterRandomizer
             {
                 BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
 
-                if (!Options.GetOption("randomizeInkColorLock")
-                    && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support"))
+                if (
+                    !Options.GetOption("randomizeInkColorLock")
+                    && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support")
+                )
                     continue;
 
                 //if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains)) continue;
                 for (int t = 0; t < teamNames.Length; t++)
                 {
-                    BymlHashTable? colorHashTable = colorData[$"{teamNames[t]}Color"] as BymlHashTable;
+                    BymlHashTable? colorHashTable =
+                        colorData[$"{teamNames[t]}Color"] as BymlHashTable;
                     for (int j = 0; j < colorTypes.Length; j++)
                     {
-                        (colorHashTable[colorTypes[j]] as BymlNode<float>).Data = GameData.Random.NextFloat();
+                        (colorHashTable[colorTypes[j]] as BymlNode<float>).Data =
+                            GameData.Random.NextFloat();
                     }
-
                 }
             }
 
             GameData.CommitToFileSystem(
-                $"RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs", 
-                inkColorByml.ToBytes().CompressZSTDBytes()
+                $"RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs",
+                FileUtils.SaveByml(inkColorByml).CompressZSTD()
             );
         }
     }
@@ -143,7 +149,8 @@ public static class ParameterRandomizer
             {
                 case BymlNodeId.Int:
                     if (typedParam.Data > 0)
-                        typedParam.Data = GameData.Random.NextInt((int)(typedParam.Data * severity)) + 1;
+                        typedParam.Data =
+                            GameData.Random.NextInt((int)(typedParam.Data * severity)) + 1;
                     else if (typedParam.Data == 0)
                         typedParam.Data = GameData.Random.NextInt((int)severity); //unfortunate rare edge case
                     else

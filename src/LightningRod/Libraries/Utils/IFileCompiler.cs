@@ -1,11 +1,12 @@
 ﻿using System.IO;
 
-namespace NintendoTools.FileFormats;
+namespace LightningRod.Libraries;
 
 /// <summary>
 /// The interface for generic file compilers.
 /// </summary>
-public interface IFileCompiler<in T> where T : class
+public interface IFileCompiler<in T>
+    where T : class
 {
     /// <summary>
     /// Compiles a file format to a file stream.

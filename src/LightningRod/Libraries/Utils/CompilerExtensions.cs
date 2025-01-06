@@ -1,11 +1,17 @@
 ﻿namespace System.Runtime.CompilerServices
 {
-    #if !NET5_0_OR_GREATER
+#if !NET5_0_OR_GREATER
     internal static class IsExternalInit;
-    #endif
+#endif
 
-    #if !NET7_0_OR_GREATER
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Struct, Inherited = false)]
+#if !NET7_0_OR_GREATER
+    [AttributeUsage(
+        AttributeTargets.Class
+            | AttributeTargets.Field
+            | AttributeTargets.Property
+            | AttributeTargets.Struct,
+        Inherited = false
+    )]
     internal sealed class RequiredMemberAttribute : Attribute;
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
@@ -19,13 +25,13 @@
 
         public const string RequiredMembers = nameof(RequiredMembers);
     }
-    #endif
+#endif
 }
 
 namespace System.Diagnostics.CodeAnalysis
 {
-    #if !NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
     [AttributeUsage(AttributeTargets.Constructor, Inherited = false)]
     internal sealed class SetsRequiredMembersAttribute : Attribute;
-    #endif
+#endif
 }

@@ -18,11 +18,12 @@ public class Crc32CHash : IHashAlgorithm
     /// <exception cref="ArgumentNullException"></exception>
     public byte[] Compute(Stream data)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        #else
-        if (data is null) throw new ArgumentNullException(nameof(data));
-        #endif
+#else
+        if (data is null)
+            throw new ArgumentNullException(nameof(data));
+#endif
 
         return _algorithm.ComputeHash(data);
     }

@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using NintendoTools.Utils;
 
-namespace NintendoTools.FileFormats.Sarc;
+namespace LightningRod.Libraries.Sarc;
 
 /// <summary>
 /// A class for parsing SARC archives.
@@ -16,11 +16,12 @@ public class SarcFileParser : IFileParser<SarcFile>
     /// <exception cref="ArgumentNullException"></exception>
     public static bool CanParseStatic(Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream, true);
         return CanParse(reader);
@@ -37,20 +38,23 @@ public class SarcFileParser : IFileParser<SarcFile>
     /// <exception cref="InvalidDataException"></exception>
     public static List<AlignmentInfo> CheckAlignment(Stream fileStream, AlignmentTable table)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream);
-        if (!CanParse(reader)) throw new InvalidDataException("File is not a SARC file.");
+        if (!CanParse(reader))
+            throw new InvalidDataException("File is not a SARC file.");
 
         //parse file metadata and header
         GetMetaData(reader, out _, out _, out var sfatOffset, out var dataOffset);
 
         //parse files
-        if (reader.ReadStringAt(sfatOffset, 4, Encoding.ASCII) != "SFAT") throw new InvalidDataException("Missing SFAT section.");
+        if (reader.ReadStringAt(sfatOffset, 4, Encoding.ASCII) != "SFAT")
+            throw new InvalidDataException("Missing SFAT section.");
         var sfatHeaderLength = reader.ReadUInt16();
         var fileCount = reader.ReadUInt16();
         reader.JumpTo(sfatOffset + sfatHeaderLength);
@@ -66,30 +70,38 @@ public class SarcFileParser : IFileParser<SarcFile>
             var fileOffset = reader.ReadInt32();
             var endOfFile = reader.ReadInt32();
 
-            infos.Add(new AlignmentInfo
-            {
-                Name = fileNameHash.ToHexString(true),
-                DataStart = dataOffset + fileOffset,
-                DataEnd = dataOffset + endOfFile,
-                Alignment = table.Default,
-                ExpectedDataStart = dataOffset + fileOffset,
-                Padding = 0
-            });
-            nameOffsets[i] = fileNameData > 0 ? ((int) fileNameData & 0x00FFFFFF) * 4 : -1;
+            infos.Add(
+                new AlignmentInfo
+                {
+                    Name = fileNameHash.ToHexString(true),
+                    DataStart = dataOffset + fileOffset,
+                    DataEnd = dataOffset + endOfFile,
+                    Alignment = table.Default,
+                    ExpectedDataStart = dataOffset + fileOffset,
+                    Padding = 0,
+                }
+            );
+            nameOffsets[i] = fileNameData > 0 ? ((int)fileNameData & 0x00FFFFFF) * 4 : -1;
         }
 
         //parse file names
-        if (reader.ReadStringAt(sfatOffset + sfatHeaderLength + fileCount * 16, 4, Encoding.ASCII) != "SFNT") throw new InvalidDataException("Missing SFNT section.");
+        if (
+            reader.ReadStringAt(sfatOffset + sfatHeaderLength + fileCount * 16, 4, Encoding.ASCII)
+            != "SFNT"
+        )
+            throw new InvalidDataException("Missing SFNT section.");
         var nameOffset = reader.Position + reader.ReadUInt16() - 4;
         var maxAlignment = 0;
         for (var i = 0; i < nameOffsets.Length; ++i)
         {
             var offset = nameOffsets[i];
-            if (offset < 0) continue;
+            if (offset < 0)
+                continue;
 
             var fileName = reader.ReadTerminatedStringAt(nameOffset + offset);
             var alignment = table.GetFromName(fileName);
-            if (alignment > maxAlignment) maxAlignment = alignment;
+            if (alignment > maxAlignment)
+                maxAlignment = alignment;
 
             infos[i].Name = fileName;
             infos[i].Alignment = alignment;
@@ -101,8 +113,13 @@ public class SarcFileParser : IFileParser<SarcFile>
         {
             var info = infos[i];
             var alignment = i == 0 ? maxAlignment : info.Alignment;
-            info.ExpectedDataStart = currentDataOffset += BinaryUtils.GetOffset(currentDataOffset, alignment);
-            info.Padding = info.DataStart - (i > 0 ? infos[i - 1].DataStart + infos[i - 1].DataLength : reader.Position);
+            info.ExpectedDataStart = currentDataOffset += BinaryUtils.GetOffset(
+                currentDataOffset,
+                alignment
+            );
+            info.Padding =
+                info.DataStart
+                - (i > 0 ? infos[i - 1].DataStart + infos[i - 1].DataLength : reader.Position);
             currentDataOffset += info.DataLength;
         }
 
@@ -120,14 +137,16 @@ public class SarcFileParser : IFileParser<SarcFile>
     /// <exception cref="InvalidDataException"></exception>
     public SarcFile Parse(Stream fileStream)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(fileStream, nameof(fileStream));
-        #else
-        if (fileStream is null) throw new ArgumentNullException(nameof(fileStream));
-        #endif
+#else
+        if (fileStream is null)
+            throw new ArgumentNullException(nameof(fileStream));
+#endif
 
         using var reader = new FileReader(fileStream);
-        if (!CanParse(reader)) throw new InvalidDataException("File is not a SARC file.");
+        if (!CanParse(reader))
+            throw new InvalidDataException("File is not a SARC file.");
 
         //parse file metadata and header
         GetMetaData(reader, out _, out var version, out var sfatOffset, out var dataOffset);
@@ -136,11 +155,12 @@ public class SarcFileParser : IFileParser<SarcFile>
         {
             BigEndian = reader.IsBigEndian,
             Version = version,
-            HasFileNames = true
+            HasFileNames = true,
         };
 
         //parse files
-        if (reader.ReadStringAt(sfatOffset, 4, Encoding.ASCII) != "SFAT") throw new InvalidDataException("Missing SFAT section.");
+        if (reader.ReadStringAt(sfatOffset, 4, Encoding.ASCII) != "SFAT")
+            throw new InvalidDataException("Missing SFAT section.");
         var sfatHeaderLength = reader.ReadUInt16();
         var fileCount = reader.ReadUInt16();
         sarcFile.HashKey = reader.ReadInt32();
@@ -160,14 +180,14 @@ public class SarcFileParser : IFileParser<SarcFile>
             var file = new SarcContent
             {
                 Name = fileNameHash.ToHexString(true),
-                Data = reader.ReadBytesAt(dataOffset + fileOffset, endOfFile - fileOffset)
+                Data = reader.ReadBytesAt(dataOffset + fileOffset, endOfFile - fileOffset),
             };
 
             files.Add(file);
 
             if (fileNameData > 0)
             {
-                nameOffsets[i] = ((int) fileNameData & 0x00FFFFFF) * 4;
+                nameOffsets[i] = ((int)fileNameData & 0x00FFFFFF) * 4;
             }
             else
             {
@@ -177,12 +197,17 @@ public class SarcFileParser : IFileParser<SarcFile>
         }
 
         //parse file names
-        if (reader.ReadStringAt(sfatOffset + sfatHeaderLength + fileCount * 16, 4, Encoding.ASCII) != "SFNT") throw new InvalidDataException("Missing SFNT section.");
+        if (
+            reader.ReadStringAt(sfatOffset + sfatHeaderLength + fileCount * 16, 4, Encoding.ASCII)
+            != "SFNT"
+        )
+            throw new InvalidDataException("Missing SFNT section.");
         var nameOffset = reader.Position + reader.ReadUInt16() - 4;
         for (var i = 0; i < nameOffsets.Length; ++i)
         {
             var offset = nameOffsets[i];
-            if (offset < 0) continue;
+            if (offset < 0)
+                continue;
             files[i].Name = reader.ReadTerminatedStringAt(nameOffset + offset);
         }
 
@@ -193,12 +218,20 @@ public class SarcFileParser : IFileParser<SarcFile>
 
     #region private methods
     //verifies that the file is a SARC archive
-    private static bool CanParse(FileReader reader) => reader.BaseStream.Length > 4 && reader.ReadStringAt(0, 4, Encoding.ASCII) == "SARC";
+    private static bool CanParse(FileReader reader) =>
+        reader.BaseStream.Length > 4 && reader.ReadStringAt(0, 4, Encoding.ASCII) == "SARC";
 
     //parses meta data
-    private static void GetMetaData(FileReader reader, out uint fileSize, out int version, out int sfatOffset, out uint dataOffset)
+    private static void GetMetaData(
+        FileReader reader,
+        out uint fileSize,
+        out int version,
+        out int sfatOffset,
+        out uint dataOffset
+    )
     {
-        if (reader.ReadUInt16At(6) == 0xFFFE) reader.IsBigEndian = true;
+        if (reader.ReadUInt16At(6) == 0xFFFE)
+            reader.IsBigEndian = true;
 
         sfatOffset = reader.ReadUInt16At(0x04);
         fileSize = reader.ReadUInt32At(0x08);

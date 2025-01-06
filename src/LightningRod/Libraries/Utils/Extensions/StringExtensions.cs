@@ -19,7 +19,8 @@ internal static class StringExtensions
     {
         foreach (var c in values)
         {
-            if (str.Contains(c)) return true;
+            if (str.Contains(c))
+                return true;
         }
         return false;
     }
@@ -29,7 +30,8 @@ internal static class StringExtensions
     {
         foreach (var value in values)
         {
-            if (str.Contains(value)) return true;
+            if (str.Contains(value))
+                return true;
         }
         return false;
     }

@@ -1,12 +1,13 @@
 ﻿using System.IO;
 
-namespace NintendoTools.FileFormats;
+namespace LightningRod.Libraries;
 
 /// <summary>
 /// Base interface for all file format serializers.
 /// </summary>
 /// <typeparam name="T">The type of the file.</typeparam>
-public interface IFileSerializer<in T> where T : class
+public interface IFileSerializer<in T>
+    where T : class
 {
     /// <summary>
     /// Serializes a file object.

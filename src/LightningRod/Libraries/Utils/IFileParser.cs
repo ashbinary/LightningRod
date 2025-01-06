@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace NintendoTools.FileFormats;
+namespace LightningRod.Libraries;
 
 /// <summary>
 /// The base interface for file parsers.
@@ -18,7 +18,8 @@ public interface IFileParser
 /// <summary>
 /// The interface for generic file parsers.
 /// </summary>
-public interface IFileParser<out T> : IFileParser where T : class
+public interface IFileParser<out T> : IFileParser
+    where T : class
 {
     /// <summary>
     /// Parses a file stream to a file format.

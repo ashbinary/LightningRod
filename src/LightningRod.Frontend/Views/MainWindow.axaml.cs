@@ -209,7 +209,8 @@ public partial class MainWindow : Window
     {
         var gameFilePath = await OpenPickerPathAndReturn(true);
 
-        var observableFields = typeof(MainWindowViewModel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+        var observableFields = typeof(MainWindowViewModel)
+            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
             .Where(field => Attribute.IsDefined(field, typeof(ObservablePropertyAttribute)));
 
         foreach (var field in observableFields)
@@ -217,9 +218,7 @@ public partial class MainWindow : Window
             Options.SetOption(field.Name, field.GetValue(Model));
         }
 
-        thunderBackend.TriggerRandomizers(
-            gameFilePath
-        );
+        thunderBackend.TriggerRandomizers(gameFilePath);
     }
 
     private void SwapRomFSandNSPInput(object sender, RoutedEventArgs e)

@@ -1,9 +1,12 @@
+using LightningRod.Libraries.Byml;
+using LightningRod.Utilities;
+
 namespace LightningRod.Randomizers;
 
-class BigWorldRandomizer
+public static class BigWorldRandomizer
 {
-    public BigWorldRandomizer()
+    public static void Randomize()
     {
-        throw new NotImplementedException();
+        Logger.Log("Starting parameter randomizer!");
     }
 }

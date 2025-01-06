@@ -18,13 +18,15 @@ public static class HashAlgorithmExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static string Compute(this IHashAlgorithm hashAlgorithm, string data)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(hashAlgorithm, nameof(hashAlgorithm));
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        #else
-        if (hashAlgorithm is null) throw new ArgumentNullException(nameof(hashAlgorithm));
-        if (data is null) throw new ArgumentNullException(nameof(data));
-        #endif
+#else
+        if (hashAlgorithm is null)
+            throw new ArgumentNullException(nameof(hashAlgorithm));
+        if (data is null)
+            throw new ArgumentNullException(nameof(data));
+#endif
 
         var hash = hashAlgorithm.Compute(Encoding.UTF8.GetBytes(data));
         return BitConverter.ToString(hash).Replace("-", "");
@@ -39,13 +41,15 @@ public static class HashAlgorithmExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static byte[] Compute(this IHashAlgorithm hashAlgorithm, byte[] data)
     {
-        #if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(hashAlgorithm, nameof(hashAlgorithm));
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        #else
-        if (hashAlgorithm is null) throw new ArgumentNullException(nameof(hashAlgorithm));
-        if (data is null) throw new ArgumentNullException(nameof(data));
-        #endif
+#else
+        if (hashAlgorithm is null)
+            throw new ArgumentNullException(nameof(hashAlgorithm));
+        if (data is null)
+            throw new ArgumentNullException(nameof(data));
+#endif
 
         using var stream = new MemoryStream(data, false);
         return hashAlgorithm.Compute(stream);

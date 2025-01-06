@@ -11,7 +11,8 @@ internal static class CollectionExtensions
     {
         foreach (var item in source)
         {
-            if (!predicate(item)) return false;
+            if (!predicate(item))
+                return false;
         }
 
         source.Add(element);

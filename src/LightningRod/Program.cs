@@ -13,7 +13,7 @@ public class Program
         var defaultOptions = new Dictionary<string, dynamic> // This is for debugging shut up
         {
             { "unimplemented", false },
-            { "randomizerSeed", "1234567890123456" }, 
+            { "randomizerSeed", "1234567890123456" },
             { "dataUnloaded", true },
             { "dataUpdateUnloaded", true },
             { "gameDataLoaded", false },
@@ -42,17 +42,14 @@ public class Program
             { "parameterSeverity", 2 },
             { "maxInkConsume", true },
             { "randomizeInkColors", true },
-            { "randomizeInkColorLock", true }
+            { "randomizeInkColorLock", true },
         };
-
 
         foreach (KeyValuePair<string, dynamic> option in defaultOptions)
         {
             Options.SetOption(option.Key, option.Value);
         }
 
-        handler.TriggerRandomizers(
-            @"C:\Users\Ash\Documents\TestData"
-        );
+        handler.TriggerRandomizers(@"C:\Users\Ash\Documents\TestData");
     }
 }

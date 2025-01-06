@@ -58,6 +58,7 @@ internal sealed class FileWriter : IDisposable
 
     //appends the given number of null bytes to the stream
     public void Pad(int count) => BaseStream.Write(stackalloc byte[count]);
+
     public void Pad(int count, byte value)
     {
         Span<byte> buffer = stackalloc byte[count];
@@ -69,35 +70,42 @@ internal sealed class FileWriter : IDisposable
     public void Align(int alignment)
     {
         var offset = BinaryUtils.GetOffset(Position, alignment);
-        if (offset > 0) Pad(offset);
+        if (offset > 0)
+            Pad(offset);
     }
+
     public void Align(int alignment, byte value)
     {
         var offset = BinaryUtils.GetOffset(Position, alignment);
-        if (offset > 0) Pad(offset, value);
+        if (offset > 0)
+            Pad(offset, value);
     }
 
     //writes an array of raw bytes to the stream
     public void Write(byte[] value)
     {
-        if (value.Length == 0) return;
+        if (value.Length == 0)
+            return;
         BaseStream.Write(value);
     }
+
     public void Write(byte[] value, int offset, int count)
     {
-        if (value.Length == 0) return;
+        if (value.Length == 0)
+            return;
         BaseStream.Write(value, offset, count);
     }
 
     //writes a span of raw bytes to the stream
     public void Write(ReadOnlySpan<byte> value)
     {
-        if (value.Length == 0) return;
+        if (value.Length == 0)
+            return;
         BaseStream.Write(value);
     }
 
     //writes a sbyte value to stream
-    public void Write(sbyte value) => BaseStream.WriteByte((byte) value);
+    public void Write(sbyte value) => BaseStream.WriteByte((byte)value);
 
     //writes a byte value to stream
     public void Write(byte value) => BaseStream.WriteByte(value);
@@ -160,10 +168,13 @@ internal sealed class FileWriter : IDisposable
 
     //writes a string value to stream
     public void Write(string value) => Write(value, Encoding.UTF8);
-    public void Write(string value, Encoding encoding) => BaseStream.Write(encoding.GetBytes(value));
+
+    public void Write(string value, Encoding encoding) =>
+        BaseStream.Write(encoding.GetBytes(value));
 
     //writes a null-terminated string value to stream
     public void WriteTerminated(string value) => Write(value + "\0", Encoding.UTF8);
+
     public void WriteTerminated(string value, Encoding encoding) => Write(value + "\0", encoding);
     #endregion
 
@@ -171,9 +182,11 @@ internal sealed class FileWriter : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        if (_disposed) return;
+        if (_disposed)
+            return;
 
-        if (!_leaveOpen) BaseStream.Dispose();
+        if (!_leaveOpen)
+            BaseStream.Dispose();
         _disposed = true;
     }
     #endregion
@@ -193,71 +206,83 @@ internal sealed class FileWriter : IDisposable
 
     private class LittleEndianBinaryWriter : IBinaryWriter
     {
-        public void Write(Span<byte> buffer, short value) => BinaryPrimitives.WriteInt16LittleEndian(buffer, value);
+        public void Write(Span<byte> buffer, short value) =>
+            BinaryPrimitives.WriteInt16LittleEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, ushort value) => BinaryPrimitives.WriteUInt16LittleEndian(buffer, value);
+        public void Write(Span<byte> buffer, ushort value) =>
+            BinaryPrimitives.WriteUInt16LittleEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, int value) => BinaryPrimitives.WriteInt32LittleEndian(buffer, value);
+        public void Write(Span<byte> buffer, int value) =>
+            BinaryPrimitives.WriteInt32LittleEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, uint value) => BinaryPrimitives.WriteUInt32LittleEndian(buffer, value);
+        public void Write(Span<byte> buffer, uint value) =>
+            BinaryPrimitives.WriteUInt32LittleEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, long value) => BinaryPrimitives.WriteInt64LittleEndian(buffer, value);
+        public void Write(Span<byte> buffer, long value) =>
+            BinaryPrimitives.WriteInt64LittleEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, ulong value) => BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
+        public void Write(Span<byte> buffer, ulong value) =>
+            BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
 
         public void Write(Span<byte> buffer, float value)
         {
-            #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
             BinaryPrimitives.WriteSingleLittleEndian(buffer, value);
-            #else
+#else
             var tmpValue = BitConverter.SingleToInt32Bits(value);
             BinaryPrimitives.WriteInt64LittleEndian(buffer, tmpValue);
-            #endif
+#endif
         }
 
         public void Write(Span<byte> buffer, double value)
         {
-            #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
             BinaryPrimitives.WriteDoubleLittleEndian(buffer, value);
-            #else
+#else
             var tmpValue = BitConverter.DoubleToInt64Bits(value);
             BinaryPrimitives.WriteInt64LittleEndian(buffer, tmpValue);
-            #endif
+#endif
         }
     }
 
     private class BigEndianBinaryWriter : IBinaryWriter
     {
-        public void Write(Span<byte> buffer, short value) => BinaryPrimitives.WriteInt16BigEndian(buffer, value);
+        public void Write(Span<byte> buffer, short value) =>
+            BinaryPrimitives.WriteInt16BigEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, ushort value) => BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
+        public void Write(Span<byte> buffer, ushort value) =>
+            BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, int value) => BinaryPrimitives.WriteInt32BigEndian(buffer, value);
+        public void Write(Span<byte> buffer, int value) =>
+            BinaryPrimitives.WriteInt32BigEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, uint value) => BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
+        public void Write(Span<byte> buffer, uint value) =>
+            BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, long value) => BinaryPrimitives.WriteInt64BigEndian(buffer, value);
+        public void Write(Span<byte> buffer, long value) =>
+            BinaryPrimitives.WriteInt64BigEndian(buffer, value);
 
-        public void Write(Span<byte> buffer, ulong value) => BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
+        public void Write(Span<byte> buffer, ulong value) =>
+            BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
 
         public void Write(Span<byte> buffer, float value)
         {
-            #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
             BinaryPrimitives.WriteSingleBigEndian(buffer, value);
-            #else
+#else
             var tmpValue = BitConverter.SingleToInt32Bits(value);
             BinaryPrimitives.WriteInt32BigEndian(buffer, tmpValue);
-            #endif
+#endif
         }
 
         public void Write(Span<byte> buffer, double value)
         {
-            #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
             BinaryPrimitives.WriteDoubleBigEndian(buffer, value);
-            #else
+#else
             var tmpValue = BitConverter.DoubleToInt64Bits(value);
             BinaryPrimitives.WriteInt64BigEndian(buffer, tmpValue);
-            #endif
+#endif
         }
     }
     #endregion

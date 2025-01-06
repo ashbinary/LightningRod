@@ -25,15 +25,17 @@ public static class HexStringExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToHexString(this byte[]? data, bool prefix)
     {
-        if (data is null) return string.Empty;
+        if (data is null)
+            return string.Empty;
 
-        #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
         var result = Convert.ToHexString(data);
-        #else
+#else
         var result = BitConverter.ToString(data).Replace("-", string.Empty);
-        #endif
+#endif
 
-        if (prefix && result.Length > 0) return "0x" + result;
+        if (prefix && result.Length > 0)
+            return "0x" + result;
         return result;
     }
 }
