@@ -52,6 +52,7 @@ public static class WeaponKitRandomizer
         for (int i = 0; i < weaponSub.Length; i++)
         {
             string RowId = ((weaponSub[i] as BymlHashTable)["__RowId"] as BymlNode<string>).Data;
+            GameData.weaponNames.WeaponInfoSub.Add(RowId);
             if (!SubBanList.Any(RowId.Contains))
                 subList.Add(RowId);
         }
@@ -61,6 +62,7 @@ public static class WeaponKitRandomizer
             string RowId = (
                 (weaponSpecial[i] as BymlHashTable)["__RowId"] as BymlNode<string>
             ).Data;
+            GameData.weaponNames.WeaponInfoSpecial.Add(RowId);
             if (!SpecialBanList.Any(RowId.Contains))
                 specialList.Add(RowId);
         }
@@ -70,6 +72,8 @@ public static class WeaponKitRandomizer
         for (int i = 0; i < weaponMain.Length; i++)
         {
             BymlHashTable? mainData = weaponMain[i] as BymlHashTable;
+
+            GameData.weaponNames.WeaponInfoMain.Add((mainData["__RowId"] as BymlNode<string>).Data);
 
             if (MainBanList.Any((mainData["__RowId"] as BymlNode<string>).Data.Contains))
                 continue;
@@ -119,8 +123,6 @@ public static class WeaponKitRandomizer
                 }
             }
         }
-
-        MiscUtils.CreateFolder("RSDB");
 
         if (Options.GetOption("randomizeKits"))
             GameData.CommitToFileSystem(

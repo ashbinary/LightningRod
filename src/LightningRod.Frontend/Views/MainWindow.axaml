@@ -104,7 +104,7 @@
             <!-- Control Buttons -->
             <StackPanel HorizontalAlignment="Right" Width="350" Margin="0,0,10,0">
                 <Button Content="Load Game Data" Width="350" Height="43" Click="SendDataToBackend" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,10,5"/>
-                <Button Content="Randomize + Save" Width="350" Height="43" Click="StartRandomizer" IsEnabled="{Binding GameDataLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
+                <Button Name="RandomizeOpt" Content="Randomize + Save" Width="350" Height="43" Click="StartRandomizer" IsEnabled="{Binding GameDataLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Save Config [TBD]" Width="172.5" Height="43" IsEnabled="{Binding Unimplemented, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
                     <Button Content="Load Config [TBD]" Width="172.5" Height="43" IsEnabled="{Binding Unimplemented, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->

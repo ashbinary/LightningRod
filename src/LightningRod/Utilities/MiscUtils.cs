@@ -26,4 +26,30 @@ public static class MiscUtils
         }
         return arrayNode;
     }
+
+    public static void SimpleAddNode<T>(this BymlHashTable table, string name, T data, BymlNodeId nodeId)
+    {
+        table.AddNode(nodeId, new BymlNode<T>(nodeId, data), name);
+    }
+
+    public static void AddHashPair<T>(this BymlHashTable table, string name, T data, BymlNodeId nodeId)
+    {
+        BymlHashPair pair = new BymlHashPair();
+        pair.Name = name;
+        pair.Id = BymlNodeId.Hash;
+        pair.Value = new BymlNode<T>(nodeId, data);
+        table.Pairs.Add(pair);
+    }
+
+    public static string GetRandomIndex(this List<string> dataTable, string constraint)
+    {
+        string data = "";
+        int tableLength = dataTable.Count;
+        while (!data.Contains(constraint))
+        {
+            data = dataTable[GameData.Random.NextInt(tableLength)];
+            Console.WriteLine($"randomized to {data}");
+        }
+        return data;
+    }
 }
