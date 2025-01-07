@@ -104,6 +104,27 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool randomizeInkColorLock;
 
+    [ObservableProperty]
+    private bool randomizeInkColorSdodr;
+    
+    [ObservableProperty]
+    private bool randomizeInkColorMsn;
+
+    [ObservableProperty]
+    private int inkColorBias;
+
+    [ObservableProperty]
+    private bool randomizeDialogue;
+
+    [ObservableProperty]
+    private bool randomizeAllText;
+
+    [ObservableProperty]
+    private bool notRandomizeWeaponNames;
+
+    [ObservableProperty]
+    private bool notRandomizeLevelNames;
+
     public MainWindowViewModel()
     {
         InitializeProperties();
@@ -150,5 +171,6 @@ public partial class MainWindowViewModel : ObservableObject
         MaxInkConsume = true;
         RandomizeInkColors = true;
         RandomizeInkColorLock = true;
+        
     }
 }

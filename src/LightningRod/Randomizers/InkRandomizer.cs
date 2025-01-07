@@ -19,11 +19,10 @@ public static class InkColorRandomizer
             for (int i = 0; i < inkColorByml.Length; i++)
             {
                 BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
+                string colorTag = (colorData["Tag"] as BymlNode<string>).Data;
 
-                if (
-                    !Options.GetOption("randomizeInkColorLock")
-                    && (colorData["__RowId"] as BymlNode<string>).Data.Contains("Support")
-                )
+                if (!colorTag.ColorContains("Option", "randomizeInkColorLock") ||
+                    !colorTag.ColorContains("Mission", "randomizeInkColorMsn"))
                     continue;
 
                 for (int t = 0; t < teamNames.Length; t++)
@@ -43,5 +42,10 @@ public static class InkColorRandomizer
                 FileUtils.SaveByml(inkColorByml).CompressZSTD()
             );
         }
+    }
+
+    public static bool ColorContains(this string colorName, string lookupName, string optionName)
+    {
+        return Options.GetOption(optionName) && !colorName.Contains(lookupName);
     }
 }
