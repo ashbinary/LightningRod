@@ -10,14 +10,17 @@ public static class BigWorldStageRandomizer
     {
         Logger.Log("Starting Alterna randomizer!");
 
-        dynamic missionMapInfo = GameData.FileSystem.ParseByml($"/RSDB/MissionMapInfo.Product.{GameData.GameVersion}.rstbl.byml.zs");
+        dynamic missionMapInfo = GameData.FileSystem.ParseByml(
+            $"/RSDB/MissionMapInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
+        );
 
         List<KeyValuePair<string, int>> msnScenes = [];
-        
+
         for (int i = 0; i < missionMapInfo.Length; i++)
         {
             string sceneName = missionMapInfo[i]["__RowId"].Data;
-            if (sceneName.Contains("_A")) msnScenes.Add(new KeyValuePair<string, int>(sceneName, i));
+            if (sceneName.Contains("_A"))
+                msnScenes.Add(new KeyValuePair<string, int>(sceneName, i));
         }
 
         SarcFile alternaPack = GameData.FileSystem.ParseSarc($"/Pack/Scene/BigWorld.pack.zs");
@@ -30,13 +33,18 @@ public static class BigWorldStageRandomizer
         for (int i = 0; i < alternaLayout.Length; i++)
         {
             dynamic alternaItem = alternaLayout[i];
-            if (!alternaItem["Gyaml"].Data.Contains("MissionGateway")) continue;
-            string kettleSceneName = alternaItem["spl__MissionGatewayBancParam"]["ChangeSceneName"].Data;
+            if (!alternaItem["Gyaml"].Data.Contains("MissionGateway"))
+                continue;
+            string kettleSceneName = alternaItem["spl__MissionGatewayBancParam"][
+                "ChangeSceneName"
+            ].Data;
 
             if (kettleSceneName.Contains("_A"))
             {
                 int randomNumber = GameData.Random.NextInt(msnScenes.Count);
-                alternaItem["spl__MissionGatewayBancParam"]["ChangeSceneName"].Data = msnScenes[randomNumber].Key;
+                alternaItem["spl__MissionGatewayBancParam"]["ChangeSceneName"].Data = msnScenes[
+                    randomNumber
+                ].Key;
                 msnScenes.RemoveAt(randomNumber);
             }
         }

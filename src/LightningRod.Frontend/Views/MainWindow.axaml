@@ -338,10 +338,10 @@
                                 <TextBlock Text="Weapon Selection" FontWeight="Bold" Margin="0,0,0,10"/>
                                 <CheckBox Content="Randomize Allowed Weapons" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Always Set First Slot To Usable Weapon" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                    <CheckBox Content="Ensure One Weapon Works" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This will prevent softlocks when playing through Hero Mode."/>
+                                            <ToolTip Content="This will prevent softlocks when playing through Hero Mode by keeping the first weapon of each stage the same as the original game. The other 2 will be replaced nonetheless."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>

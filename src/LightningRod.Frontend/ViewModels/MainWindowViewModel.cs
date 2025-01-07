@@ -1,176 +1,67 @@
 ﻿using System;
-using Avalonia.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LightningRod.Frontend.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-#pragma warning disable CA1822 // Mark members as static
-    public string ToolVersion => "0.9";
-    public string VersionString => $"(v{ToolVersion})";
-#pragma warning restore CA1822 // Mark members as static
+    public static string ToolVersion => "0.9";
+    public static string VersionString => $"(v{ToolVersion})";
 
-    [ObservableProperty]
-    private bool unimplemented;
+    /* Generic Randomizer Options */
+    [ObservableProperty] private bool unimplemented = false;
+    [ObservableProperty] private string randomizerSeed = GenerateRandomizerSeed();
+    [ObservableProperty] private bool dataUnloaded = true;
+    [ObservableProperty] private bool dataUpdateUnloaded = true;
+    [ObservableProperty] private bool gameDataLoaded = false;
+    [ObservableProperty] private bool useRomFSInstead = false;
+    /* Weapon Kit Randomization */
+    [ObservableProperty] private bool randomizeKits = true;
+    [ObservableProperty] private bool heroSubSelection = false;
+    [ObservableProperty] private bool coopSplatBomb = false;
+    [ObservableProperty] private bool allSubWeapons = false;
+    [ObservableProperty] private bool heroModeSuperLanding = false;
+    [ObservableProperty] private bool useRainmaker = false;
+    [ObservableProperty] private bool useIkuraShoot = false;
+    [ObservableProperty] private bool useAllSpecials = false;
+    [ObservableProperty] private bool include170To220p = true;
+    [ObservableProperty] private bool noPFSIncrementation = false;
+    [ObservableProperty] private bool matchPeriscopeKits = true;
+    /* Stage Randomization */
+    [ObservableProperty] private bool randomFogLevels = false;
+    [ObservableProperty] private bool swapStageEnv = false;
+    [ObservableProperty] private bool randomStageEnv = false;
+    [ObservableProperty] private bool tweakStageLayouts = false;
+    [ObservableProperty] private int tweakLevel = 3;
+    [ObservableProperty] private bool tweakStageLayoutPos = true;
+    [ObservableProperty] private bool tweakStageLayoutRot = true;
+    [ObservableProperty] private bool tweakStageLayoutSiz = true;
+    [ObservableProperty] private bool mismatchedStages = true;
+    /* Parameter + Ink Randomization */
+    [ObservableProperty] private bool randomizeParameters = true;
+    [ObservableProperty] private int parameterSeverity = 2;
+    [ObservableProperty] private bool maxInkConsume = true;
+    [ObservableProperty] private bool randomizeInkColors = true;
+    [ObservableProperty] private bool randomizeInkColorLock = false;
+    [ObservableProperty] private bool randomizeInkColorSdodr = false;
+    [ObservableProperty] private bool randomizeInkColorMsn = false;
+    [ObservableProperty] private int inkColorBias = 0;
+    /* Misc Randomization */
+    [ObservableProperty] private bool randomizeDialogue = true;
+    [ObservableProperty] private bool randomizeAllText = false;
+    [ObservableProperty] private bool notRandomizeWeaponNames = true;
+    [ObservableProperty] private bool notRandomizeLevelNames = true;
 
-    [ObservableProperty]
-    private string randomizerSeed = string.Empty;
+    public MainWindowViewModel() { }
 
-    [ObservableProperty]
-    private bool dataUnloaded;
-
-    [ObservableProperty]
-    private bool dataUpdateUnloaded;
-
-    [ObservableProperty]
-    private bool gameDataLoaded;
-
-    [ObservableProperty]
-    private bool useRomFSInstead;
-
-    [ObservableProperty]
-    private bool randomizeKits;
-
-    [ObservableProperty]
-    private bool heroSubSelection;
-
-    [ObservableProperty]
-    private bool coopSplatBomb;
-
-    [ObservableProperty]
-    private bool allSubWeapons;
-
-    [ObservableProperty]
-    private bool heroModeSuperLanding;
-
-    [ObservableProperty]
-    private bool useRainmaker;
-
-    [ObservableProperty]
-    private bool useIkuraShoot;
-
-    [ObservableProperty]
-    private bool useAllSpecials;
-
-    [ObservableProperty]
-    private bool include170To220p;
-
-    [ObservableProperty]
-    private bool noPFSIncrementation;
-
-    [ObservableProperty]
-    private bool matchPeriscopeKits;
-
-    [ObservableProperty]
-    private bool randomFogLevels;
-
-    [ObservableProperty]
-    private bool swapStageEnv;
-
-    [ObservableProperty]
-    private bool randomStageEnv;
-
-    [ObservableProperty]
-    private bool tweakStageLayouts;
-
-    [ObservableProperty]
-    private int tweakLevel;
-
-    [ObservableProperty]
-    private bool tweakStageLayoutPos;
-
-    [ObservableProperty]
-    private bool tweakStageLayoutRot;
-
-    [ObservableProperty]
-    private bool tweakStageLayoutSiz;
-
-    [ObservableProperty]
-    private bool mismatchedStages;
-
-    [ObservableProperty]
-    private bool randomizeParameters;
-
-    [ObservableProperty]
-    private int parameterSeverity;
-
-    [ObservableProperty]
-    private bool maxInkConsume;
-
-    [ObservableProperty]
-    private bool randomizeInkColors;
-
-    [ObservableProperty]
-    private bool randomizeInkColorLock;
-
-    [ObservableProperty]
-    private bool randomizeInkColorSdodr;
-    
-    [ObservableProperty]
-    private bool randomizeInkColorMsn;
-
-    [ObservableProperty]
-    private int inkColorBias;
-
-    [ObservableProperty]
-    private bool randomizeDialogue;
-
-    [ObservableProperty]
-    private bool randomizeAllText;
-
-    [ObservableProperty]
-    private bool notRandomizeWeaponNames;
-
-    [ObservableProperty]
-    private bool notRandomizeLevelNames;
-
-    public MainWindowViewModel()
+    public static string GenerateRandomizerSeed()
     {
-        InitializeProperties();
-    }
+        Random random = new();
+        string randomNumber = string.Empty;
 
-    private void InitializeProperties()
-    {
-        Unimplemented = false;
-        DataUnloaded = true;
-        DataUpdateUnloaded = true;
-        UseRomFSInstead = false;
-        GameDataLoaded = false;
-        RandomizeKits = true;
+        for (int i = 0; i < 16; i++)
+            randomNumber += random.Next(0, 9);
 
-        Random rand = new();
-        RandomizerSeed = Math.Floor(
-                (rand.NextDouble() * (9999999999999999 - 1000000000000000)) + 1000000000000000
-            )
-            .ToString();
-
-        HeroSubSelection = false;
-        CoopSplatBomb = false;
-        AllSubWeapons = false;
-        HeroModeSuperLanding = false;
-        UseRainmaker = false;
-        UseIkuraShoot = false;
-        UseAllSpecials = false;
-        Include170To220p = true;
-        NoPFSIncrementation = false;
-        MatchPeriscopeKits = true;
-
-        RandomFogLevels = false;
-        RandomStageEnv = false;
-        SwapStageEnv = false;
-        TweakStageLayouts = true;
-        TweakLevel = 3;
-        TweakStageLayoutPos = true;
-        TweakStageLayoutRot = false;
-        TweakStageLayoutSiz = false;
-        MismatchedStages = true;
-
-        RandomizeParameters = false;
-        ParameterSeverity = 2;
-        MaxInkConsume = true;
-        RandomizeInkColors = true;
-        RandomizeInkColorLock = true;
-        
+        return randomNumber;
     }
 }

@@ -27,12 +27,22 @@ public static class MiscUtils
         return arrayNode;
     }
 
-    public static void SimpleAddNode<T>(this BymlHashTable table, string name, T data, BymlNodeId nodeId)
+    public static void SimpleAddNode<T>(
+        this BymlHashTable table,
+        string name,
+        T data,
+        BymlNodeId nodeId
+    )
     {
         table.AddNode(nodeId, new BymlNode<T>(nodeId, data), name);
     }
 
-    public static void AddHashPair<T>(this BymlHashTable table, string name, T data, BymlNodeId nodeId)
+    public static void AddHashPair<T>(
+        this BymlHashTable table,
+        string name,
+        T data,
+        BymlNodeId nodeId
+    )
     {
         BymlHashPair pair = new BymlHashPair();
         pair.Name = name;

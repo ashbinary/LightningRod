@@ -21,8 +21,10 @@ public static class InkColorRandomizer
                 BymlHashTable? colorData = inkColorByml[i] as BymlHashTable;
                 string colorTag = (colorData["Tag"] as BymlNode<string>).Data;
 
-                if (!colorTag.ColorContains("Option", "randomizeInkColorLock") ||
-                    !colorTag.ColorContains("Mission", "randomizeInkColorMsn"))
+                if (
+                    !colorTag.ColorContains("Option", "randomizeInkColorLock")
+                    || !colorTag.ColorContains("Mission", "randomizeInkColorMsn")
+                )
                     continue;
 
                 for (int t = 0; t < teamNames.Length; t++)

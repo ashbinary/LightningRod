@@ -21,6 +21,6 @@ public static class BigWorldRandomizer
         Normal = 0,
         Hero = 1,
         Special = 2,
-        MainAndSpecial = 3
+        MainAndSpecial = 3,
     }
 }
