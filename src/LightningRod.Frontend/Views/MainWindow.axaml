@@ -336,41 +336,53 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                             <StackPanel>
                                 <TextBlock Text="Weapon Selection" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <CheckBox Content="Randomize Allowed Weapons" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Allowed Weapons" IsChecked="{Binding RandomizeHeroWeapons, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Ensure One Weapon Works" IsEnabled="{Binding HeroSubSelection, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                    <CheckBox Content="Ensure One Weapon Works" IsEnabled="{Binding EnsureFirstHeroWeapon, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This will prevent softlocks when playing through Hero Mode by keeping the first weapon of each stage the same as the original game. The other 2 will be replaced nonetheless."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Power Egg Reward" IsChecked="{Binding UseRainmaker, Mode=TwoWay}"/>
+                                <TextBlock Text="Hero Mode Stages" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <CheckBox Content="Randomize Kettles" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Power Egg Reward" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Stage Skybox" IsChecked="{Binding RandomizeStageSkybox, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Stage BGM" IsChecked="{Binding RandomizeStageMusic, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
                     <StackPanel Width="350" Margin="5,0,0,0">
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                             <StackPanel>
-                                <TextBlock Text="Hero Mode Stages" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <CheckBox Content="Randomize Kettles" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Special-Only Stages" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
-                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,10,0,10"/>
-                                <CheckBox Content="Randomize Mission Enemy Parameters" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <TextBlock Text="The Crater" FontWeight="Bold" Margin="0,0,0,10"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Randomize Mission Enemies" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                    <CheckBox Content="Randomize Crater Levels" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="Level 1 of The Crater will not be randomized, as it is required for the game to work properly."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <CheckBox Content="Randomize Octarian Parameters" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Randomize Octarians" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This shuffles around all the data for all Octarians, meaning that any Octarian will appear in the place of another. Is this playable? Maybe."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
+                                <CheckBox Content="Randomize Fuzzy Ooze Cost" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Hero Gear Upgrade Tree" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
                                 <CheckBox Content="Set All Level Fees To 0" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Set All Level Completion Rewards To 9999" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                    <CheckBox Content="Set Re-Completion Rewards to 9999" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="Not recommended for those with low self-control."/>
+                                            <ToolTip Content="Meant for esaping Fuzzy Ooze softlocks. Not recommended for those with low self-control."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
@@ -420,6 +432,14 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Other" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize BGM" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

@@ -43,7 +43,6 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool maxInkConsume = true;
     [ObservableProperty] private bool randomizeInkColors = true;
     [ObservableProperty] private bool randomizeInkColorLock = false;
-    [ObservableProperty] private bool randomizeInkColorSdodr = false;
     [ObservableProperty] private bool randomizeInkColorMsn = false;
     [ObservableProperty] private int inkColorBias = 0;
     /* Misc Randomization */
@@ -51,6 +50,14 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool randomizeAllText = false;
     [ObservableProperty] private bool notRandomizeWeaponNames = true;
     [ObservableProperty] private bool notRandomizeLevelNames = true;
+    /* Hero Mode Randomization */
+    [ObservableProperty] private bool randomizeHeroWeapons = true;
+    [ObservableProperty] private bool ensureFirstHeroWeapon = true;
+    [ObservableProperty] private bool randomizeLevelReward = false;
+    [ObservableProperty] private bool randomizeKettles = true;
+    [ObservableProperty] private bool randomizeStageSkybox = true;
+    [ObservableProperty] private bool randomizeStageMusic = true;
+    
 
     public MainWindowViewModel() { }
 

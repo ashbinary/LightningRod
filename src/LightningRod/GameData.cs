@@ -15,8 +15,8 @@ public static class GameData
 
     public static void CommitToFileSystem(string filePath, byte[] newData)
     {
-        string? directoryPath = Path.GetDirectoryName($"{DataPath}/{filePath}");
-        if (!Directory.Exists(directoryPath))
+        string? directoryPath = Path.GetDirectoryName($"{filePath}");
+        if (!Directory.Exists($"{DataPath}/{directoryPath}"))
             MiscUtils.CreateFolder(directoryPath);
         using FileStream fileSaver = File.Create($"{DataPath}/{filePath}");
         fileSaver.Write(newData);

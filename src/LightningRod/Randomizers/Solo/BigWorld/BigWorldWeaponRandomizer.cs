@@ -26,14 +26,19 @@ public static class BigWorldWeaponRandomizer
                 continue; // Staff roll is a special scene and does not have all this, so ignore
 
             dynamic oldOctaSupplyArray = null;
-
-            if (missionMapInfo[i]["OctaSupplyWeaponInfoArray"].Length > 0)
-                oldOctaSupplyArray = missionMapInfo[i]["OctaSupplyWeaponInfoArray"];
             var newSupplyArray = new BymlArrayNode(); // Reset it
 
-            newSupplyArray.AddNodeToArray(oldOctaSupplyArray[0]);
+            if (missionMapInfo[i]["OctaSupplyWeaponInfoArray"].Length > 0)
+            {
+                oldOctaSupplyArray = missionMapInfo[i]["OctaSupplyWeaponInfoArray"];
+                newSupplyArray.AddNodeToArray(oldOctaSupplyArray[0]);
+            }
+            else
+            {
+                oldOctaSupplyArray = new BymlArrayNode();
+            }
 
-            for (int msn = 0; msn < 2; msn++)
+            for (int msn = 0; msn < 3 - oldOctaSupplyArray.Length; msn++)
             {
                 dynamic msnNode = CreateNewMsnNode();
                 msnNode["WeaponMain"].Data =
