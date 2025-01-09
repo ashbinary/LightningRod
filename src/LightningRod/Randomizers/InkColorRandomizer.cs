@@ -22,8 +22,8 @@ public static class InkColorRandomizer
                 string colorTag = (colorData["Tag"] as BymlNode<string>).Data;
 
                 if (
-                    !colorTag.ColorContains("Option", "randomizeInkColorLock")
-                    || !colorTag.ColorContains("Mission", "randomizeInkColorMsn")
+                    colorTag.ColorContains("Option", "randomizeInkColorLock")
+                    || colorTag.ColorContains("Mission", "randomizeInkColorMsn")
                 )
                     continue;
 
@@ -48,6 +48,7 @@ public static class InkColorRandomizer
 
     public static bool ColorContains(this string colorName, string lookupName, string optionName)
     {
-        return Options.GetOption(optionName) && !colorName.Contains(lookupName);
+        // i deaduzz do not know how this works bro
+        return !Options.GetOption(optionName) && colorName.Contains(lookupName);
     }
 }

@@ -35,6 +35,7 @@ public class BaseHandler(IFileSystem baseFs)
         ParameterRandomizer.Randomize();
         MiscRandomizer.Randomize();
         BigWorldRandomizer.Randomize();
+        InkColorRandomizer.Randomize();
 
         Logger.MakeFile();
     }
