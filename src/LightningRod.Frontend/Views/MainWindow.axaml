@@ -94,9 +94,12 @@
             <StackPanel Width="350" Margin="0,0,10,0">
                 <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                     <StackPanel>
-                        <CheckBox Content="Load Game Data from romFS" HorizontalAlignment="Center" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
-                        <Button Name="LoadBaseNSP" Content="Load Base .nsp/.xci File" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
-                        <Button Name="LoadUpdateNSP" Content="Load Update .nsp/.xci File" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUpdateUnloaded, Mode=OneWay}" IsVisible="{Binding UseRomFSInstead, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                        <CheckBox Content="Use RomFS Directory" HorizontalAlignment="Center" Height="35" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
+                        <Button Name="LoadBaseNSP" Content="Load Base (.nsp/.xci File)" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
+                        <StackPanel Orientation="Horizontal" Width="350" Margin="20,0,10,0">
+                            <Button Name="LoadUpdateNSP" Content="Load Update" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUpdateUnloaded, Mode=OneWay}" IsVisible="{Binding UseRomFSInstead, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                            <Button Name="LoadDLCNSP" Content="Load DLC" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUpdateUnloaded, Mode=OneWay}"/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -106,8 +109,8 @@
                 <Button Content="Load Game Data" Width="350" Height="43" Click="SendDataToBackend" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,10,5"/>
                 <Button Name="RandomizeOpt" Content="Randomize + Save" Width="350" Height="43" Click="StartRandomizer" IsEnabled="{Binding GameDataLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Save Config [TBD]" Width="172.5" Height="43" IsEnabled="{Binding Unimplemented, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
-                    <Button Content="Load Config [TBD]" Width="172.5" Height="43" IsEnabled="{Binding Unimplemented, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
+                    <Button Content="Save Config" Width="172.5" Click="ExportOptions" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
+                    <Button Content="Load Config" Width="172.5" Click="ImportOptions" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
                 </StackPanel>
             </StackPanel>
         </StackPanel>
@@ -311,8 +314,8 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Ink Color Bias:" Margin="0,5,10,10"/>
                                     <Slider x:Name="ColorBias"
-                                            Minimum="-128"
-                                            Maximum="128"
+                                            Minimum="-64"
+                                            Maximum="64"
                                             Value="{Binding InkColorBias, Mode=TwoWay}"
                                             Margin="0,5,0,10"
                                             TickFrequency="1"

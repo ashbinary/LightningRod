@@ -11,6 +11,7 @@ public static class Logger
 
     public static void Log(string message)
     {
+        Console.WriteLine(message);
         logBuffer.AppendLine($"[{DateTime.Now:HH:mm:ss.ff}] {message}");
     }
 

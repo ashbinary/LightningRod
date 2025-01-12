@@ -33,8 +33,10 @@ public static class InkColorRandomizer
                         colorData[$"{teamNames[t]}Color"] as BymlHashTable;
                     for (int j = 0; j < colorTypes.Length; j++)
                     {
+                        float inkColorValue =
+                            GameData.Random.NextInt(255) + Options.GetOption("inkColorBias");
                         (colorHashTable[colorTypes[j]] as BymlNode<float>).Data =
-                            GameData.Random.NextFloat();
+                            Math.Clamp(inkColorValue, 0, 255) / 255;
                     }
                 }
             }

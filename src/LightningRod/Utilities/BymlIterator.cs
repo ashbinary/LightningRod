@@ -4,14 +4,14 @@ namespace LightningRod.Utilities;
 
 public class BymlIterator
 {
-    public BymlHashTable IterateParams(BymlHashTable paramFile)
+    public BymlHashTable IterateParams(BymlHashTable paramFile, string paramsKey)
     {
-        if (!paramFile.ContainsKey("GameParameters"))
+        if (!paramFile.ContainsKey(paramsKey))
             return paramFile;
 
-        BymlHashTable paramData = (BymlHashTable)paramFile["GameParameters"];
+        BymlHashTable paramData = (BymlHashTable)paramFile[paramsKey];
         paramData = (BymlHashTable)CheckType(paramData);
-        paramFile.SetNode("GameParameters", paramData);
+        paramFile.SetNode(paramsKey, paramData);
         return paramFile;
     }
 

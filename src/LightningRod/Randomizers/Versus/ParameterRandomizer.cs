@@ -24,7 +24,9 @@ public static class ParameterRandomizer
                 new Byml(new MemoryStream(paramFileSarc.Data)).Root;
 
             BymlIterator paramIterator = new();
-            paramFileSarc.Data = FileUtils.SaveByml(paramIterator.IterateParams(paramFile));
+            paramFileSarc.Data = FileUtils.SaveByml(
+                paramIterator.IterateParams(paramFile, "GameParameters")
+            );
         }
 
         GameData.CommitToFileSystem(

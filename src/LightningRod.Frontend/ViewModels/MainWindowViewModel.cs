@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace LightningRod.Frontend.ViewModels;
 
@@ -9,12 +12,12 @@ public partial class MainWindowViewModel : ObservableObject
     public static string VersionString => $"(v{ToolVersion})";
 
     /* Generic Randomizer Options */
-    [ObservableProperty] private bool unimplemented = false;
-    [ObservableProperty] private string randomizerSeed = GenerateRandomizerSeed();
-    [ObservableProperty] private bool dataUnloaded = true;
-    [ObservableProperty] private bool dataUpdateUnloaded = true;
-    [ObservableProperty] private bool gameDataLoaded = false;
-    [ObservableProperty] private bool useRomFSInstead = false;
+    [ObservableProperty, JsonIgnore] private bool unimplemented = false;
+    [ObservableProperty, JsonIgnore] private string randomizerSeed = GenerateRandomizerSeed();
+    [ObservableProperty, JsonIgnore] private bool dataUnloaded = true;
+    [ObservableProperty, JsonIgnore] private bool dataUpdateUnloaded = true;
+    [ObservableProperty, JsonIgnore] private bool gameDataLoaded = false;
+    [ObservableProperty, JsonIgnore] private bool useRomFSInstead = false;
     /* Weapon Kit Randomization */
     [ObservableProperty] private bool randomizeKits = true;
     [ObservableProperty] private bool heroSubSelection = false;
@@ -70,5 +73,23 @@ public partial class MainWindowViewModel : ObservableObject
             randomNumber += random.Next(0, 9);
 
         return randomNumber;
+    }
+
+    public void ImportOptions(string filePath)
+    {
+        var jsonData = File.ReadAllText(filePath);
+        var options = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonData);
+
+        if (options == null) return;
+
+        foreach (KeyValuePair<string, object> option in options)
+        {
+            var property = GetType().GetProperty(option.Key);
+            if (property != null && property.CanWrite)
+            {
+                var value = Convert.ChangeType(option.Value, property.PropertyType);
+                property.SetValue(this, value);
+            }
+        }
     }
 }

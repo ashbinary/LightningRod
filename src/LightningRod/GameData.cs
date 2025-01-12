@@ -22,6 +22,12 @@ public static class GameData
         fileSaver.Write(newData);
         FileSystem.Commit();
     }
+
+    public static bool IsNewerVersion(int version)
+    {
+        Logger.Log($"Checking if {GameVersion} is newer than {version}...");
+        return version <= int.Parse(GameVersion);
+    }
 }
 
 public class WeaponInfo // Info is kept for side order and msn randomizers

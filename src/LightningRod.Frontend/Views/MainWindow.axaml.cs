@@ -28,6 +28,7 @@ using LibHac.Tools.FsSystem.NcaUtils;
 using LightningRod.Frontend.ViewModels;
 using LightningRod.Randomizers;
 using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace LightningRod.Frontend.Views;
 
@@ -35,6 +36,9 @@ public partial class MainWindow : Window
 {
     public static FilePickerFileType SwitchFiles { get; } =
         new("Nintendo Switch Packages") { Patterns = ["*.nsp", "*.xci"] };
+
+    public static FilePickerFileType ConfigFiles { get; } =
+        new("LightningRod Config Files") { Patterns = ["*.config", "*.json"] };
 
     IFileSystem HoianBaseFiles;
     SharedRef<IFileSystem> HoianTempBase,
@@ -68,7 +72,10 @@ public partial class MainWindow : Window
         }
     }
 
-    public static async Task<string> OpenPickerPathAndReturn(bool isRomFS)
+    public static async Task<string> OpenPickerPathAndReturn(
+        bool isDirectory,
+        FilePickerOpenOptions options = null
+    )
     {
         var mainWindow =
             (
@@ -79,7 +86,7 @@ public partial class MainWindow : Window
             ) ?? throw new Exception();
         var storageProvider = mainWindow.StorageProvider;
 
-        if (isRomFS)
+        if (isDirectory)
         {
             var loadedFolderData = await storageProvider.OpenFolderPickerAsync(
                 new FolderPickerOpenOptions { Title = "Open Directory", AllowMultiple = false }
@@ -90,14 +97,7 @@ public partial class MainWindow : Window
             return loadedFolderData[0].Path.LocalPath;
         }
 
-        var loadedData = await storageProvider.OpenFilePickerAsync(
-            new FilePickerOpenOptions
-            {
-                Title = "Open Game File",
-                FileTypeFilter = [SwitchFiles],
-                AllowMultiple = false,
-            }
-        );
+        var loadedData = await storageProvider.OpenFilePickerAsync(options);
 
         if (loadedData.Count < 1)
             return null;
@@ -119,7 +119,15 @@ public partial class MainWindow : Window
 
     public async Task LoadGameFileAsync(bool isUpdateFile)
     {
-        var gameFilePath = await OpenPickerPathAndReturn(false);
+        var gameFilePath = await OpenPickerPathAndReturn(
+            false,
+            new FilePickerOpenOptions
+            {
+                Title = "Open Game File",
+                FileTypeFilter = [SwitchFiles],
+                AllowMultiple = false,
+            }
+        );
 
         if (gameFilePath != null)
         {
@@ -137,7 +145,7 @@ public partial class MainWindow : Window
                             .Create(ref HoianTempBase, ref LibHacFile)
                             .ThrowIfFailure();
                         Model.DataUnloaded = false;
-                        this.FindControl<Button>("LoadBaseNSP").Content = "NSP file loaded!";
+                        this.FindControl<Button>("LoadBaseNSP").Content = "Base Loaded (NSP)";
                     }
                     else
                     {
@@ -145,8 +153,7 @@ public partial class MainWindow : Window
                             .Create(ref HoianTempUpdate, ref LibHacFile)
                             .ThrowIfFailure();
                         Model.DataUpdateUnloaded = false;
-                        this.FindControl<Button>("LoadUpdateNSP").Content =
-                            "Update NSP file loaded!";
+                        this.FindControl<Button>("LoadUpdateNSP").Content = "Update Loaded";
                     }
 
                     break;
@@ -158,7 +165,7 @@ public partial class MainWindow : Window
                         xci.OpenPartition(XciPartitionType.Secure)
                     );
                     Model.DataUnloaded = false;
-                    this.FindControl<Button>("LoadBaseNSP").Content = "XCI file loaded!";
+                    this.FindControl<Button>("LoadBaseNSP").Content = "Base Loaded (XCI)";
 
                     break;
                 default:
@@ -169,19 +176,15 @@ public partial class MainWindow : Window
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e)
     {
-        // TODO: Fix base NSP only
         if (!Model.UseRomFSInstead)
-        { // if it sucks shit
-            if (Model.DataUpdateUnloaded)
-            {
-                HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempBase.Get);
-            }
-            else
-            {
-                HoianBaseFiles = new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
-            }
+        {
+            HoianBaseFiles = Model.DataUpdateUnloaded
+                ? HoianTempBase.Get
+                : new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
+
             var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);
 
+            // Get base NCA data
             Title baseNcaTitle = filesystem.Titles[0x0100C2500FC20000];
             SwitchFsNca baseNca = baseNcaTitle.MainNca;
             IFileSystem baseNcaData = baseNca.OpenFileSystem(
@@ -189,11 +192,21 @@ public partial class MainWindow : Window
                 IntegrityCheckLevel.IgnoreOnInvalid
             );
 
-            IFileSystem updateNcaData = filesystem
-                .Titles[filesystem.Applications[0x0100C2500FC20000].Patch.Id]
-                .MainNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.IgnoreOnInvalid);
+            if (Model.DataUpdateUnloaded)
+            {
+                HoianBaseFiles = baseNcaData;
+            }
+            else
+            {
+                IFileSystem updateNcaData = filesystem
+                    .Titles[filesystem.Applications[0x0100C2500FC20000].Patch.Id]
+                    .MainNca.OpenFileSystem(
+                        NcaSectionType.Data,
+                        IntegrityCheckLevel.IgnoreOnInvalid
+                    );
 
-            HoianBaseFiles = new LayeredFileSystem(baseNcaData, updateNcaData);
+                HoianBaseFiles = new LayeredFileSystem(baseNcaData, updateNcaData);
+            }
         }
 
         thunderBackend = new BaseHandler(HoianBaseFiles);
@@ -203,10 +216,10 @@ public partial class MainWindow : Window
     // So it'll attach to the button lol
     private void StartRandomizer(object? sender, RoutedEventArgs e)
     {
-        _ = StartRandomizerAsync(sender, e);
+        StartRandomizerAsync(sender, e);
     }
 
-    private async Task StartRandomizerAsync(object? sender, RoutedEventArgs e)
+    private async void StartRandomizerAsync(object? sender, RoutedEventArgs e)
     {
         var gameFilePath = await OpenPickerPathAndReturn(true);
 
@@ -222,25 +235,60 @@ public partial class MainWindow : Window
         thunderBackend.TriggerRandomizers(gameFilePath);
     }
 
+    private void ExportOptions(object? sender, RoutedEventArgs e)
+    {
+        AsyncExportOptions();
+    }
+
+    private async void AsyncExportOptions()
+    {
+        var optionFolder = await OpenPickerPathAndReturn(true);
+        var jsonData = JsonConvert.SerializeObject(Model);
+
+        using (StreamWriter fileStream = new StreamWriter(optionFolder + "\\LightningRod.config"))
+        {
+            fileStream.Write(jsonData);
+        }
+    }
+
+    private void ImportOptions(object? sender, RoutedEventArgs e)
+    {
+        AsyncImportOptions();
+    }
+
+    private async void AsyncImportOptions()
+    {
+        var optionPath = await OpenPickerPathAndReturn(
+            false,
+            new FilePickerOpenOptions
+            {
+                Title = "Open Config File",
+                FileTypeFilter = [ConfigFiles],
+                AllowMultiple = false,
+            }
+        );
+        Model.ImportOptions(optionPath);
+    }
+
     private void SwapRomFSandNSPInput(object sender, RoutedEventArgs e)
     {
         var checkBox = sender as CheckBox;
         var button = this.FindControl<Button>("LoadBaseNSP");
-        var buttonUpdate = this.FindControl<Button>("LoadUpdateNSP");
+        var buttonUpdate = this.FindControl<Button>("LoadDLCNSP");
 
         if (checkBox != null && button != null)
         {
             if (checkBox.IsChecked == true)
             {
-                button.Content = "Load romFS Directory";
-                buttonUpdate.Content = "Disabled"; // lol this is unused but idgaf enough to remove
-                button.Height = 75;
+                button.Content = "Load RomFS Dump";
+                buttonUpdate.Content = "Load DLC RomFS Dump"; // lol this is unused but idgaf enough to remove // NOT ANYMORE!
+                buttonUpdate.Width = 300;
             }
             else
             {
-                button.Content = "Load Base .nsp/.xci File";
-                buttonUpdate.Content = "Load Update .nsp File";
-                button.Height = 35;
+                button.Content = "Load Base (.nsp/.xci File)";
+                buttonUpdate.Content = "Load DLC";
+                buttonUpdate.Width = 147.5;
             }
         }
     }

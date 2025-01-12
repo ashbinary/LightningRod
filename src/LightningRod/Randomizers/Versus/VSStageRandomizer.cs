@@ -19,10 +19,12 @@ public static class VSStageRandomizer
         );
 
         SarcFile paramPack = GameData.FileSystem.ParseSarc($"/Pack/Params.pack.zs");
+        List<string> versusSceneRowIds = [];
 
         foreach (dynamic versusScene in versusSceneInfo.Array)
         {
             string versusSceneName = versusScene["__RowId"].Data;
+            versusSceneRowIds.Add(versusSceneName);
 
             Byml stageBanc = null;
             byte[] rawBancData = [];
@@ -83,28 +85,6 @@ public static class VSStageRandomizer
                 }
             }
 
-            string[] sceneInfoLabels = ["StageIconBanner", "StageIconL", "StageIconS"];
-            BymlArrayNode newSceneInfo = new();
-
-            if (Options.GetOption("mismatchedStages"))
-            {
-                foreach (BymlHashTable scene in sceneInfo.Array)
-                {
-                    if (((BymlNode<string>)scene["__RowId"]).Data != versusSceneName)
-                        continue;
-
-                    for (int i = 0; i < sceneInfoLabels.Length; i++)
-                    {
-                        string newStage = versusSceneInfo[
-                            GameData.Random.NextInt(versusSceneInfo.Length)
-                        ]["__RowId"].Data;
-                        newStage = newStage.TrimEnd(['0', '1', '2', '3', '4', '5']);
-                        ((BymlNode<string>)scene[sceneInfoLabels[i]]).Data = newStage;
-                    }
-                    break;
-                }
-            }
-
             if (paramPack.GetSarcFileIndex($"Banc/{versusSceneName}.bcett.byml") == -1)
                 paramPack.Files.Add(
                     new SarcContent()
@@ -119,10 +99,26 @@ public static class VSStageRandomizer
                     .Data = FileUtils.SaveByml(stageBanc.Root);
         }
 
-        MiscUtils.CreateFolder("Pack");
+        string[] sceneInfoLabels = ["StageIconBanner", "StageIconL", "StageIconS"];
 
-        if (Options.GetOption("mismatchedStages"))
+        if (Options.GetOption("mismatchedStages") && GameData.IsNewerVersion(120)) //SceneInfo was changed in 1.2.0 to make this possible
         {
+            foreach (BymlHashTable scene in sceneInfo.Array)
+            {
+                if (!versusSceneRowIds.Contains((scene["__RowId"] as BymlNode<string>).Data))
+                    continue;
+
+                for (int i = 0; i < sceneInfoLabels.Length; i++)
+                {
+                    string newStage = versusSceneInfo[
+                        GameData.Random.NextInt(versusSceneInfo.Length)
+                    ]["__RowId"].Data;
+                    newStage = newStage.TrimEnd(['0', '1', '2', '3', '4', '5']);
+                    ((BymlNode<string>)scene[sceneInfoLabels[i]]).Data = newStage;
+                }
+                break;
+            }
+
             GameData.CommitToFileSystem(
                 $"RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs",
                 FileUtils.SaveByml(sceneInfo).CompressZSTD()
