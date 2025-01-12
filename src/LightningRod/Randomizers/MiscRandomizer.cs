@@ -61,7 +61,7 @@ public static class MiscRandomizer
         MiscUtils.CreateFolder("Mals");
 
         GameData.CommitToFileSystem(
-            $"Mals/USen.Product.{GameData.GameVersion}.sarc.zs",
+            $"/Mals/USen.Product.{GameData.GameVersion}.sarc.zs",
             FileUtils.SaveSarc(msbtSarc).CompressZSTD()
         );
     }

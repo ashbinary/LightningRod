@@ -2,9 +2,9 @@ using LightningRod.Libraries.Byml;
 
 namespace LightningRod.Utilities;
 
-public class BymlIterator
+public static class BymlIterator
 {
-    public BymlHashTable IterateParams(BymlHashTable paramFile, string paramsKey)
+    public static BymlHashTable IterateParams(BymlHashTable paramFile, string paramsKey)
     {
         if (!paramFile.ContainsKey(paramsKey))
             return paramFile;
@@ -15,7 +15,7 @@ public class BymlIterator
         return paramFile;
     }
 
-    public IBymlNode CheckType(IBymlNode paramData)
+    public static IBymlNode CheckType(IBymlNode paramData)
     {
         BymlNodeId dataType = paramData.Id;
         switch (dataType)
@@ -36,7 +36,7 @@ public class BymlIterator
         return paramData;
     }
 
-    public BymlHashTable HandleHashTable(BymlHashTable paramData)
+    public static BymlHashTable HandleHashTable(BymlHashTable paramData)
     {
         foreach (string paramKey in paramData.Keys)
         {
@@ -50,7 +50,7 @@ public class BymlIterator
         return paramData;
     }
 
-    public BymlArrayNode HandleArrayNode(BymlArrayNode paramData)
+    public static BymlArrayNode HandleArrayNode(BymlArrayNode paramData)
     {
         for (int i = 0; i < paramData.Length; i++)
         {

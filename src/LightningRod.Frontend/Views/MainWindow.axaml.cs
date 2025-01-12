@@ -186,12 +186,12 @@ public partial class MainWindow : Window
         }
     }
 
-
-    private void HandlePartitionData(ref SharedRef<IFileSystem> hoianData, ref SharedRef<IStorage> libHacFile)
+    private void HandlePartitionData(
+        ref SharedRef<IFileSystem> hoianData,
+        ref SharedRef<IStorage> libHacFile
+    )
     {
-        new PartitionFileSystemCreator()
-        .Create(ref hoianData, ref libHacFile)
-        .ThrowIfFailure();
+        new PartitionFileSystemCreator().Create(ref hoianData, ref libHacFile).ThrowIfFailure();
     }
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e)
@@ -205,17 +205,18 @@ public partial class MainWindow : Window
         else
         {
             List<IFileSystem> addedFilesystems = [HoianTempBase.Get];
-            if (Model.IsUpdateLoaded) addedFilesystems.Add(HoianTempUpdate.Get);
-            if (Model.IsDLCLoaded) addedFilesystems.Add(HoianTempDLC.Get);
+            if (Model.IsUpdateLoaded)
+                addedFilesystems.Add(HoianTempUpdate.Get);
+            if (Model.IsDLCLoaded)
+                addedFilesystems.Add(HoianTempDLC.Get);
             HoianBaseFiles = new LayeredFileSystem(addedFilesystems);
 
             var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);
             addedFilesystems = [];
 
-            IFileSystem baseNcaData = filesystem.Titles[0x0100C2500FC20000].MainNca.OpenFileSystem(
-                NcaSectionType.Data,
-                IntegrityCheckLevel.IgnoreOnInvalid
-            );
+            IFileSystem baseNcaData = filesystem
+                .Titles[0x0100C2500FC20000]
+                .MainNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.IgnoreOnInvalid);
             addedFilesystems.Add(baseNcaData);
 
             if (Model.IsUpdateLoaded)
@@ -233,7 +234,7 @@ public partial class MainWindow : Window
             if (Model.IsDLCLoaded)
             {
                 IFileSystem dlcNcaData = filesystem
-                    .Titles[filesystem.Applications[0x0100C2500FC20000].AddOnContent[0].Id]
+                    .Titles[filesystem.Applications[0x0100C2500FC20000].AddOnContent[0].Id] // Side Order is AOC102, but Inkopolis Plaza/Add On Bonus will never be loaded
                     .MainNca.OpenFileSystem(
                         NcaSectionType.Data,
                         IntegrityCheckLevel.IgnoreOnInvalid
@@ -345,6 +346,6 @@ public partial class MainWindow : Window
     {
         Base,
         Update,
-        DLC
+        DLC,
     }
 }

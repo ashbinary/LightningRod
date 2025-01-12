@@ -42,7 +42,7 @@ public static class InkColorRandomizer
             }
 
             GameData.CommitToFileSystem(
-                $"RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs",
+                $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs",
                 FileUtils.SaveByml(inkColorByml).CompressZSTD()
             );
         }

@@ -126,7 +126,7 @@ public static class WeaponKitRandomizer
 
         if (Options.GetOption("randomizeKits"))
             GameData.CommitToFileSystem(
-                $"RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs",
+                $"/RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs",
                 FileUtils.SaveByml(weaponMain).CompressZSTD()
             );
     }

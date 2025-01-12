@@ -120,7 +120,7 @@ public static class VSStageRandomizer
             }
 
             GameData.CommitToFileSystem(
-                $"RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs",
+                $"/RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs",
                 FileUtils.SaveByml(sceneInfo).CompressZSTD()
             );
         }
@@ -128,7 +128,7 @@ public static class VSStageRandomizer
         if (Options.GetOption("tweakStageLayouts"))
         {
             GameData.CommitToFileSystem(
-                "Pack/Params.pack.zs",
+                "/Pack/Params.pack.zs",
                 FileUtils.SaveSarc(paramPack).CompressZSTD()
             );
         }

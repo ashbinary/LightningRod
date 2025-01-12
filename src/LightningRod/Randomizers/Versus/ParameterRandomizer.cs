@@ -23,14 +23,13 @@ public static class ParameterRandomizer
             BymlHashTable paramFile = (BymlHashTable)
                 new Byml(new MemoryStream(paramFileSarc.Data)).Root;
 
-            BymlIterator paramIterator = new();
             paramFileSarc.Data = FileUtils.SaveByml(
-                paramIterator.IterateParams(paramFile, "GameParameters")
+                BymlIterator.IterateParams(paramFile, "GameParameters")
             );
         }
 
         GameData.CommitToFileSystem(
-            "Pack/Params.pack.zs",
+            "/Pack/Params.pack.zs",
             FileUtils.SaveSarc(paramPack).CompressZSTD()
         );
     }
