@@ -14,8 +14,9 @@ public partial class MainWindowViewModel : ObservableObject
     /* Generic Randomizer Options */
     [ObservableProperty, JsonIgnore] private bool unimplemented = false;
     [ObservableProperty, JsonIgnore] private string randomizerSeed = GenerateRandomizerSeed();
-    [ObservableProperty, JsonIgnore] private bool dataUnloaded = true;
-    [ObservableProperty, JsonIgnore] private bool dataUpdateUnloaded = true;
+    [ObservableProperty, JsonIgnore] private bool isBaseLoaded = false;
+    [ObservableProperty, JsonIgnore] private bool isUpdateLoaded = false;
+    [ObservableProperty, JsonIgnore] private bool isDLCLoaded = false;
     [ObservableProperty, JsonIgnore] private bool gameDataLoaded = false;
     [ObservableProperty, JsonIgnore] private bool useRomFSInstead = false;
     /* Weapon Kit Randomization */

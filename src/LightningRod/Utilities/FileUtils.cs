@@ -96,7 +96,6 @@ public static class FileUtils
     {
         for (int i = 0; i < sarc.Files.Count; i++)
         {
-            Console.WriteLine($"Finding {sarc.Files[i].Name}");
             if (sarc.Files[i].Name == path)
                 return i;
         }

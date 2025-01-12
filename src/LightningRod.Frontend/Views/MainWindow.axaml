@@ -94,11 +94,11 @@
             <StackPanel Width="350" Margin="0,0,10,0">
                 <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                     <StackPanel>
-                        <CheckBox Content="Use RomFS Directory" HorizontalAlignment="Center" Height="35" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
-                        <Button Name="LoadBaseNSP" Content="Load Base (.nsp/.xci File)" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUnloaded, Mode=OneWay}"/>
+                        <CheckBox Content="Use RomFS Directory" HorizontalAlignment="Center" Height="35" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding IsBaseLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                        <Button Name="LoadBaseNSP" Content="Load Base (.nsp/.xci File)" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding IsBaseLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
                         <StackPanel Orientation="Horizontal" Width="350" Margin="20,0,10,0">
-                            <Button Name="LoadUpdateNSP" Content="Load Update" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUpdateUnloaded, Mode=OneWay}" IsVisible="{Binding UseRomFSInstead, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
-                            <Button Name="LoadDLCNSP" Content="Load DLC" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding DataUpdateUnloaded, Mode=OneWay}"/>
+                            <Button Name="LoadUpdateNSP" Content="Load Update" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding IsUpdateLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" IsVisible="{Binding UseRomFSInstead, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                            <Button Name="LoadDLCNSP" Content="Load DLC" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding IsDLCLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -106,17 +106,17 @@
 
             <!-- Control Buttons -->
             <StackPanel HorizontalAlignment="Right" Width="350" Margin="0,0,10,0">
-                <Button Content="Load Game Data" Width="350" Height="43" Click="SendDataToBackend" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,10,5"/>
+                <Button Content="Load Game Data" Width="350" Height="43" Click="SendDataToBackend" IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
                 <Button Name="RandomizeOpt" Content="Randomize + Save" Width="350" Height="43" Click="StartRandomizer" IsEnabled="{Binding GameDataLoaded, Mode=OneWay}" Margin="0,0,10,5"/>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Save Config" Width="172.5" Click="ExportOptions" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
-                    <Button Content="Load Config" Width="172.5" Click="ImportOptions" Height="43" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> <!-- IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" Margin="0,0,5,0"/> -->
+                    <Button Content="Save Config" Width="172.5" Click="ExportOptions" Height="43" IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}" Margin="0,0,5,0"/>
+                    <Button Content="Load Config" Width="172.5" Click="ImportOptions" Height="43" IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}" Margin="0,0,5,0"/> 
                 </StackPanel>
             </StackPanel>
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" Margin="10,5,10,10" HorizontalAlignment="Left" IsEnabled="{Binding DataUnloaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}">
+        <TabControl Grid.Row="2" Margin="10,5,10,10" HorizontalAlignment="Left" IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">

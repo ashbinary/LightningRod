@@ -1,33 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibHac.Arp.Impl;
 using LibHac.Common;
 using LibHac.Common.Keys;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
-using LibHac.FsSrv;
 using LibHac.FsSrv.FsCreator;
 using LibHac.FsSystem;
 using LibHac.Tools.Fs;
 using LibHac.Tools.FsSystem;
 using LibHac.Tools.FsSystem.NcaUtils;
 using LightningRod.Frontend.ViewModels;
-using LightningRod.Randomizers;
-using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 
 namespace LightningRod.Frontend.Views;
@@ -41,8 +32,13 @@ public partial class MainWindow : Window
         new("LightningRod Config Files") { Patterns = ["*.config", "*.json"] };
 
     IFileSystem HoianBaseFiles;
+
     SharedRef<IFileSystem> HoianTempBase,
-        HoianTempUpdate;
+        HoianTempUpdate,
+        HoianTempDLC;
+
+    IFileSystem HoianFSTempBase,
+        HoianFSTempDLC;
 
     BaseHandler thunderBackend;
 
@@ -60,12 +56,18 @@ public partial class MainWindow : Window
         {
             case "LoadBaseNSP":
                 if (Model.UseRomFSInstead)
-                    await LoadRomFSAsync();
+                    await LoadRomFSAsync(GameType.Base);
                 else
-                    await LoadGameFileAsync(false);
+                    await LoadGameFileAsync(GameType.Base);
                 break;
-            case "LoadUpdateNSP":
-                await LoadGameFileAsync(true);
+            case "LoadUpdateNSP": // Update has no romfs equivalent, bundled with base
+                await LoadGameFileAsync(GameType.Update);
+                break;
+            case "LoadDLCNSP":
+                if (Model.UseRomFSInstead)
+                    await LoadRomFSAsync(GameType.DLC);
+                else
+                    await LoadGameFileAsync(GameType.DLC);
                 break;
             default:
                 throw new NotImplementedException();
@@ -104,20 +106,29 @@ public partial class MainWindow : Window
         return loadedData[0].Path.LocalPath;
     }
 
-    public async Task LoadRomFSAsync()
+    public async Task LoadRomFSAsync(GameType gameType)
     {
         var romFSData = await OpenPickerPathAndReturn(true);
 
         if (romFSData != null)
         {
-            HoianBaseFiles = new LocalFileSystem(romFSData);
-            this.FindControl<Button>("LoadBaseNSP").Content = "romFS Directory loaded!";
+            switch (gameType)
+            {
+                case GameType.Base:
+                    HoianFSTempBase = new LocalFileSystem(romFSData);
+                    this.FindControl<Button>("LoadBaseNSP").Content = "romFS Directory loaded!";
+                    break;
+                case GameType.DLC:
+                    HoianFSTempDLC = new LocalFileSystem(romFSData);
+                    this.FindControl<Button>("LoadDLCNSP").Content = "DLC romFS Directory loaded!";
+                    break;
+            }
         }
 
-        Model.DataUnloaded = romFSData is null;
+        Model.IsBaseLoaded = romFSData is not null;
     }
 
-    public async Task LoadGameFileAsync(bool isUpdateFile)
+    public async Task LoadGameFileAsync(GameType gameType)
     {
         var gameFilePath = await OpenPickerPathAndReturn(
             false,
@@ -139,23 +150,24 @@ public partial class MainWindow : Window
             switch (System.IO.Path.GetExtension(gameFilePath))
             {
                 case ".nsp":
-                    if (!isUpdateFile)
+                    switch (gameType)
                     {
-                        new PartitionFileSystemCreator()
-                            .Create(ref HoianTempBase, ref LibHacFile)
-                            .ThrowIfFailure();
-                        Model.DataUnloaded = false;
-                        this.FindControl<Button>("LoadBaseNSP").Content = "Base Loaded (NSP)";
+                        case GameType.Base:
+                            HandlePartitionData(ref HoianTempBase, ref LibHacFile);
+                            Model.IsBaseLoaded = true;
+                            this.FindControl<Button>("LoadBaseNSP").Content = "Base Loaded (NSP)";
+                            break;
+                        case GameType.Update:
+                            HandlePartitionData(ref HoianTempUpdate, ref LibHacFile);
+                            Model.IsUpdateLoaded = true;
+                            this.FindControl<Button>("LoadUpdateNSP").Content = "Update Loaded";
+                            break;
+                        case GameType.DLC:
+                            HandlePartitionData(ref HoianTempDLC, ref LibHacFile);
+                            Model.IsDLCLoaded = true;
+                            this.FindControl<Button>("LoadDLCNSP").Content = "DLC Loaded";
+                            break;
                     }
-                    else
-                    {
-                        new PartitionFileSystemCreator()
-                            .Create(ref HoianTempUpdate, ref LibHacFile)
-                            .ThrowIfFailure();
-                        Model.DataUpdateUnloaded = false;
-                        this.FindControl<Button>("LoadUpdateNSP").Content = "Update Loaded";
-                    }
-
                     break;
                 case ".xci":
                     KeySet keys = setupKeyset();
@@ -164,7 +176,7 @@ public partial class MainWindow : Window
                     HoianTempBase = new SharedRef<IFileSystem>(
                         xci.OpenPartition(XciPartitionType.Secure)
                     );
-                    Model.DataUnloaded = false;
+                    Model.IsBaseLoaded = true;
                     this.FindControl<Button>("LoadBaseNSP").Content = "Base Loaded (XCI)";
 
                     break;
@@ -174,29 +186,39 @@ public partial class MainWindow : Window
         }
     }
 
+
+    private void HandlePartitionData(ref SharedRef<IFileSystem> hoianData, ref SharedRef<IStorage> libHacFile)
+    {
+        new PartitionFileSystemCreator()
+        .Create(ref hoianData, ref libHacFile)
+        .ThrowIfFailure();
+    }
+
     private void SendDataToBackend(object? sender, RoutedEventArgs e)
     {
-        if (!Model.UseRomFSInstead)
+        if (Model.UseRomFSInstead)
         {
-            HoianBaseFiles = Model.DataUpdateUnloaded
-                ? HoianTempBase.Get
-                : new LayeredFileSystem(HoianTempBase.Get, HoianTempUpdate.Get);
+            HoianBaseFiles = Model.IsDLCLoaded
+                ? new LayeredFileSystem(HoianFSTempBase, HoianFSTempDLC)
+                : HoianFSTempBase;
+        }
+        else
+        {
+            List<IFileSystem> addedFilesystems = [HoianTempBase.Get];
+            if (Model.IsUpdateLoaded) addedFilesystems.Add(HoianTempUpdate.Get);
+            if (Model.IsDLCLoaded) addedFilesystems.Add(HoianTempDLC.Get);
+            HoianBaseFiles = new LayeredFileSystem(addedFilesystems);
 
             var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);
+            addedFilesystems = [];
 
-            // Get base NCA data
-            Title baseNcaTitle = filesystem.Titles[0x0100C2500FC20000];
-            SwitchFsNca baseNca = baseNcaTitle.MainNca;
-            IFileSystem baseNcaData = baseNca.OpenFileSystem(
+            IFileSystem baseNcaData = filesystem.Titles[0x0100C2500FC20000].MainNca.OpenFileSystem(
                 NcaSectionType.Data,
                 IntegrityCheckLevel.IgnoreOnInvalid
             );
+            addedFilesystems.Add(baseNcaData);
 
-            if (Model.DataUpdateUnloaded)
-            {
-                HoianBaseFiles = baseNcaData;
-            }
-            else
+            if (Model.IsUpdateLoaded)
             {
                 IFileSystem updateNcaData = filesystem
                     .Titles[filesystem.Applications[0x0100C2500FC20000].Patch.Id]
@@ -205,8 +227,25 @@ public partial class MainWindow : Window
                         IntegrityCheckLevel.IgnoreOnInvalid
                     );
 
-                HoianBaseFiles = new LayeredFileSystem(baseNcaData, updateNcaData);
+                addedFilesystems.Add(updateNcaData);
             }
+
+            if (Model.IsDLCLoaded)
+            {
+                IFileSystem dlcNcaData = filesystem
+                    .Titles[filesystem.Applications[0x0100C2500FC20000].AddOnContent[0].Id]
+                    .MainNca.OpenFileSystem(
+                        NcaSectionType.Data,
+                        IntegrityCheckLevel.IgnoreOnInvalid
+                    );
+
+                addedFilesystems.Add(dlcNcaData);
+            }
+
+            // LibHac reads filesystems front-to-back, this prevents 1.0.0 from being read over a newer version due to RegionLangMask
+            addedFilesystems.Reverse();
+
+            HoianBaseFiles = new LayeredFileSystem(addedFilesystems);
         }
 
         thunderBackend = new BaseHandler(HoianBaseFiles);
@@ -300,5 +339,12 @@ public partial class MainWindow : Window
         string prodKeyFile = System.IO.Path.Combine(homePath, ".switch", "prod.keys");
 
         return ExternalKeyReader.ReadKeyFile(prodKeyFile, homeTitleKeyFile);
+    }
+
+    public enum GameType
+    {
+        Base,
+        Update,
+        DLC
     }
 }
