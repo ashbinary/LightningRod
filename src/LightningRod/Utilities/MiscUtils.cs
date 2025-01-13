@@ -58,7 +58,6 @@ public static class MiscUtils
         while (!data.Contains(constraint))
         {
             data = dataTable[GameData.Random.NextInt(tableLength)];
-            Console.WriteLine($"randomized to {data}");
         }
         return data;
     }

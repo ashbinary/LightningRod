@@ -14,7 +14,7 @@ public static class VSStageRandomizer
         dynamic versusSceneInfo = GameData.FileSystem.ParseByml(
             $"/RSDB/VersusSceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
-        BymlArrayNode sceneInfo = GameData.FileSystem.ParseByml(
+        dynamic sceneInfo = GameData.FileSystem.ParseByml(
             $"/RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
@@ -103,25 +103,22 @@ public static class VSStageRandomizer
 
         if (Options.GetOption("mismatchedStages") && GameData.IsNewerVersion(120)) //SceneInfo was changed in 1.2.0 to make this possible
         {
-            foreach (BymlHashTable scene in sceneInfo.Array)
+            for (int i = 0; i < sceneInfo.Length; i++)
             {
-                if (!versusSceneRowIds.Contains((scene["__RowId"] as BymlNode<string>).Data))
+                if (!versusSceneRowIds.Contains(sceneInfo.Array[i]["__RowId"].Data))
                     continue;
 
-                for (int i = 0; i < sceneInfoLabels.Length; i++)
+                for (int label = 0; label < 3; label++)
                 {
-                    string newStage = versusSceneInfo[
-                        GameData.Random.NextInt(versusSceneInfo.Length)
-                    ]["__RowId"].Data;
-                    newStage = newStage.TrimEnd(['0', '1', '2', '3', '4', '5']);
-                    ((BymlNode<string>)scene[sceneInfoLabels[i]]).Data = newStage;
+                    string randomScene = versusSceneRowIds[GameData.Random.NextInt(versusSceneRowIds.Count)].TrimEnd(['0', '1', '2', '3', '4', '5']);
+                    sceneInfo.Array[i][sceneInfoLabels[label]].Data = randomScene;
                 }
-                break;
+
             }
 
             GameData.CommitToFileSystem(
                 $"/RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs",
-                FileUtils.SaveByml(sceneInfo).CompressZSTD()
+                FileUtils.SaveByml((BymlArrayNode)sceneInfo).CompressZSTD()
             );
         }
 

@@ -285,22 +285,14 @@
                                 <CheckBox Content="Keep Ink Consumption Under 100%" IsChecked="{Binding MaxInkConsume, Mode=TwoWay}"/>
                                 <TextBlock Text="Singletons" FontWeight="Bold" Margin="0,10,0,10"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Randomize Versus Constants" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <CheckBox Content="Randomize Match Intro / Results" IsChecked="{Binding RandomizeVersusConstants, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="Due to how the versus constants are randomized, it's possible that the game may flag you for cheating on an unlucky save. Enable Prevent Scorekeeper Detection to prevent this."/>
+                                            <ToolTip Content="This feature is also modified by the parameter severity level."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
                                 <CheckBox Content="Randomize Salmon Run Constants" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Prevent Scorekeeper Detection" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
-                                        <ToolTip.Tip>
-                                            <ToolTip Content="This is NOT an anticheat bypass. All this does is prevent the game's internal scorekeeper from being randomized and falsely flagging a player."/>
-                                        </ToolTip.Tip>
-                                    </TextBlock>
-                                </StackPanel>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -353,13 +345,7 @@
                                 <CheckBox Content="Randomize Power Egg Reward" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Stage Skybox" IsChecked="{Binding RandomizeStageSkybox, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Stage BGM" IsChecked="{Binding RandomizeStageMusic, Mode=TwoWay}"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                    <StackPanel Width="350" Margin="5,0,0,0">
-                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
-                            <StackPanel>
-                                <TextBlock Text="The Crater" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="The Crater" FontWeight="Bold" Margin="0,10,0,10"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Crater Levels" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
@@ -368,6 +354,12 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                            <StackPanel>
                                 <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,10,0,10"/>
                                 <CheckBox Content="Randomize Octarian Parameters" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
@@ -380,9 +372,10 @@
                                 </StackPanel>
                                 <CheckBox Content="Randomize Fuzzy Ooze Cost" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Hero Gear Upgrade Tree" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
+                                <TextBlock Text="Additional Help" FontWeight="Bold" Margin="0,10,0,10"/>
                                 <CheckBox Content="Set All Level Fees To 0" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Set Re-Completion Rewards to 9999" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
+                                    <CheckBox Content="Set Stage Re-Completion Rewards to 9999" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="Meant for esaping Fuzzy Ooze softlocks. Not recommended for those with low self-control."/>

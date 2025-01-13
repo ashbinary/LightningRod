@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 using LightningRod.Utilities;
@@ -25,6 +26,32 @@ public static class SingletonRandomizer
             BymlIterator.IterateParams(versusConstant, versusConstantKeys[i]);
 
         singletonSarc.Files[versusConstantIndex].Data = FileUtils.SaveByml(versusConstant);
+
+        int missionConstantIndex = singletonSarc.GetSarcFileIndex(
+            $"Gyml/Singleton/spl__MissionConstant.spl__MissionConstant.bgyml"
+        );
+        dynamic missionConstant = new Byml(
+            new MemoryStream(singletonSarc.Files[missionConstantIndex].Data)
+        ).Root;
+
+        BymlArrayNode skillTree = missionConstant["PlayerSkillTree"]["SkillIconTable"];
+
+        List<string> skillTreeTypes = skillTree.Array // is this dumb? yes. do i care? no
+            .OfType<BymlHashTable>() 
+            .Where(option => option.ContainsKey("SkillType")) 
+            .Select(option => (option["SkillType"] as BymlNode<string>).Data)
+            .ToList();
+
+        for (int i = 0; i < skillTree.Length; i++)
+        {
+            if (!(skillTree.Array[i] as BymlHashTable).ContainsKey("SkillType")) continue;
+            
+            int randomNumber = GameData.Random.NextInt(skillTreeTypes.Count);
+            ((skillTree.Array[i] as BymlHashTable)["SkillType"] as BymlNode<string>).Data = skillTreeTypes[randomNumber];
+            skillTreeTypes.RemoveAt(randomNumber);
+        }
+
+        singletonSarc.Files[missionConstantIndex].Data = FileUtils.SaveByml(missionConstant);
 
         GameData.CommitToFileSystem(
             singletonPath,

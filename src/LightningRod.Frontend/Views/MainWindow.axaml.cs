@@ -46,6 +46,10 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainWindowViewModel();
+
+        string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        // if (File.Exists(System.IO.Path.Combine(homePath, ".switch", "prod.keys"))) // Check for prod keys and hope to god they're not dumb enough to put title keys separately!
+        //     Model.IsConsoleKeysLoaded = true;
     }
 
     public MainWindowViewModel Model => (MainWindowViewModel)DataContext;
@@ -170,7 +174,7 @@ public partial class MainWindow : Window
                     }
                     break;
                 case ".xci":
-                    KeySet keys = setupKeyset();
+                    KeySet keys = SetupKeyset();
                     Xci xci = new(keys, LibHacFile.Get);
 
                     HoianTempBase = new SharedRef<IFileSystem>(
@@ -211,7 +215,7 @@ public partial class MainWindow : Window
                 addedFilesystems.Add(HoianTempDLC.Get);
             HoianBaseFiles = new LayeredFileSystem(addedFilesystems);
 
-            var filesystem = SwitchFs.OpenNcaDirectory(setupKeyset(), HoianBaseFiles);
+            var filesystem = SwitchFs.OpenNcaDirectory(SetupKeyset(), HoianBaseFiles);
             addedFilesystems = [];
 
             IFileSystem baseNcaData = filesystem
@@ -333,7 +337,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private KeySet setupKeyset()
+    private KeySet SetupKeyset()
     {
         string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         string homeTitleKeyFile = System.IO.Path.Combine(homePath, ".switch", "title.keys");

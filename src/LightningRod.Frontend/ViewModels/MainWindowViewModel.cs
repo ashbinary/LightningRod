@@ -14,6 +14,7 @@ public partial class MainWindowViewModel : ObservableObject
     /* Generic Randomizer Options */
     [ObservableProperty, JsonIgnore] private bool unimplemented = false;
     [ObservableProperty, JsonIgnore] private string randomizerSeed = GenerateRandomizerSeed();
+    [ObservableProperty, JsonIgnore] private bool isConsoleKeysLoaded = false;
     [ObservableProperty, JsonIgnore] private bool isBaseLoaded = false;
     [ObservableProperty, JsonIgnore] private bool isUpdateLoaded = false;
     [ObservableProperty, JsonIgnore] private bool isDLCLoaded = false;
@@ -44,6 +45,7 @@ public partial class MainWindowViewModel : ObservableObject
     /* Parameter + Ink Randomization */
     [ObservableProperty] private bool randomizeParameters = true;
     [ObservableProperty] private int parameterSeverity = 2;
+    [ObservableProperty] private bool randomizeVersusConstants = true;
     [ObservableProperty] private bool maxInkConsume = true;
     [ObservableProperty] private bool randomizeInkColors = true;
     [ObservableProperty] private bool randomizeInkColorLock = false;
