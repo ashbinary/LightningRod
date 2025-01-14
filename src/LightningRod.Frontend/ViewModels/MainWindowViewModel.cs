@@ -27,9 +27,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool allSubWeapons = false;
     [ObservableProperty] private bool heroModeSuperLanding = false;
     [ObservableProperty] private bool useRainmaker = false;
-    [ObservableProperty] private bool useIkuraShoot = false;
     [ObservableProperty] private bool useAllSpecials = false;
-    [ObservableProperty] private bool include170To220p = true;
+    [ObservableProperty] private int minimumPFS = 180;
+    [ObservableProperty] private int maximumPFS = 210;
     [ObservableProperty] private bool noPFSIncrementation = false;
     [ObservableProperty] private bool matchPeriscopeKits = true;
     /* Stage Randomization */

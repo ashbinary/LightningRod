@@ -102,4 +102,11 @@ public static class FileUtils
 
         return -1; // Unable to find file in SARC.
     }
+
+    // ----------------------------------------------------------------------------
+
+    public static Byml ToByml(byte[] data)
+    {
+        return new Byml(new MemoryStream(data));
+    }
 }

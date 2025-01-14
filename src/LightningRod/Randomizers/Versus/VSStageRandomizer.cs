@@ -26,10 +26,11 @@ public static class VSStageRandomizer
             string versusSceneName = versusScene["__RowId"].Data;
             versusSceneRowIds.Add(versusSceneName);
 
-            Byml stageBanc = null;
-            byte[] rawBancData = [];
+            if (!Options.GetOption("tweakStageLayouts"))
+                continue;
+            byte[] rawBancData;
 
-            if (paramPack.GetSarcFileData($"Banc/{versusSceneName}.bcett.byml") != null) // Index does exist
+            if (paramPack.GetSarcFileIndex($"Banc/{versusSceneName}.bcett.byml") != -1) // Index does exist
             {
                 rawBancData = paramPack.GetSarcFileData($"Banc/{versusSceneName}.bcett.byml");
             }
@@ -42,7 +43,7 @@ public static class VSStageRandomizer
                 rawBancData = actorPack.GetSarcFileData($"Banc/{versusSceneName}.bcett.byml");
             }
 
-            stageBanc = new Byml(new MemoryStream(rawBancData));
+            Byml stageBanc = new Byml(new MemoryStream(rawBancData));
 
             BymlHashTable stageBancRoot = (BymlHashTable)stageBanc.Root;
             BymlArrayNode stageActors = (BymlArrayNode)stageBancRoot.Values[0]; // get Actors
@@ -56,34 +57,7 @@ public static class VSStageRandomizer
             if (Options.GetOption("tweakStageLayoutRot"))
                 positionData.Add("Rotate");
 
-            foreach (BymlHashTable actorData in stageActors.Array)
-            {
-                if (Options.GetOption("tweakStageLayouts"))
-                {
-                    foreach (string positionType in positionData)
-                    {
-                        if (actorData.ContainsKey(positionType))
-                        {
-                            ((BymlArrayNode)actorData[positionType]).RandomizePositions(
-                                (1.0f, (float)Options.GetOption("tweakLevel") / 100),
-                                GameData.Random.NextFloatArray(3)
-                            );
-                        }
-                        else
-                        {
-                            BymlArrayNode positionNode = new BymlArrayNode();
-                            (float, float) dataPoints = positionType.Contains("Scale")
-                                ? (1.0f, (float)Options.GetOption("tweakLevel") / 100)
-                                : (0.0f, (float)Options.GetOption("tweakLevel") / 100);
-                            positionNode.RandomizePositions(
-                                dataPoints,
-                                GameData.Random.NextFloatArray(3)
-                            );
-                            actorData.AddNode(BymlNodeId.Array, positionNode, positionType);
-                        }
-                    }
-                }
-            }
+            RandomizeStageActors(ref stageActors, positionData);
 
             if (paramPack.GetSarcFileIndex($"Banc/{versusSceneName}.bcett.byml") == -1)
                 paramPack.Files.Add(
@@ -110,10 +84,12 @@ public static class VSStageRandomizer
 
                 for (int label = 0; label < 3; label++)
                 {
-                    string randomScene = versusSceneRowIds[GameData.Random.NextInt(versusSceneRowIds.Count)].TrimEnd(['0', '1', '2', '3', '4', '5']);
+                    string randomScene = versusSceneRowIds[
+                        GameData.Random.NextInt(versusSceneRowIds.Count)
+                    ]
+                        .TrimEnd(['0', '1', '2', '3', '4', '5']);
                     sceneInfo.Array[i][sceneInfoLabels[label]].Data = randomScene;
                 }
-
             }
 
             GameData.CommitToFileSystem(
@@ -163,5 +139,39 @@ public static class VSStageRandomizer
                     * (node[i] as BymlNode<float>).Data;
         }
         return node;
+    }
+
+    public static void RandomizeStageActors(ref BymlArrayNode actorList, List<string> positionData)
+    {
+        foreach (BymlHashTable actorData in actorList.Array)
+        {
+            if ((actorData["Name"] as BymlNode<string>).Data == "StartPos")
+                continue;
+            if (Options.GetOption("tweakStageLayouts"))
+            {
+                foreach (string positionType in positionData)
+                {
+                    if (actorData.ContainsKey(positionType))
+                    {
+                        ((BymlArrayNode)actorData[positionType]).RandomizePositions(
+                            (1.0f, (float)Options.GetOption("tweakLevel") / 100),
+                            GameData.Random.NextFloatArray(3)
+                        );
+                    }
+                    else
+                    {
+                        BymlArrayNode positionNode = new BymlArrayNode();
+                        (float, float) dataPoints = positionType.Contains("Scale")
+                            ? (1.0f, (float)Options.GetOption("tweakLevel") / 100)
+                            : (0.0f, (float)Options.GetOption("tweakLevel") / 100);
+                        positionNode.RandomizePositions(
+                            dataPoints,
+                            GameData.Random.NextFloatArray(3)
+                        );
+                        actorData.AddNode(BymlNodeId.Array, positionNode, positionType);
+                    }
+                }
+            }
+        }
     }
 }

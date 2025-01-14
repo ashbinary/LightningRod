@@ -36,18 +36,21 @@ public static class SingletonRandomizer
 
         BymlArrayNode skillTree = missionConstant["PlayerSkillTree"]["SkillIconTable"];
 
-        List<string> skillTreeTypes = skillTree.Array // is this dumb? yes. do i care? no
-            .OfType<BymlHashTable>() 
-            .Where(option => option.ContainsKey("SkillType")) 
+        List<string> skillTreeTypes = skillTree
+            .Array // is this dumb? yes. do i care? no
+            .OfType<BymlHashTable>()
+            .Where(option => option.ContainsKey("SkillType"))
             .Select(option => (option["SkillType"] as BymlNode<string>).Data)
             .ToList();
 
         for (int i = 0; i < skillTree.Length; i++)
         {
-            if (!(skillTree.Array[i] as BymlHashTable).ContainsKey("SkillType")) continue;
-            
+            if (!(skillTree.Array[i] as BymlHashTable).ContainsKey("SkillType"))
+                continue;
+
             int randomNumber = GameData.Random.NextInt(skillTreeTypes.Count);
-            ((skillTree.Array[i] as BymlHashTable)["SkillType"] as BymlNode<string>).Data = skillTreeTypes[randomNumber];
+            ((skillTree.Array[i] as BymlHashTable)["SkillType"] as BymlNode<string>).Data =
+                skillTreeTypes[randomNumber];
             skillTreeTypes.RemoveAt(randomNumber);
         }
 

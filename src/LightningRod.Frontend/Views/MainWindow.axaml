@@ -122,41 +122,41 @@
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
                     <!-- General Options Group -->
                     <StackPanel Width="350" Margin="0,0,5,0">
-                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
-                                <TextBlock Text="Sub Weapon Selection" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <CheckBox Content="Randomize Weapon Kits" IsChecked="{Binding RandomizeKits, Mode=TwoWay}"/>
+                                <TextBlock Text="Sub Weapon Selection" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Include Hero Mode Sub Weapons" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                <CheckBox Content="Include Salmon Run Splat Bomb" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Include Unused &quot;Big&quot; Splat Bomb" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This went unused throughout the game's life, intended for Salmon Run, but still works completely as intended. Depending on the version of the game, it will either show up as a Splat Bomb or as a Smallfry without an icon."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include All Sub Weapons" IsChecked="{Binding AllSubWeapons, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is very prone to crashing when a weapon is selected! Use at your own risk."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
 
-                                <TextBlock Text="Special Weapon Selection" FontWeight="Bold" Margin="0,10,0,10"/>
+                                <TextBlock Text="Special Weapon Selection" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Include Hero Mode Splashdown" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include Rainmaker" IsChecked="{Binding UseRainmaker, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This includes both the Rainmaker and Modified Rainmaker (after v5.0.0). Highly likely to softlock before v5.0.0."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Include Smallfry" IsChecked="{Binding UseIkuraShoot, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
-                                        <ToolTip.Tip>
-                                            <ToolTip Content="This will not work at all without additional modifications."/>
-                                        </ToolTip.Tip>
-                                    </TextBlock>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include All Specials" IsChecked="{Binding UseAllSpecials, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This has a very high chance of crashing the game, especially regarding the Side Order specials and specials intended for Rivals."/>
                                         </ToolTip.Tip>
@@ -167,24 +167,43 @@
                     </StackPanel>
 
                     <StackPanel Width="350" Margin="5,0,0,0">
-                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
-                                <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <CheckBox Content="Include 170p - 220p Weapons" IsChecked="{Binding Include170To220p, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Use Non-Incremented PFS" IsChecked="{Binding NoPFSIncrementation, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="Minimum PFS:" Margin="0,5,10,5"/>
+                                    <Slider x:Name="MinPFS"
+                                        Minimum="140"
+                                        Maximum="190"
+                                        Value="{Binding MinimumPFS, Mode=TwoWay}"
+                                        Margin="0,5,0,5"
+                                        TickFrequency="10"
+                                        IsSnapToTickEnabled="True"
+                                        Width="150"/>
+                                    <TextBlock Text="{Binding MinimumPFS}" Margin="10,5,0,5"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Maximum PFS:" Margin="0,5,10,5"/>
+                                    <Slider x:Name="MaxPFS"
+                                        Minimum="200"
+                                        Maximum="250"
+                                        Value="{Binding MaximumPFS, Mode=TwoWay}"
+                                        Margin="0,5,0,5"
+                                        TickFrequency="10"
+                                        IsSnapToTickEnabled="True"
+                                        Width="150"/>
+                                    <TextBlock Text="{Binding MaximumPFS}" Margin="10,5,0,5"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Disable PFS Increments" IsChecked="{Binding NoPFSIncrementation, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This option allows weapons to have any PFS between the desired values instead of all PFS being divisible by 10, such as 188p or 204p for special."/>
+                                            <ToolTip Content="This allows weapons to have any PFS between the desired values instead of all PFS being divisible by 10, such as 188p or 204p for special."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
                                 <CheckBox Content="Match Unscoped and Scoped Charger Kits" IsChecked="{Binding MatchPeriscopeKits, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
                             </StackPanel>
-                        </Border>
-
-                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,10,0,0">
-                            <CheckBox Content="Randomize Weapon Kits" IsChecked="{Binding RandomizeKits, Mode=TwoWay}"/>
                         </Border>
                     </StackPanel>
 

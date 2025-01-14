@@ -53,31 +53,6 @@ public static class BigWorldWeaponRandomizer
             $"/RSDB/MissionMapInfo.Product.{GameData.GameVersion}.rstbl.byml.zs",
             FileUtils.SaveByml((BymlArrayNode)missionMapInfo).CompressZSTD()
         );
-
-        foreach (KeyValuePair<string, int> sceneData in msnScenes) // I HATE THIS GAME
-        {
-            var parsedScene = GameData.FileSystem.ParseSarc($"/Pack/Scene/{sceneData.Key}.pack.zs");
-            var sceneBgymlData = parsedScene.GetSarcFileData(
-                $"SceneComponent/MissionMapInfo/{sceneData.Key}.spl__MissionMapInfo.bgyml"
-            );
-            dynamic sceneBgyml = (BymlHashTable)new Byml(new MemoryStream(sceneBgymlData)).Root;
-
-            sceneBgyml["OctaSupplyWeaponInfoArray"].Array = missionMapInfo[sceneData.Value][
-                "OctaSupplyWeaponInfoArray"
-            ].Array;
-
-            parsedScene
-                .Files[
-                    parsedScene.GetSarcFileIndex(
-                        $"SceneComponent/MissionMapInfo/{sceneData.Key}.spl__MissionMapInfo.bgyml"
-                    )
-                ]
-                .Data = FileUtils.SaveByml(sceneBgyml);
-            GameData.CommitToFileSystem(
-                $"/Pack/Scene/{sceneData.Key}.pack.zs",
-                FileUtils.SaveSarc(parsedScene).CompressZSTD()
-            );
-        }
     }
 
     public static BymlHashTable CreateNewMsnNode()

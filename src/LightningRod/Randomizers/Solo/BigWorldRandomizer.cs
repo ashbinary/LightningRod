@@ -12,8 +12,8 @@ public static class BigWorldRandomizer
     {
         Logger.Log("Starting Alterna randomizer!");
 
-        BigWorldWeaponRandomizer.Randomize();
         BigWorldStageRandomizer.Randomize();
+        BigWorldWeaponRandomizer.Randomize();
     }
 
     public enum SupplyWeaponType
