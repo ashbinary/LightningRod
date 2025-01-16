@@ -112,7 +112,7 @@
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
+        <TabControl Grid.Row="2" SelectedIndex="1" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -243,7 +243,7 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Minimap Position" IsChecked="{Binding TweakStageLayoutSiz, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Minimap Position" IsChecked="{Binding RandomMinimapPos, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -263,17 +263,17 @@
                                         </MultiBinding>
                                     </TextBlock.IsVisible>
                                 </TextBlock>
-                                <CheckBox Content="Include Non-Versus Stage Environments" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
+                                <CheckBox Content="Include Non-Versus Stage Environments" IsChecked="{Binding AllowNonVersusEnvs, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
                                 <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding RandomFogLevels, Mode=TwoWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomStageEnv, Mode=OneWay}">
-                                    <CheckBox Content="Randomize Lighting" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}"/>
+                                    <CheckBox Content="Randomize Lighting" IsChecked="{Binding RandomLighting, Mode=TwoWay}"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This may be SLIGHTLY stressful on the eyes in certain randomizations. To prevent most situations like this, enable Stop Lighting Intensity Randomization."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Stop Lighting Intensity Randomization" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsEnabled="{Binding RandomStageEnv, Mode=OneWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
+                                <CheckBox Content="Stop Lighting Intensity Randomization" IsChecked="{Binding PreventLightingIntensity, Mode=TwoWay}" IsEnabled="{Binding RandomLighting, Mode=OneWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
                             </StackPanel>   
                         </Border>
                     </StackPanel>

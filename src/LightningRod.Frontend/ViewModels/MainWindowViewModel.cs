@@ -33,15 +33,19 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool noPFSIncrementation = false;
     [ObservableProperty] private bool matchPeriscopeKits = true;
     /* Stage Randomization */
-    [ObservableProperty] private bool randomFogLevels = false;
-    [ObservableProperty] private bool swapStageEnv = false;
-    [ObservableProperty] private bool randomStageEnv = false;
     [ObservableProperty] private bool tweakStageLayouts = false;
     [ObservableProperty] private int tweakLevel = 3;
     [ObservableProperty] private bool tweakStageLayoutPos = true;
     [ObservableProperty] private bool tweakStageLayoutRot = true;
     [ObservableProperty] private bool tweakStageLayoutSiz = true;
+    [ObservableProperty] private bool swapStageEnv = false;
+    [ObservableProperty] private bool allowNonVersusEnvs = true;
+    [ObservableProperty] private bool randomStageEnv = true;
+    [ObservableProperty] private bool randomFogLevels = true;
+    [ObservableProperty] private bool randomLighting = false;
+    [ObservableProperty] private bool preventLightingIntensity = true;
     [ObservableProperty] private bool mismatchedStages = true;
+    [ObservableProperty] private bool randomMinimapPos = true;
     /* Parameter + Ink Randomization */
     [ObservableProperty] private bool randomizeParameters = true;
     [ObservableProperty] private int parameterSeverity = 2;
