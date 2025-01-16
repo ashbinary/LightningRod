@@ -57,7 +57,7 @@ public static class BigWorldStageRandomizer
             var sceneBgymlData = levelPack.GetSarcFileData(
                 $"SceneComponent/MissionMapInfo/{sceneKvp.Key}.spl__MissionMapInfo.bgyml"
             );
-            dynamic sceneBgyml = (BymlHashTable)new Byml(new MemoryStream(sceneBgymlData)).Root;
+            dynamic sceneBgyml = (BymlHashTable)FileUtils.ToByml(sceneBgymlData).Root;
 
             sceneBgyml["OctaSupplyWeaponInfoArray"].Array = missionMapInfo[sceneKvp.Value][
                 "OctaSupplyWeaponInfoArray"
@@ -82,7 +82,7 @@ public static class BigWorldStageRandomizer
         int bcettIndex = alternaPack.GetSarcFileIndex($"Banc/BigWorld.bcett.byml");
 
         BymlHashTable? alternaLayoutRoot = (BymlHashTable)
-            new Byml(new MemoryStream(alternaPack.Files[bcettIndex].Data)).Root;
+            FileUtils.ToByml(alternaPack.Files[bcettIndex].Data).Root;
         BymlArrayNode? alternaLayout = alternaLayoutRoot["Actors"] as BymlArrayNode;
 
         for (int i = 0; i < alternaLayout.Length; i++)

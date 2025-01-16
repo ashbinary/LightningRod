@@ -43,7 +43,7 @@ public static class FileUtils
     {
         Logger.Log($"Opening and reading BYML: {path}");
         var data = fs.GetFile(path);
-        Byml byml = new(new MemoryStream(data.DecompressZSTD()));
+        Byml byml = ToByml(data.DecompressZSTD());
         return (BymlArrayNode)byml.Root;
     }
 
@@ -60,7 +60,8 @@ public static class FileUtils
         var data = fs.GetFile(path);
 
         SarcFileParser fileParser = new();
-        return fileParser.Parse(new MemoryStream(data.DecompressZSTD()));
+        using MemoryStream fileDataStream = new MemoryStream(data.DecompressZSTD());
+        return fileParser.Parse(fileDataStream);
     }
 
     public static byte[] SaveSarc(SarcFile data)
@@ -107,6 +108,7 @@ public static class FileUtils
 
     public static Byml ToByml(byte[] data)
     {
-        return new Byml(new MemoryStream(data));
+        using MemoryStream dataStream = new(data);
+        return new Byml(dataStream);
     }
 }

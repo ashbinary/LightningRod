@@ -21,7 +21,7 @@ public static class ParameterRandomizer
             if (!paramFileSarc.Name.StartsWith("Component/GameParameterTable/Weapon"))
                 continue;
             BymlHashTable paramFile = (BymlHashTable)
-                new Byml(new MemoryStream(paramFileSarc.Data)).Root;
+                FileUtils.ToByml(paramFileSarc.Data).Root;
 
             paramFileSarc.Data = FileUtils.SaveByml(
                 BymlIterator.IterateParams(paramFile, "GameParameters")

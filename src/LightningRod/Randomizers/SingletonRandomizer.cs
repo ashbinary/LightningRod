@@ -18,9 +18,7 @@ public static class SingletonRandomizer
         int versusConstantIndex = singletonSarc.GetSarcFileIndex(
             $"Gyml/Singleton/spl__VersusConstant.spl__VersusConstant.bgyml"
         );
-        dynamic versusConstant = new Byml(
-            new MemoryStream(singletonSarc.Files[versusConstantIndex].Data)
-        ).Root;
+        dynamic versusConstant = FileUtils.ToByml(singletonSarc.Files[versusConstantIndex].Data).Root;
 
         for (int i = 0; i < versusConstantKeys.Length; i++)
             BymlIterator.IterateParams(versusConstant, versusConstantKeys[i]);
@@ -30,9 +28,7 @@ public static class SingletonRandomizer
         int missionConstantIndex = singletonSarc.GetSarcFileIndex(
             $"Gyml/Singleton/spl__MissionConstant.spl__MissionConstant.bgyml"
         );
-        dynamic missionConstant = new Byml(
-            new MemoryStream(singletonSarc.Files[missionConstantIndex].Data)
-        ).Root;
+        dynamic missionConstant = FileUtils.ToByml(singletonSarc.Files[missionConstantIndex].Data).Root;
 
         BymlArrayNode skillTree = missionConstant["PlayerSkillTree"]["SkillIconTable"];
 
