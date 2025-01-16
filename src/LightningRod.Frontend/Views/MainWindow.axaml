@@ -17,10 +17,6 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Window.Resources>
-        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-    </Window.Resources>
-
     <Grid>
         <!-- Top Row for General Options and ROM Information -->
         <Grid.RowDefinitions>
@@ -94,11 +90,11 @@
             <StackPanel Width="350" Margin="0,0,10,0">
                 <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
                     <StackPanel>
-                        <CheckBox Content="Use RomFS Directory" HorizontalAlignment="Center" Height="35" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding IsBaseLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
-                        <Button Name="LoadBaseNSP" Content="Load Base (.nsp/.xci File)" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding IsBaseLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                        <CheckBox Content="Use RomFS Directory" HorizontalAlignment="Center" Height="35" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding !IsBaseLoaded}, Mode=OneWay}"/>
+                        <Button Name="LoadBaseNSP" Content="Load Base (.nsp/.xci File)" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding !IsBaseLoaded}, Mode=OneWay}"/>
                         <StackPanel Orientation="Horizontal" Width="350" Margin="20,0,10,0">
-                            <Button Name="LoadUpdateNSP" Content="Load Update" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding IsUpdateLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}" IsVisible="{Binding UseRomFSInstead, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
-                            <Button Name="LoadDLCNSP" Content="Load DLC" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding IsDLCLoaded, Converter={StaticResource InverseBooleanConverter}}, Mode=OneWay}"/>
+                            <Button Name="LoadUpdateNSP" Content="Load Update" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding !IsUpdateLoaded}, Mode=OneWay}" IsVisible="{Binding !UseRomFSInstead}, Mode=OneWay}"/>
+                            <Button Name="LoadDLCNSP" Content="Load DLC" Height="35" Width="147.5" Margin="5,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding !IsDLCLoaded}, Mode=OneWay}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -116,7 +112,7 @@
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" Margin="10,5,10,10" HorizontalAlignment="Left" IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">
+        <TabControl Grid.Row="2" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -169,7 +165,7 @@
                     <StackPanel Width="350" Margin="5,0,0,0">
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
-                                <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Minimum PFS:" Margin="0,5,10,5"/>
                                     <Slider x:Name="MinPFS"
@@ -214,22 +210,22 @@
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
                     <!-- General Options Group -->
                     <StackPanel Width="350" Margin="0,0,5,0">
-                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
-                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding TweakStageLayouts, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding TweakStageLayouts, Mode=OneWay}">
-                                    <TextBlock Text="Modification Level:" Margin="0,5,10,10"/>
+                                <StackPanel Orientation="Horizontal" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}">
+                                    <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
                                     <Slider x:Name="TweakAmount"
                                         Minimum="1"
                                         Maximum="20"
                                         Value="{Binding TweakLevel, Mode=TwoWay}"
-                                        Margin="0,5,0,10"
+                                        Margin="0,5,0,5"
                                         TickFrequency="1"
                                         IsSnapToTickEnabled="True"
                                         Width="100"/>
-                                    <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,10"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,-5,0,0">
+                                    <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,5"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,-5,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
                                         </ToolTip.Tip>
@@ -238,40 +234,46 @@
                                 <CheckBox Content="Modify Object Position" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}" IsChecked="{Binding TweakStageLayoutPos, Mode=TwoWay}"/>
                                 <CheckBox Content="Modify Object Rotation" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}" IsChecked="{Binding TweakStageLayoutRot, Mode=TwoWay}"/>
                                 <CheckBox Content="Modify Object Scale" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}" IsChecked="{Binding TweakStageLayoutSiz, Mode=TwoWay}"/>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Mismatch Stage Icons" IsChecked="{Binding MismatchedStages, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This is automatically disabled if the version currently loaded is lower than v1.2.0, as part of the stage file was rewritten, allowing this randomization to work."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Randomize Minimap Position" IsChecked="{Binding TweakStageLayoutSiz, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
 
                     <StackPanel Width="350" Margin="5,0,0,0">
-                        <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
-                                <TextBlock Text="Miscellaneous Options" FontWeight="Bold" Margin="0,0,0,10"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Mismatch Stage Icons" IsChecked="{Binding MismatchedStages, Mode=TwoWay}"/>
-                                </StackPanel>
-                                <!-- <CheckBox Content="Randomize Tower Control Tower Path" IsChecked="{Binding YaguraRandomPath, Mode=TwoWay}"/> -->
-                                <!-- <StackPanel Orientation="Horizontal" IsVisible="{Binding YaguraRandomPath, Mode=OneWay}">
-                                    <TextBlock Text="# of Checkpoints" Margin="0,5,10,5"/>
-                                    <Slider x:Name="TowerRandom"
-                                        Minimum="0"
-                                        Maximum="5"
-                                        Value="{Binding YaguraCheckpointNum, Mode=TwoWay}"
-                                        Margin="0,5,0,10"
-                                        TickFrequency="1"
-                                        IsSnapToTickEnabled="True"
-                                        Width="100"/>
-                                    <TextBlock Text="{Binding YaguraCheckpointNum}" Margin="10,5,0,5"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                <TextBlock Text="Environment" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Stage Environments" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsEnabled="{Binding !SwapStageEnv, Mode=OneWay}"/>
+                                <CheckBox Content="Swap Stage Environments" IsChecked="{Binding SwapStageEnv, Mode=TwoWay}" IsEnabled="{Binding !RandomStageEnv, Mode=OneWay}"/>
+                                <TextBlock Text="Environment Settings" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <TextBlock Text="Enable Randomize Stage Environments or Swap Stage Environments for options to appear!" TextWrapping="Wrap" Margin="0,5,0,5" Foreground="#FF808080">
+                                    <TextBlock.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                            <Binding Path="!RandomStageEnv"/>
+                                            <Binding Path="!SwapStageEnv"/>
+                                        </MultiBinding>
+                                    </TextBlock.IsVisible>
+                                </TextBlock>
+                                <CheckBox Content="Include Non-Versus Stage Environments" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding RandomFogLevels, Mode=TwoWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomStageEnv, Mode=OneWay}">
+                                    <CheckBox Content="Randomize Lighting" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This has a very high chance of ending up unplayable on certain map modes, as the Tower will likely go into the floor. Use at your own risk."/>
+                                            <ToolTip Content="This may be SLIGHTLY stressful on the eyes in certain randomizations. To prevent most situations like this, enable Stop Lighting Intensity Randomization."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <TextBlock Text="Environment" FontWeight="Bold" Margin="0,5,0,10"/>
-                                <CheckBox Content="Use Other Stage Environments" IsChecked="{Binding SwapStageEnv, Mode=TwoWay}"/>
-                                <CheckBox Content="Include Non-Versus Stage Environments" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
-                                <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding RandomFogLevels, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Stage Lighting" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}"/> -->
+                                <CheckBox Content="Stop Lighting Intensity Randomization" IsChecked="{Binding RandomStageEnv, Mode=TwoWay}" IsEnabled="{Binding RandomStageEnv, Mode=OneWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
                             </StackPanel>   
                         </Border>
                     </StackPanel>
