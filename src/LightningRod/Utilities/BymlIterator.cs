@@ -2,89 +2,87 @@ using LightningRod.Libraries.Byml;
 
 namespace LightningRod.Utilities;
 
-public static class BymlIterator
+public class BymlIterator
 {
-    public static BymlHashTable IterateParams(BymlHashTable paramFile, string paramsKey)
-    {
-        if (!paramFile.ContainsKey(paramsKey))
-            return paramFile;
+    public static double randomizationLevel;
+    public Dictionary<Func<string, bool>, Action<string, BymlHashTable>> ruleKeys = [];
 
-        BymlHashTable paramData = (BymlHashTable)paramFile[paramsKey];
-        paramData = (BymlHashTable)CheckType(paramData);
-        paramFile.SetNode(paramsKey, paramData);
-        return paramFile;
+    public BymlIterator(double randLevel)
+    {
+        randomizationLevel = randLevel;
     }
 
-    public static IBymlNode CheckType(IBymlNode paramData)
+    public dynamic ProcessBymlRoot(dynamic bymlRoot)
     {
-        BymlNodeId dataType = paramData.Id;
-        switch (dataType)
+        return ProcessNode(bymlRoot);
+    }
+
+    public IBymlNode ProcessNode(IBymlNode bymlNode)
+    {
+        switch (bymlNode.Id)
         {
-            case BymlNodeId.Hash:
-                paramData = HandleHashTable((BymlHashTable)paramData);
-                break;
             case BymlNodeId.Array:
-                paramData = HandleArrayNode((BymlArrayNode)paramData);
+                bymlNode = ProcessArray(bymlNode as BymlArrayNode);
                 break;
-            case BymlNodeId.Null:
-                throw new Exception("Illegal byml node.");
+            case BymlNodeId.Hash:
+                bymlNode = ProcessHashTable(bymlNode as BymlHashTable);
+                break;
             default:
-                paramData = HandleValue(paramData);
+                bymlNode = ProcessPrimitiveNode(bymlNode);
                 break;
         }
-
-        return paramData;
+        return bymlNode;
     }
 
-    public static BymlHashTable HandleHashTable(BymlHashTable paramData)
+    public BymlArrayNode ProcessArray(BymlArrayNode arrayNode)
     {
-        foreach (string paramKey in paramData.Keys)
+        for (int i = 0; i < arrayNode.Length; i++)
+            arrayNode.SetNodeAtIdx(ProcessNode(arrayNode[i]), i);
+        return arrayNode;
+    }
+
+    public virtual BymlHashTable ProcessHashTable(BymlHashTable hashTable)
+    {
+        foreach (BymlHashPair node in hashTable.Pairs)
         {
-            if (paramKey.Contains("InkConsume") && Options.GetOption("maxInkConsume"))
-                paramData.SetNode(
-                    paramKey,
-                    new BymlNode<float>(BymlNodeId.Float, GameData.Random.NextFloat())
-                );
-            paramData.SetNode(paramKey, CheckType(paramData[paramKey]));
+            foreach (var rule in ruleKeys)
+                if (rule.Key(node.Name)) 
+                {
+                    Logger.Log($"Found special case for {node.Name}");
+                    rule.Value(node.Name, hashTable);
+                }
+                else
+                    hashTable.SetNode(node.Name, ProcessNode(node.Value));
         }
-        return paramData;
+        return hashTable;
     }
 
-    public static BymlArrayNode HandleArrayNode(BymlArrayNode paramData)
+    public virtual IBymlNode ProcessPrimitiveNode(dynamic dataNode)
     {
-        for (int i = 0; i < paramData.Length; i++)
-        {
-            paramData.SetNodeAtIdx(CheckType(paramData[i]), i);
-        }
-
-        return paramData;
-    }
-
-    public static IBymlNode HandleValue(IBymlNode paramData)
-    {
-        dynamic typedParam = paramData;
-
-        double[] severityValues = [1.5, 2.0, 3.0];
-        float severity = (float)severityValues[Options.GetOption("parameterSeverity") - 1];
-
-        switch (paramData.Id)
+        switch (dataNode.Id)
         {
             case BymlNodeId.Int:
-                if (typedParam.Data > 0)
-                    typedParam.Data =
-                        GameData.Random.NextInt((int)(typedParam.Data * severity)) + 1;
-                else if (typedParam.Data == 0)
-                    typedParam.Data = GameData.Random.NextInt((int)severity); //unfortunate rare edge case
-                else
-                    typedParam.Data = -1 * GameData.Random.NextInt(Math.Abs(typedParam.Data));
+                dataNode = ProcessIntNode(dataNode);
                 break;
             case BymlNodeId.Float:
-                typedParam.Data = GameData.Random.NextFloat() * (typedParam.Data * severity);
+                dataNode.Data *= GameData.Random.NextFloat((float)randomizationLevel) + 0.01;
                 break;
             case BymlNodeId.Bool:
-                typedParam.Data = GameData.Random.NextBoolean();
+                dataNode.Data = GameData.Random.NextBoolean();
                 break;
         }
-        return paramData;
+        return dataNode;
+    }
+
+    public static IBymlNode ProcessIntNode(BymlNode<int> intNode)
+    {
+        if (intNode.Data == 0)
+        {
+            intNode.Data = GameData.Random.NextInt((int)randomizationLevel);
+            return intNode;
+        }
+        
+        intNode.Data *= GameData.Random.NextInt((int)randomizationLevel) + 1;
+        return intNode;
     }
 }

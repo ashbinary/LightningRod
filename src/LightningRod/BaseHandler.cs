@@ -2,6 +2,7 @@
 using LibHac.FsSystem;
 using LibHac.Tools.FsSystem;
 using LightningRod.Randomizers;
+using LightningRod.Randomizers.Versus;
 using LightningRod.Utilities;
 
 namespace LightningRod;

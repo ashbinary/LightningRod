@@ -40,18 +40,18 @@ public static class StageLayoutRandomizer
             }
 
             dynamic stageBanc = FileUtils.ToByml(rawBancData);
-            BymlArrayNode stageActors = (BymlArrayNode)stageBanc.Root.Values[0]; // get Actors
+            BymlArrayNode stageActors = stageBanc.Root.Values[0]; // get Actors
 
-            List<string> positionData = [];
+            StageIterator actorIterator = new(1.5);
 
             if (Options.GetOption("tweakStageLayoutPos"))
-                positionData.Add("Translate");
+                actorIterator.editedKeys.Add("Translate");
             if (Options.GetOption("tweakStageLayoutSiz"))
-                positionData.Add("Scale");
+                actorIterator.editedKeys.Add("Scale");
             if (Options.GetOption("tweakStageLayoutRot"))
-                positionData.Add("Rotate");
+                actorIterator.editedKeys.Add("Rotate");
 
-            StageIterator.RandomizeStageActors(ref stageActors, positionData);
+            stageBanc.Root.SetNode("Actors", actorIterator.ProcessBymlRoot(stageActors));
 
             if (paramPack.GetSarcFileIndex($"Banc/{versusSceneName}.bcett.byml") == -1)
                 paramPack.Files.Add(

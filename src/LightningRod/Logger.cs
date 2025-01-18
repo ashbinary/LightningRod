@@ -17,9 +17,7 @@ public static class Logger
 
     public static void MakeFile()
     {
-        using (StreamWriter outputFile = new StreamWriter(filePath))
-        {
-            outputFile.WriteLine(logBuffer.ToString());
-        }
+        using StreamWriter outputFile = new(filePath);
+        outputFile.WriteLine(logBuffer.ToString());
     }
 }

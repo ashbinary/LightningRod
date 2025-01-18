@@ -16,6 +16,16 @@ public static class ParameterRandomizer
         Logger.Log("Starting parameter randomizer!");
         SarcFile paramPack = GameData.FileSystem.ParseSarc($"/Pack/Params.pack.zs");
 
+        BymlIterator paramIterator = new(Options.GetOption("parameterSeverity"));
+
+        paramIterator.ruleKeys.Add(
+            key => key.Contains("InkConsume"),
+            (key, table) => table.SetNode(
+                key,
+                new BymlNode<float>(BymlNodeId.String, GameData.Random.NextFloat(0.99f))
+            )
+        );
+
         foreach (SarcContent paramFileSarc in paramPack.Files)
         {
             if (!paramFileSarc.Name.StartsWith("Component/GameParameterTable/Weapon"))
@@ -23,9 +33,8 @@ public static class ParameterRandomizer
             BymlHashTable paramFile = (BymlHashTable)
                 FileUtils.ToByml(paramFileSarc.Data).Root;
 
-            paramFileSarc.Data = FileUtils.SaveByml(
-                BymlIterator.IterateParams(paramFile, "GameParameters")
-            );
+            paramFile = paramIterator.ProcessBymlRoot(paramFile);
+            paramFileSarc.Data = FileUtils.SaveByml(paramFile);
         }
 
         GameData.CommitToFileSystem(

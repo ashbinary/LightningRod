@@ -52,7 +52,7 @@ public static class BigWorldStageRandomizer
             int levelBancIndex = levelPack.GetSarcFileIndex($"{specialMapName}");
             dynamic levelBanc = FileUtils.ToByml(levelPack.Files[levelBancIndex].Data).Root;
             BymlArrayNode levelActors = levelBanc.Values[0];
-            VSStageRandomizer.RandomizeStageActors(ref levelActors, positionData);
+            //StageIterator.RandomizeStageActors(ref levelActors, positionData);
 
             var sceneBgymlData = levelPack.GetSarcFileData(
                 $"SceneComponent/MissionMapInfo/{sceneKvp.Key}.spl__MissionMapInfo.bgyml"

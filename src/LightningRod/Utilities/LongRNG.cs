@@ -31,9 +31,9 @@ public sealed class LongRNG
         return (int)(((uint)_seed) >> (48 - bits));
     }
 
-    public float NextFloat()
+    public float NextFloat(float f = 1)
     {
-        return (float)(NextInt(1000)) / 1000;
+        return (float)NextInt((int)(1000 * f)) / 1000; // data loss? yes. funny? also yes
     }
 
     public float[] NextFloatArray(int arrLength)

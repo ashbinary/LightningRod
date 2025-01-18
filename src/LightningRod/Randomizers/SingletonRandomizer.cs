@@ -20,8 +20,8 @@ public static class SingletonRandomizer
         );
         dynamic versusConstant = FileUtils.ToByml(singletonSarc.Files[versusConstantIndex].Data).Root;
 
-        for (int i = 0; i < versusConstantKeys.Length; i++)
-            BymlIterator.IterateParams(versusConstant, versusConstantKeys[i]);
+        BymlIterator singletonIterator = new BymlIterator(1.5);
+        singletonIterator.ProcessBymlRoot(versusConstant);
 
         singletonSarc.Files[versusConstantIndex].Data = FileUtils.SaveByml(versusConstant);
 

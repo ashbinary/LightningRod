@@ -1,74 +1,68 @@
 using LightningRod.Libraries.Byml;
+using LightningRod.Utilities;
 
-namespace LightningRod.Utilities;
+namespace LightningRod.Randomizers.Versus.Stage;
 
-public static class StageIterator
+public class StageIterator(double randLevel) : BymlIterator(randLevel)
 {
-    public static BymlArrayNode RandomizePositions(
-        this BymlArrayNode node,
-        (float startPoint, float changePoint) dataPoints,
-        float[] randInfo
-    )
+    public List<string> editedKeys = [];
+
+    public override BymlHashTable ProcessHashTable(BymlHashTable hashTable)
     {
-        float basePoint = dataPoints.startPoint - dataPoints.changePoint;
-        float modPoint = dataPoints.changePoint * 2;
-
-        bool isNewNode = false;
-
-        if (node.Length < 1)
-            isNewNode = true;
-
-        // RNG is handled as (random * 0.02) + 0.99 (example)
-        // provides random of 0.99 - 1.01
-        // (1, 0.01) in dataPoints does this
-        for (int i = 0; i < randInfo.Length; i++)
+        List<string> tempKeys = editedKeys;
+        foreach (BymlHashPair node in hashTable.Pairs)
         {
-            if (isNewNode)
-                node.AddNodeToArray(
-                    new BymlNode<float>(
-                        BymlNodeId.Float,
-                        (float)((randInfo[i] * modPoint) + basePoint)
-                    )
-                );
-            else
-                (node[i] as BymlNode<float>).Data =
-                    (float)((randInfo[i] * modPoint) + basePoint)
-                    * (node[i] as BymlNode<float>).Data;
+            if (node.Id == BymlNodeId.Array)
+                hashTable.SetNode(node.Name, ProcessStageNode(node.Value, node.Name));
+            tempKeys.Remove(node.Name);
         }
-        return node;
+
+        foreach (string key in tempKeys)
+        {
+            float defaultValue = key == "Scale" ? 1.0f : 0.0f;
+            hashTable.AddNode(BymlNodeId.Array, ProcessStageNode(new BymlArrayNode()
+            {
+                Array = {
+                    new BymlNode<float>(BymlNodeId.Float, defaultValue),
+                    new BymlNode<float>(BymlNodeId.Float, defaultValue),
+                    new BymlNode<float>(BymlNodeId.Float, defaultValue)
+                }
+            }, key), key);
+            Console.WriteLine("girl whatever");
+        }
+
+        return hashTable;
     }
 
-    public static void RandomizeStageActors(ref BymlArrayNode actorList, List<string> positionData)
+    public IBymlNode ProcessStageNode(dynamic dataNode, string positionType)
     {
-        foreach (BymlHashTable actorData in actorList.Array)
+        float randomBase = 1.0f;
+        float randomRange = (float)Options.GetOption("tweakLevel") / 100 * 2;
+
+        if (!editedKeys.Contains(positionType)) return dataNode;
+
+        switch (positionType)
         {
-            if ((actorData["Name"] as BymlNode<string>).Data == "StartPos")
-                continue;
-            if (Options.GetOption("tweakStageLayouts"))
-            {
-                foreach (string positionType in positionData)
-                {
-                    if (actorData.ContainsKey(positionType))
-                    {
-                        ((BymlArrayNode)actorData[positionType]).RandomizePositions(
-                            (1.0f, (float)Options.GetOption("tweakLevel") / 100),
-                            GameData.Random.NextFloatArray(3)
-                        );
-                    }
-                    else
-                    {
-                        BymlArrayNode positionNode = new BymlArrayNode();
-                        (float, float) dataPoints = positionType.Contains("Scale")
-                            ? (1.0f, (float)Options.GetOption("tweakLevel") / 100)
-                            : (0.0f, (float)Options.GetOption("tweakLevel") / 100);
-                        positionNode.RandomizePositions(
-                            dataPoints,
-                            GameData.Random.NextFloatArray(3)
-                        );
-                        actorData.AddNode(BymlNodeId.Array, positionNode, positionType);
-                    }
-                }
-            }
+            case "Translate": 
+            case "Rotate":
+                // Since randomBase is already sent to 1.0f, nothing is needed. Just need to make sure it won't return.
+                break;
+            case "Scale": 
+                randomBase = 1.0f;
+                break;
+            default: 
+                return dataNode;
         }
+        randomBase -= (float)Options.GetOption("tweakLevel") / 100;
+
+        for (int i = 0; i < 3; i++)
+        {
+            float randomValue = dataNode[i].Data * ((GameData.Random.NextFloat() * randomRange) + randomBase);
+            BymlNode<float> newBymlNode = new(BymlNodeId.Float, randomValue);
+
+            dataNode.SetNodeAtIdx(newBymlNode, i);
+        }
+
+        return dataNode;
     }
 }
