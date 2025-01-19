@@ -38,6 +38,7 @@ public class StageIterator(double randLevel) : BymlIterator(randLevel)
     {
         float randomBase = 1.0f;
         float randomRange = (float)Options.GetOption("tweakLevel") / 100 * 2;
+        Console.WriteLine("girl whatever else");
 
         if (!editedKeys.Contains(positionType)) return dataNode;
 

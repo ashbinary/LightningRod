@@ -62,7 +62,7 @@ public class BymlIterator
         switch (dataNode.Id)
         {
             case BymlNodeId.Int:
-                dataNode = ProcessIntNode(dataNode);
+                dataNode.Data = ProcessIntNode(dataNode.Data);
                 break;
             case BymlNodeId.Float:
                 dataNode.Data *= GameData.Random.NextFloat((float)randomizationLevel) + 0.01;
@@ -74,15 +74,16 @@ public class BymlIterator
         return dataNode;
     }
 
-    public static IBymlNode ProcessIntNode(BymlNode<int> intNode)
+    public static int ProcessIntNode(int intNodeData)
     {
-        if (intNode.Data == 0)
+        if (intNodeData == 0)
         {
-            intNode.Data = GameData.Random.NextInt((int)randomizationLevel);
-            return intNode;
+            intNodeData = GameData.Random.NextInt((int)randomizationLevel);
+            return intNodeData;
         }
         
-        intNode.Data *= GameData.Random.NextInt((int)randomizationLevel) + 1;
-        return intNode;
+        int additive = intNodeData < 0 ? -1 : 1;
+        intNodeData = GameData.Random.NextInt((int)(Math.Abs(intNodeData) * randomizationLevel)) + additive;
+        return intNodeData;
     }
 }
