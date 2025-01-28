@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -26,6 +27,9 @@ public static class ParameterRandomizer
             )
         );
 
+        string[] weaponWeights = ["Slow", "Mid", "Fast"];
+        string[] weaponWeightStats = ["WeaponSpeedType", "WeaponAccType"];
+
         foreach (SarcContent paramFileSarc in paramPack.Files)
         {
             if (!paramFileSarc.Name.StartsWith("Component/GameParameterTable/Weapon"))
@@ -35,7 +39,19 @@ public static class ParameterRandomizer
             BymlHashTable paramFile = (BymlHashTable)
                 FileUtils.ToByml(paramFileSarc.Data).Root;
 
+            if (!paramFile.ContainsKey("GameParameters")) continue;
             paramFile = paramIterator.ProcessBymlRoot(paramFile);
+
+            if ((paramFile["GameParameters"] as BymlHashTable).ContainsKey("MainWeaponSetting")) 
+            {
+                dynamic mainWeaponSetting = (paramFile["GameParameters"] as BymlHashTable)["MainWeaponSetting"];
+                foreach (string weaponStat in weaponWeightStats)
+                {
+                    string weaponWeight = weaponWeights[GameData.Random.NextInt(weaponWeights.Length)];
+                    mainWeaponSetting = ((BymlHashTable)mainWeaponSetting).SetIfExistsElseAdd(weaponStat, weaponWeight);
+                }
+            }
+
             paramFileSarc.Data = FileUtils.SaveByml(paramFile);
         }
 
@@ -43,5 +59,12 @@ public static class ParameterRandomizer
             "/Pack/Params.pack.zs",
             FileUtils.SaveSarc(paramPack).CompressZSTD()
         );
+    }
+
+    public static BymlHashTable SetIfExistsElseAdd(this BymlHashTable hashTable, string key, string value)
+    {
+        if (hashTable.ContainsKey(key)) (hashTable[key] as BymlNode<string>).Data = value;
+        else hashTable.AddHashPair(key, value, BymlNodeId.String);
+        return hashTable;
     }
 }
