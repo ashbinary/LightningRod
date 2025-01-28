@@ -47,8 +47,10 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool mismatchedStages = true;
     /* Parameter + Ink Randomization */
     [ObservableProperty] private bool randomizeParameters = true;
-     [ObservableProperty] private bool randomizeMsnParameters = true;
+    [ObservableProperty] private bool randomizeMsnParameters = true;
+    [ObservableProperty] private bool randomizeSdodrParameters = true;
     [ObservableProperty] private int parameterSeverity = 2;
+    [ObservableProperty] private bool randomizeWeaponWeight = true; 
     [ObservableProperty] private bool randomizeVersusConstants = true;
     [ObservableProperty] private bool randomizeCoopLevels = true;
     [ObservableProperty] private bool maxInkConsume = true;

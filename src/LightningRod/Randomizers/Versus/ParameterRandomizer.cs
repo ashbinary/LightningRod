@@ -42,13 +42,16 @@ public static class ParameterRandomizer
             if (!paramFile.ContainsKey("GameParameters")) continue;
             paramFile = paramIterator.ProcessBymlRoot(paramFile);
 
-            if ((paramFile["GameParameters"] as BymlHashTable).ContainsKey("MainWeaponSetting")) 
+            if (Options.GetOption("randomizeWeaponWeight"))
             {
-                dynamic mainWeaponSetting = (paramFile["GameParameters"] as BymlHashTable)["MainWeaponSetting"];
-                foreach (string weaponStat in weaponWeightStats)
+                if ((paramFile["GameParameters"] as BymlHashTable).ContainsKey("MainWeaponSetting")) 
                 {
-                    string weaponWeight = weaponWeights[GameData.Random.NextInt(weaponWeights.Length)];
-                    mainWeaponSetting = ((BymlHashTable)mainWeaponSetting).SetIfExistsElseAdd(weaponStat, weaponWeight);
+                    dynamic mainWeaponSetting = (paramFile["GameParameters"] as BymlHashTable)["MainWeaponSetting"];
+                    foreach (string weaponStat in weaponWeightStats)
+                    {
+                        string weaponWeight = weaponWeights[GameData.Random.NextInt(weaponWeights.Length)];
+                        mainWeaponSetting = ((BymlHashTable)mainWeaponSetting).SetIfExistsElseAdd(weaponStat, weaponWeight);
+                    }
                 }
             }
 

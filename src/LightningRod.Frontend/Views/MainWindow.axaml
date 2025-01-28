@@ -319,8 +319,9 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Side Order Weapon Data" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Side Order Weapon Data" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
                                 <CheckBox Content="Keep Ink Consumption Under 100%" IsChecked="{Binding MaxInkConsume, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Weapon Weight" IsChecked="{Binding RandomizeWeaponWeight, Mode=TwoWay}"/>
                                 <TextBlock Text="Singletons" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Match Intro / Results" IsChecked="{Binding RandomizeVersusConstants, Mode=TwoWay}"/>
