@@ -42,7 +42,7 @@ public static class StageLayoutRandomizer
             dynamic stageBanc = FileUtils.ToByml(rawBancData);
             BymlArrayNode stageActors = stageBanc.Root.Values[0]; // get Actors
 
-            StageIterator actorIterator = new(1.5);
+            StageIterator actorIterator = new(Options.GetOption("tweakLevel"));
 
             if (Options.GetOption("tweakStageLayoutPos"))
                 actorIterator.editedKeys.Add("Translate");

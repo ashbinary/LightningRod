@@ -9,7 +9,7 @@ public class StageIterator(double randLevel) : BymlIterator(randLevel)
 
     public override BymlHashTable ProcessHashTable(BymlHashTable hashTable)
     {
-        List<string> tempKeys = editedKeys;
+        List<string> tempKeys = [.. editedKeys]; // Deep copy to prevent issues with the original list
         foreach (BymlHashPair node in hashTable.Pairs)
         {
             if (node.Id == BymlNodeId.Array)
@@ -19,7 +19,11 @@ public class StageIterator(double randLevel) : BymlIterator(randLevel)
 
         foreach (string key in tempKeys)
         {
-            float defaultValue = key == "Scale" ? 1.0f : 0.0f;
+            float defaultValue = key switch
+            {
+                "Translate" or "Rotate" => 0.25f,
+                "Scale" => 1.0f,
+            };
             hashTable.AddNode(BymlNodeId.Array, ProcessStageNode(new BymlArrayNode()
             {
                 Array = {
@@ -28,7 +32,6 @@ public class StageIterator(double randLevel) : BymlIterator(randLevel)
                     new BymlNode<float>(BymlNodeId.Float, defaultValue)
                 }
             }, key), key);
-            Console.WriteLine("girl whatever");
         }
 
         return hashTable;
@@ -36,29 +39,22 @@ public class StageIterator(double randLevel) : BymlIterator(randLevel)
 
     public IBymlNode ProcessStageNode(dynamic dataNode, string positionType)
     {
-        float randomBase = 1.0f;
-        float randomRange = (float)Options.GetOption("tweakLevel") / 100 * 2;
-        Console.WriteLine("girl whatever else");
-
         if (!editedKeys.Contains(positionType)) return dataNode;
 
-        switch (positionType)
+        float Max = positionType switch
         {
-            case "Translate": 
-            case "Rotate":
-                // Since randomBase is already sent to 1.0f, nothing is needed. Just need to make sure it won't return.
-                break;
-            case "Scale": 
-                randomBase = 1.0f;
-                break;
-            default: 
-                return dataNode;
-        }
-        randomBase -= (float)Options.GetOption("tweakLevel") / 100;
+            "Translate" => 20f,
+            "Rotate" =>  3.14159f,
+            "Scale" => 0.8f,
+        };
 
         for (int i = 0; i < 3; i++)
         {
-            float randomValue = dataNode[i].Data * ((GameData.Random.NextFloat() * randomRange) + randomBase);
+            double cappedRand = Max * (randLevel / 100); 
+            double randBase = GameData.Random.NextFloat((float)(cappedRand * 2)) - cappedRand;
+            float randomValue = (float)(randBase + dataNode[i].Data);
+
+            if (positionType == "Scale") randomValue = Math.Abs(randomValue); 
             BymlNode<float> newBymlNode = new(BymlNodeId.Float, randomValue);
 
             dataNode.SetNodeAtIdx(newBymlNode, i);

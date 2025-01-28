@@ -343,7 +343,14 @@ public partial class MainWindow : Window
         string homeTitleKeyFile = System.IO.Path.Combine(homePath, ".switch", "title.keys");
         string prodKeyFile = System.IO.Path.Combine(homePath, ".switch", "prod.keys");
 
-        return ExternalKeyReader.ReadKeyFile(prodKeyFile, homeTitleKeyFile);
+        try
+        {
+            return ExternalKeyReader.ReadKeyFile(prodKeyFile, homeTitleKeyFile);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to load keys! " + e.Message);
+        }
     }
 
     public enum GameType
