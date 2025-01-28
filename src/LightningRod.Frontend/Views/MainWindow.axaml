@@ -88,7 +88,7 @@
         <StackPanel Orientation="Horizontal" Margin="15,5,15,0" Grid.Row="1" Grid.ColumnSpan="3">
             <!-- ROM Information Group -->
             <StackPanel Width="350" Margin="0,0,10,0">
-                <Border BorderBrush="Gray" BorderThickness="1" Padding="10">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="10,5,10,10">
                     <StackPanel>
                         <CheckBox Content="Use RomFS Directory" HorizontalAlignment="Center" Height="35" Margin="0,0,0,5" IsCheckedChanged="SwapRomFSandNSPInput" IsChecked="{Binding UseRomFSInstead, Mode=TwoWay}" IsEnabled="{Binding !IsBaseLoaded, Mode=OneWay}"/>
                         <Button Name="LoadBaseNSP" Content="Load Base (.nsp/.xci File)" Height="35" Width="300" Margin="0,0,0,5" Click="HandleNSPButtonsAsync" IsEnabled="{Binding !IsBaseLoaded, Mode=OneWay}"/>

@@ -61,4 +61,9 @@ public static class MiscUtils
         }
         return data;
     }
+
+    public static string Compile(this string uncompiledString)
+    {
+        return uncompiledString.Replace("Work/", "").Replace(".gyml", ".bgyml");
+    }
 }

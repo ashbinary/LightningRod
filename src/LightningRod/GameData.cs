@@ -21,6 +21,7 @@ public static class GameData
         using FileStream fileSaver = File.Create($"{DataPath}/{filePath}");
         fileSaver.Write(newData);
         FileSystem.Commit();
+        FileSystem.Flush();
     }
 
     public static bool IsNewerVersion(int version)

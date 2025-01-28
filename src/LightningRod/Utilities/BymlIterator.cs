@@ -46,13 +46,15 @@ public class BymlIterator
         foreach (BymlHashPair node in hashTable.Pairs)
         {
             foreach (var rule in ruleKeys)
+            {
                 if (rule.Key(node.Name)) 
                 {
                     Logger.Log($"Found special case for {node.Name}");
                     rule.Value(node.Name, hashTable);
+                    continue;
                 }
-                else
-                    hashTable.SetNode(node.Name, ProcessNode(node.Value));
+            }
+            hashTable.SetNode(node.Name, ProcessNode(node.Value));
         }
         return hashTable;
     }

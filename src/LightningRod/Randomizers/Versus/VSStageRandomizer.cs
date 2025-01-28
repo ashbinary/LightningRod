@@ -14,6 +14,7 @@ public static class VSStageRandomizer
         Logger.Log("Starting versus stage randomizer!");
 
         StageLayoutRandomizer.Randomize();
+        StageEnvRandomizer.Randomize();
 
         dynamic sceneInfo = GameData.FileSystem.ParseByml(
             $"/RSDB/SceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
