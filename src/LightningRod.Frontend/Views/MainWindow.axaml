@@ -218,7 +218,7 @@
                                     <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
                                     <Slider x:Name="TweakAmount"
                                         Minimum="1"
-                                        Maximum="20"
+                                        Maximum="10"
                                         Value="{Binding TweakLevel, Mode=TwoWay}"
                                         Margin="0,5,0,5"
                                         TickFrequency="1"

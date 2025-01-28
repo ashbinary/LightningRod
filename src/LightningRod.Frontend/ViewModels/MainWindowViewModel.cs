@@ -34,7 +34,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool matchPeriscopeKits = true;
     /* Stage Randomization */
     [ObservableProperty] private bool tweakStageLayouts = false;
-    [ObservableProperty] private int tweakLevel = 3;
+    [ObservableProperty] private int tweakLevel = 5;
     [ObservableProperty] private bool tweakStageLayoutPos = true;
     [ObservableProperty] private bool tweakStageLayoutRot = true;
     [ObservableProperty] private bool tweakStageLayoutSiz = true;
