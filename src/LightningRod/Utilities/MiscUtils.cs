@@ -51,19 +51,34 @@ public static class MiscUtils
         table.Pairs.Add(pair);
     }
 
-    public static string GetRandomIndex(this List<string> dataTable, string constraint)
+    public static string GetRandomIndex(this List<Weapon> weaponTable, WeaponType constraint)
     {
-        string data = "";
-        int tableLength = dataTable.Count;
-        while (!data.Contains(constraint))
+        Weapon data = new("TempWeapon", WeaponType.Other);
+        int tableLength = weaponTable.Count;
+        while (!(data.Type == constraint))
+            data = weaponTable[GameData.Random.NextInt(tableLength)];
+        return data.Name;
+    }
+
+    public static List<string> GetAllWeaponsOfType(this List<Weapon> weaponTable, WeaponType constraint)
+    {
+        List<string> weaponList = [];
+        foreach (Weapon weapon in weaponTable)
         {
-            data = dataTable[GameData.Random.NextInt(tableLength)];
+            if (weapon.Type == constraint)
+                weaponList.Add(weapon.Name);
         }
-        return data;
+        return weaponList;
     }
 
     public static string Compile(this string uncompiledString)
     {
         return uncompiledString.Replace("Work/", "").Replace(".gyml", ".bgyml");
+    }
+
+    // https://stackoverflow.com/questions/16100/convert-a-string-to-an-enum-in-c-sharp
+    public static T ToEnum<T>(this string value)
+    {
+        return (T) Enum.Parse(typeof(T), value, true);
     }
 }

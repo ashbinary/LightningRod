@@ -1,3 +1,4 @@
+using System.Net;
 using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 using LightningRod.Utilities;
@@ -8,7 +9,7 @@ public static class StageEnvRandomizer
 {
     public static void Randomize()
     {
-        List<string> versusStageEnvs = [];
+        List<(string envName, bool isNight)> versusStageEnvs = [];
 
         foreach (string versusStageName in  VSStageRandomizer.versusSceneIds)
         {
@@ -35,11 +36,32 @@ public static class StageEnvRandomizer
             string envSetNight = stageGfxEnvData.ContainsKey("EnvSetNight") ? stageGfxEnvData["EnvSetNight"].Data : envSetDay;
 
             string[] envPaths = [envSetDay.Compile(), envSetNight.Compile()];
-            if (Options.GetOption("swapStageEnv")) versusStageEnvs.AddRange(envPaths);
+            if (Options.GetOption("swapStageEnv")) 
+            {
+                versusStageEnvs.Add((envSetDay, false));
+                versusStageEnvs.Add((envSetNight, true));
+            }
 
             if (Options.GetOption("randomStageEnv"))
             {
-                BymlIterator envIterator = new(3);
+                BymlIterator envIterator = new(Options.GetOption("envIntensity") * 0.3); // Max (10) -> 3
+
+                if (!Options.GetOption("randomFogLevels"))
+                {
+                    envIterator.ruleKeys.Add(
+                        key => key.Contains("Fog"),
+                        (key, table) => {}
+                    );
+                }
+
+                if (!Options.GetOption("randomLighting"))
+                {
+                    envIterator.ruleKeys.Add(
+                        key => key.Contains("Lighting"),
+                        (key, table) => {}
+                    );
+                }
+
                 foreach (string envPath in envPaths)
                 {
                     dynamic envData = FileUtils.ToByml(
@@ -78,10 +100,19 @@ public static class StageEnvRandomizer
 
                 for (int i = 0; i < stageGfxEnvData.Pairs.Count; i++)
                 {
+                    int envRandom = GameData.Random.NextInt(versusStageEnvs.Count);
+                    if (!Options.GetOption("mixDayNightEnv"))
+                    {
+                        while ((versusStageEnvs[envRandom].isNight && i == 0) || (!versusStageEnvs[envRandom].isNight && i == 1))
+                        {
+                            envRandom = GameData.Random.NextInt(versusStageEnvs.Count);
+                        }
+                    }
+
                     stageGfxEnvData.Pairs[i] = new BymlHashPair() {
                         Name = stageGfxEnvData.Pairs[i].Name,
                         Id = BymlNodeId.String,
-                        Value = new BymlNode<string>(BymlNodeId.String, versusStageEnvs[GameData.Random.NextInt(versusStageEnvs.Count)])
+                        Value = new BymlNode<string>(BymlNodeId.String, versusStageEnvs[envRandom].envName)
                     };
                 }
 

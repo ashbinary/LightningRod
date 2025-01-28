@@ -30,6 +30,8 @@ public static class ParameterRandomizer
         {
             if (!paramFileSarc.Name.StartsWith("Component/GameParameterTable/Weapon"))
                 continue;
+            if (paramFileSarc.Name.Contains("Msn") && !Options.GetOption("randomizeMsnParameters"))
+                continue;
             BymlHashTable paramFile = (BymlHashTable)
                 FileUtils.ToByml(paramFileSarc.Data).Root;
 

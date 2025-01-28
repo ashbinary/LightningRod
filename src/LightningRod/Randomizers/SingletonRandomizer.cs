@@ -9,21 +9,26 @@ public static class SingletonRandomizer
 {
     public static void Randomize()
     {
+        bool hasSingletonBeenModified = false;
         string singletonPath = GameData.IsNewerVersion(710)
             ? "/Pack/SingletonParam_v-700.pack.zs"
             : "/Pack/SingletonParam.pack.zs";
         SarcFile singletonSarc = GameData.FileSystem.ParseSarc(singletonPath);
+        BymlIterator singletonIterator = new BymlIterator(Options.GetOption("parameterSeverity"));
 
-        string[] versusConstantKeys = ["BeforeGame", "GameEnd", "Result"];
-        int versusConstantIndex = singletonSarc.GetSarcFileIndex(
-            $"Gyml/Singleton/spl__VersusConstant.spl__VersusConstant.bgyml"
-        );
-        dynamic versusConstant = FileUtils.ToByml(singletonSarc.Files[versusConstantIndex].Data).Root;
+        if (Options.GetOption("randomizeVersusConstants"))
+        {
+            hasSingletonBeenModified = true;
+            string[] versusConstantKeys = ["BeforeGame", "GameEnd", "Result"];
+            int versusConstantIndex = singletonSarc.GetSarcFileIndex(
+                $"Gyml/Singleton/spl__VersusConstant.spl__VersusConstant.bgyml"
+            );
+            dynamic versusConstant = FileUtils.ToByml(singletonSarc.Files[versusConstantIndex].Data).Root;
 
-        BymlIterator singletonIterator = new BymlIterator(1.5);
-        singletonIterator.ProcessBymlRoot(versusConstant);
+            singletonIterator.ProcessBymlRoot(versusConstant);
 
-        singletonSarc.Files[versusConstantIndex].Data = FileUtils.SaveByml(versusConstant);
+            singletonSarc.Files[versusConstantIndex].Data = FileUtils.SaveByml(versusConstant);
+        }
 
         int missionConstantIndex = singletonSarc.GetSarcFileIndex(
             $"Gyml/Singleton/spl__MissionConstant.spl__MissionConstant.bgyml"
@@ -50,7 +55,19 @@ public static class SingletonRandomizer
             skillTreeTypes.RemoveAt(randomNumber);
         }
 
-        singletonSarc.Files[missionConstantIndex].Data = FileUtils.SaveByml(missionConstant);
+        if (Options.GetOption("randomizeCoopLevels"))
+        {
+            hasSingletonBeenModified = true;
+            singletonSarc.Files[missionConstantIndex].Data = FileUtils.SaveByml(missionConstant);
+
+            int coopLevelConfigIndex = singletonSarc.GetSarcFileIndex(
+                $"Gyml/Singleton/spl__CoopLevelsConfig.spl__CoopLevelsConfig.bgyml"
+            );
+            dynamic coopLevelConfig = FileUtils.ToByml(singletonSarc.Files[coopLevelConfigIndex].Data).Root;
+            singletonIterator.ProcessBymlRoot(coopLevelConfig);
+
+            singletonSarc.Files[coopLevelConfigIndex].Data = FileUtils.SaveByml(coopLevelConfig);
+        }
 
         GameData.CommitToFileSystem(
             singletonPath,

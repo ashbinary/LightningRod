@@ -2,6 +2,7 @@
 using LibHac.FsSystem;
 using LibHac.Tools.FsSystem;
 using LightningRod.Randomizers;
+using LightningRod.Randomizers.Solo;
 using LightningRod.Randomizers.Versus;
 using LightningRod.Utilities;
 
@@ -38,6 +39,7 @@ public class BaseHandler(IFileSystem baseFs)
         BigWorldRandomizer.Randomize();
         InkColorRandomizer.Randomize();
         SingletonRandomizer.Randomize();
+        HeroParameterRandomizer.Randomize();
 
         Logger.MakeFile();
     }

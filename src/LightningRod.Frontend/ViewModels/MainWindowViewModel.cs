@@ -39,17 +39,18 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool tweakStageLayoutRot = true;
     [ObservableProperty] private bool tweakStageLayoutSiz = true;
     [ObservableProperty] private bool swapStageEnv = false;
-    [ObservableProperty] private bool allowNonVersusEnvs = true;
-    [ObservableProperty] private bool randomStageEnv = true;
+    [ObservableProperty] private bool mixDayNightEnv = true;
+    [ObservableProperty] private bool randomStageEnv = false;
     [ObservableProperty] private bool randomFogLevels = true;
     [ObservableProperty] private bool randomLighting = false;
-    [ObservableProperty] private bool preventLightingIntensity = true;
+    [ObservableProperty] private double envIntensity = 5;
     [ObservableProperty] private bool mismatchedStages = true;
-    [ObservableProperty] private bool randomMinimapPos = true;
     /* Parameter + Ink Randomization */
     [ObservableProperty] private bool randomizeParameters = true;
+     [ObservableProperty] private bool randomizeMsnParameters = true;
     [ObservableProperty] private int parameterSeverity = 2;
     [ObservableProperty] private bool randomizeVersusConstants = true;
+    [ObservableProperty] private bool randomizeCoopLevels = true;
     [ObservableProperty] private bool maxInkConsume = true;
     [ObservableProperty] private bool randomizeInkColors = true;
     [ObservableProperty] private bool randomizeInkColorLock = false;

@@ -71,8 +71,10 @@ public static class WeaponKitRandomizer
         for (int i = 0; i < weaponMain.Length; i++)
         {
             dynamic? mainData = weaponMain[i];
+            string mainType = mainData["Type"].Data;
 
-            GameData.weaponNames.WeaponInfoMain.Add(mainData["__RowId"].Data);
+            GameData.weaponNames.WeaponInfoMain.Add(
+                new Weapon(mainData["__RowId"].Data, mainType.ToEnum<WeaponType>()));
 
             if (MainBanList.Contains(mainData["__RowId"].Data))
                 continue;

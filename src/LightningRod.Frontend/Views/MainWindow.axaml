@@ -215,7 +215,7 @@
                                 <TextBlock Text="Stage Layout" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Tweak Stage Layouts" IsChecked="{Binding TweakStageLayouts, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal" IsEnabled="{Binding TweakStageLayouts, Mode=OneWay}">
-                                    <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
+                                    <TextBlock Text="Randomization Severity:" Margin="0,5,10,5"/>
                                     <Slider x:Name="TweakAmount"
                                         Minimum="1"
                                         Maximum="10"
@@ -227,7 +227,7 @@
                                     <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,5"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,-5,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This controls how modified the stage layout is. The higher the level, the higher chance of a stage being completely unplayable."/>
+                                            <ToolTip Content="This controls how modified the stage layout is. The higher the severity, the higher chance of a stage being completely unplayable."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
@@ -243,7 +243,6 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Minimap Rotation" IsChecked="{Binding RandomMinimapPos, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -263,17 +262,26 @@
                                         </MultiBinding>
                                     </TextBlock.IsVisible>
                                 </TextBlock>
-                                <CheckBox Content="Include Non-Versus Stage Environments" IsChecked="{Binding AllowNonVersusEnvs, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
+                                <CheckBox Content="Mix Day &amp; Night Environments" IsChecked="{Binding MixDayNightEnv, Mode=TwoWay}" IsVisible="{Binding SwapStageEnv, Mode=OneWay}"/>
                                 <CheckBox Content="Randomize Fog Levels" IsChecked="{Binding RandomFogLevels, Mode=TwoWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomStageEnv, Mode=OneWay}">
-                                    <CheckBox Content="Randomize Lighting" IsChecked="{Binding RandomLighting, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                <CheckBox Content="Randomize Lighting" IsChecked="{Binding RandomLighting, Mode=TwoWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
+                               <StackPanel Orientation="Horizontal" IsEnabled="{Binding RandomLighting, Mode=OneWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}">
+                                    <TextBlock Text="Intensity:" Margin="0,5,10,5"/>
+                                    <Slider x:Name="EnvIntensityAmount"
+                                        Minimum="1"
+                                        Maximum="10"
+                                        Value="{Binding EnvIntensity, Mode=TwoWay}"
+                                        Margin="0,5,0,5"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True"
+                                        Width="150"/>
+                                    <TextBlock Text="{Binding EnvIntensity}" Margin="10,5,0,5"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,-5,0,0" Foreground="#FF54A9FF">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This may be SLIGHTLY stressful on the eyes in certain randomizations. To prevent most situations like this, enable Stop Lighting Intensity Randomization."/>
+                                            <ToolTip Content="Level 7 and above may be stressful on the eyes. Take precautions if necessary."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Stop Lighting Intensity Randomization" IsChecked="{Binding PreventLightingIntensity, Mode=TwoWay}" IsEnabled="{Binding RandomLighting, Mode=OneWay}" IsVisible="{Binding RandomStageEnv, Mode=OneWay}"/>
                             </StackPanel>   
                         </Border>
                     </StackPanel>
@@ -322,7 +330,7 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Salmon Run Difficulty" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Salmon Run Difficulty" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

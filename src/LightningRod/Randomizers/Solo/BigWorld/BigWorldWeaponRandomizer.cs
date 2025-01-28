@@ -42,7 +42,7 @@ public static class BigWorldWeaponRandomizer
             {
                 dynamic msnNode = CreateNewMsnNode();
                 msnNode["WeaponMain"].Data =
-                    $"Work/Gyml/{GameData.weaponNames.WeaponInfoMain.GetRandomIndex("Msn")}.spl__WeaponInfoMain.gyml";
+                    $"Work/Gyml/{GameData.weaponNames.WeaponInfoMain.GetRandomIndex(WeaponType.Mission)}.spl__WeaponInfoMain.gyml";
                 newSupplyArray.AddNodeToArray(msnNode);
             }
 
