@@ -49,7 +49,6 @@ public class BymlIterator
             {
                 if (rule.Key(node.Name)) 
                 {
-                    Logger.Log($"Found special case for {node.Name}");
                     rule.Value(node.Name, hashTable);
                     continue;
                 }

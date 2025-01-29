@@ -1,5 +1,6 @@
 using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
+using LightningRod.Randomizers.Versus.Stage;
 using LightningRod.Utilities;
 
 namespace LightningRod.Randomizers.Solo.BigWorld;
@@ -32,6 +33,10 @@ public static class BigWorldStageRandomizer
         if (Options.GetOption("tweakStageLayoutRot"))
             positionData.Add("Rotate");
 
+        StageIterator heroIterator = new(2);
+        heroIterator.ruleKeys.Add(key => key.Contains("StartPos"), (key, table) => { });
+        heroIterator.editedKeys.AddRange(positionData);
+
         foreach (KeyValuePair<string, int> sceneKvp in msnScenes)
         {
             SarcFile levelPack = GameData.FileSystem.ParseSarc(
@@ -52,7 +57,8 @@ public static class BigWorldStageRandomizer
             int levelBancIndex = levelPack.GetSarcFileIndex($"{specialMapName}");
             dynamic levelBanc = FileUtils.ToByml(levelPack.Files[levelBancIndex].Data).Root;
             BymlArrayNode levelActors = levelBanc.Values[0];
-            //StageIterator.RandomizeStageActors(ref levelActors, positionData);
+
+            levelBanc.Values[0].Array = heroIterator.ProcessBymlRoot(levelActors).Array;
 
             var sceneBgymlData = levelPack.GetSarcFileData(
                 $"SceneComponent/MissionMapInfo/{sceneKvp.Key}.spl__MissionMapInfo.bgyml"
@@ -74,7 +80,7 @@ public static class BigWorldStageRandomizer
             levelPack.Files[levelBancIndex].Data = FileUtils.SaveByml((BymlHashTable)levelBanc);
             GameData.CommitToFileSystem(
                 $"/Pack/Scene/{sceneKvp.Key}.pack.zs",
-                FileUtils.SaveSarc(levelPack)
+                FileUtils.SaveSarc(levelPack).CompressZSTD()
             );
         }
 

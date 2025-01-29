@@ -112,7 +112,7 @@
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" SelectedIndex="5" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
+        <TabControl Grid.Row="2" SelectedIndex="2" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -293,9 +293,18 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
                                 <TextBlock Text="Parameters" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Weapon Data" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Multiplayer Weapons" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomizeParameters, Mode=OneWay}">
-                                    <TextBlock Text="Randomization Severity:" Margin="0,5,10,5"/>
+                                    <CheckBox Content="Randomize Story Mode Weapons" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="Not recommended as it causes softlocks within Hero Mode levels. However, very fun when used with some sort of anti-softlock protection!"/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Randomize Side Order Weapons" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomizeParameters, Mode=OneWay}">
+                                    <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
                                     <Slider x:Name="ParameterScale"
                                         Minimum="1"
                                         Maximum="5"
@@ -303,7 +312,7 @@
                                         Margin="0,5,0,5"
                                         TickFrequency="1"
                                         IsSnapToTickEnabled="True"
-                                        Width="100"/>
+                                        Width="120"/>
                                     <TextBlock Text="{Binding ParameterSeverity}" Margin="10,5,0,5"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,-5,0,0">
                                         <ToolTip.Tip>
@@ -311,27 +320,9 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomizeParameters, Mode=OneWay}">
-                                    <CheckBox Content="Randomize Hero Weapon Data" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,0,0,0">
-                                        <ToolTip.Tip>
-                                            <ToolTip Content="Not recommended as it causes softlocks within Hero Mode levels."/>
-                                        </ToolTip.Tip>
-                                    </TextBlock>
-                                </StackPanel>
-                                <CheckBox Content="Randomize Side Order Weapon Data" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
+                                <TextBlock Text="Parameter Rules" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Keep Ink Consumption Under 100%" IsChecked="{Binding MaxInkConsume, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Weapon Weight" IsChecked="{Binding RandomizeWeaponWeight, Mode=TwoWay}"/>
-                                <TextBlock Text="Singletons" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Randomize Match Intro / Results" IsChecked="{Binding RandomizeVersusConstants, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
-                                        <ToolTip.Tip>
-                                            <ToolTip Content="This feature is also modified by the parameter severity level."/>
-                                        </ToolTip.Tip>
-                                    </TextBlock>
-                                </StackPanel>
-                                <CheckBox Content="Randomize Salmon Run Difficulty" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Weapon Weight" IsChecked="{Binding RandomizeWeaponWeight, Mode=TwoWay}"/>        
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -427,6 +418,7 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Salmon Run">
+                <CheckBox Content="Randomize Salmon Run Difficulty" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
             </TabItem>
             <TabItem Header="Miscellaneous">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -464,6 +456,14 @@
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This will affect the RNG, even on the same seed. It is only for saving space."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Randomize Match Intro / Results" IsChecked="{Binding RandomizeVersusConstants, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This feature is also modified by the parameter severity level."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
