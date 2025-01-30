@@ -66,10 +66,18 @@ public partial class MainWindowViewModel : ObservableObject
     /* Hero Mode Randomization */
     [ObservableProperty] private bool randomizeHeroWeapons = true;
     [ObservableProperty] private bool ensureFirstHeroWeapon = true;
+    [ObservableProperty] private bool randomizeOctarians = true; // Unused : )
+    [ObservableProperty] private bool randomizeOctarianParams = true; // Unused : )
+    [ObservableProperty] private bool randomizeFuzzballCost = false;
+    [ObservableProperty] private bool randomizeHeroTree = true;
+    [ObservableProperty] private bool randomizeDigUpPointEggs = false;
+    [ObservableProperty] private int digUpPointEggCount = 25;
     [ObservableProperty] private bool randomizeLevelReward = false;
+    [ObservableProperty] private bool randomizeLevelFee = false;
     [ObservableProperty] private bool randomizeKettles = true;
-    [ObservableProperty] private bool randomizeStageSkybox = true;
-    [ObservableProperty] private bool randomizeStageMusic = true;
+    [ObservableProperty] private bool randomizeKettlesCrater = true;
+    [ObservableProperty] private bool randomizeStageSkybox = false;
+    [ObservableProperty] private bool randomizeStageMusic = false;
     
 
     public MainWindowViewModel() { }

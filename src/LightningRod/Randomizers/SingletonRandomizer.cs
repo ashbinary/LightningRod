@@ -30,35 +30,40 @@ public static class SingletonRandomizer
             singletonSarc.Files[versusConstantIndex].Data = FileUtils.SaveByml(versusConstant);
         }
 
-        int missionConstantIndex = singletonSarc.GetSarcFileIndex(
-            $"Gyml/Singleton/spl__MissionConstant.spl__MissionConstant.bgyml"
-        );
-        dynamic missionConstant = FileUtils.ToByml(singletonSarc.Files[missionConstantIndex].Data).Root;
-
-        BymlArrayNode skillTree = missionConstant["PlayerSkillTree"]["SkillIconTable"];
-
-        List<string> skillTreeTypes = skillTree
-            .Array // is this dumb? yes. do i care? no
-            .OfType<BymlHashTable>()
-            .Where(option => option.ContainsKey("SkillType"))
-            .Select(option => (option["SkillType"] as BymlNode<string>).Data)
-            .ToList();
-
-        for (int i = 0; i < skillTree.Length; i++)
+        if (Options.GetOption("randomizeHeroTree"))
         {
-            if (!(skillTree.Array[i] as BymlHashTable).ContainsKey("SkillType"))
-                continue;
+            hasSingletonBeenModified = true;
+            int missionConstantIndex = singletonSarc.GetSarcFileIndex(
+                $"Gyml/Singleton/spl__MissionConstant.spl__MissionConstant.bgyml"
+            );
+            dynamic missionConstant = FileUtils.ToByml(singletonSarc.Files[missionConstantIndex].Data).Root;
 
-            int randomNumber = GameData.Random.NextInt(skillTreeTypes.Count);
-            ((skillTree.Array[i] as BymlHashTable)["SkillType"] as BymlNode<string>).Data =
-                skillTreeTypes[randomNumber];
-            skillTreeTypes.RemoveAt(randomNumber);
+            BymlArrayNode skillTree = missionConstant["PlayerSkillTree"]["SkillIconTable"];
+
+            List<string> skillTreeTypes = skillTree
+                .Array // is this dumb? yes. do i care? no
+                .OfType<BymlHashTable>()
+                .Where(option => option.ContainsKey("SkillType"))
+                .Select(option => (option["SkillType"] as BymlNode<string>).Data)
+                .ToList();
+
+            for (int i = 0; i < skillTree.Length; i++)
+            {
+                if (!(skillTree.Array[i] as BymlHashTable).ContainsKey("SkillType"))
+                    continue;
+
+                int randomNumber = GameData.Random.NextInt(skillTreeTypes.Count);
+                ((skillTree.Array[i] as BymlHashTable)["SkillType"] as BymlNode<string>).Data =
+                    skillTreeTypes[randomNumber];
+                skillTreeTypes.RemoveAt(randomNumber);
+            }
+
+            singletonSarc.Files[missionConstantIndex].Data = FileUtils.SaveByml(missionConstant);
         }
 
         if (Options.GetOption("randomizeCoopLevels"))
         {
             hasSingletonBeenModified = true;
-            singletonSarc.Files[missionConstantIndex].Data = FileUtils.SaveByml(missionConstant);
 
             int coopLevelConfigIndex = singletonSarc.GetSarcFileIndex(
                 $"Gyml/Singleton/spl__CoopLevelsConfig.spl__CoopLevelsConfig.bgyml"
@@ -69,9 +74,10 @@ public static class SingletonRandomizer
             singletonSarc.Files[coopLevelConfigIndex].Data = FileUtils.SaveByml(coopLevelConfig);
         }
 
-        GameData.CommitToFileSystem(
-            singletonPath,
-            FileUtils.SaveSarc(singletonSarc).CompressZSTD()
-        );
+        if (hasSingletonBeenModified)
+            GameData.CommitToFileSystem(
+                singletonPath,
+                FileUtils.SaveSarc(singletonSarc).CompressZSTD()
+            );
     }
 }

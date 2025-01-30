@@ -50,20 +50,28 @@ public static class WeaponKitRandomizer
 
         for (int i = 0; i < weaponSub.Length; i++)
         {
-            string RowId = ((weaponSub[i] as BymlHashTable)["__RowId"] as BymlNode<string>).Data;
-            GameData.weaponNames.WeaponInfoSub.Add(RowId);
-            if (!SubBanList.Any(RowId.Contains))
-                subList.Add(RowId);
+            string subRowId = weaponSub[i]["__RowId"].Data;
+            string subType = weaponSub[i]["Type"].Data;
+
+            GameData.weaponNames.WeaponInfoSub.Add(
+                new Weapon(subRowId, subType.ToEnum<WeaponType>())
+            );
+
+            if (!SubBanList.Any(subRowId.Contains))
+                subList.Add(subRowId);
         }
 
         for (int i = 0; i < weaponSpecial.Length; i++)
         {
-            string RowId = (
-                (weaponSpecial[i] as BymlHashTable)["__RowId"] as BymlNode<string>
-            ).Data;
-            GameData.weaponNames.WeaponInfoSpecial.Add(RowId);
-            if (!SpecialBanList.Any(RowId.Contains))
-                specialList.Add(RowId);
+            string specialRowId = weaponSpecial[i]["__RowId"].Data;
+            string specialType = weaponSpecial[i]["Type"].Data;
+
+            GameData.weaponNames.WeaponInfoSpecial.Add(
+                new Weapon(specialRowId, specialType.ToEnum<WeaponType>())
+            );
+
+            if (!SpecialBanList.Any(specialRowId.Contains))
+                specialList.Add(specialRowId);
         }
 
         Dictionary<string, int> periscopeIndexes = [];
@@ -74,7 +82,8 @@ public static class WeaponKitRandomizer
             string mainType = mainData["Type"].Data;
 
             GameData.weaponNames.WeaponInfoMain.Add(
-                new Weapon(mainData["__RowId"].Data, mainType.ToEnum<WeaponType>()));
+                new Weapon(mainData["__RowId"].Data, mainType.ToEnum<WeaponType>())
+            );
 
             if (MainBanList.Contains(mainData["__RowId"].Data))
                 continue;
@@ -105,23 +114,17 @@ public static class WeaponKitRandomizer
 
         if (Options.GetOption("matchPeriscopeKits"))
         {
+            string[] overwriteKeys = ["SubWeapon", "SpecialWeapon", "SpecialPoint"];
             foreach (string key in periscopeIndexes.Keys)
             {
-                if (key.Contains("Scope"))
+                if (!key.Contains("Scope")) continue;
+                string altKey = key.Replace("Scope", "");
+
+                foreach (string indexKey in overwriteKeys)
                 {
-                    string altKey = key.Replace("Scope", "");
-
-                    ((dynamic)weaponMain[periscopeIndexes[key]])["SubWeapon"].Data = (
+                    ((dynamic)weaponMain[periscopeIndexes[key]])[indexKey].Data = (
                         (dynamic)weaponMain[periscopeIndexes[altKey]]
-                    )["SubWeapon"].Data;
-
-                    ((dynamic)weaponMain[periscopeIndexes[key]])["SpecialWeapon"].Data = (
-                        (dynamic)weaponMain[periscopeIndexes[altKey]]
-                    )["SpecialWeapon"].Data;
-
-                    ((dynamic)weaponMain[periscopeIndexes[key]])["SpecialPoint"].Data = (
-                        (dynamic)weaponMain[periscopeIndexes[altKey]]
-                    )["SpecialPoint"].Data;
+                    )[indexKey].Data;
                 }
             }
         }

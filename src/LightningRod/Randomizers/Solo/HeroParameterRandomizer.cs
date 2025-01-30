@@ -14,7 +14,7 @@ public static class HeroParameterRandomizer
     public static void Randomize()
     {
         Logger.Log("Starting parameter randomizer!");
-       
+
         List<string> missionWeapons = GameData.weaponNames.WeaponInfoMain.GetAllWeaponsOfType(WeaponType.Mission);
         SarcFile paramPack = GameData.FileSystem.ParseSarc($"/Pack/Params.pack.zs");
         BymlIterator paramIterator = new(Options.GetOption("parameterSeverity"));

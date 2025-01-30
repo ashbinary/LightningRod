@@ -81,4 +81,9 @@ public static class MiscUtils
     {
         return (T) Enum.Parse(typeof(T), value, true);
     }
+
+    public static bool RandomChance(int chance)
+    {
+        return GameData.Random.NextInt(100) < chance;
+    }
 }

@@ -112,7 +112,7 @@
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" SelectedIndex="2" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
+        <TabControl Grid.Row="2" SelectedIndex="3" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -294,8 +294,8 @@
                             <StackPanel>
                                 <TextBlock Text="Parameters" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Randomize Multiplayer Weapons" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomizeParameters, Mode=OneWay}">
-                                    <CheckBox Content="Randomize Story Mode Weapons" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Randomize Story Mode Weapons" IsChecked="{Binding RandomizeMsnParameters, Mode=TwoWay}"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,0,0,0">
                                         <ToolTip.Tip>
                                             <ToolTip Content="Not recommended as it causes softlocks within Hero Mode levels. However, very fun when used with some sort of anti-softlock protection!"/>
@@ -303,7 +303,7 @@
                                     </TextBlock>
                                 </StackPanel>
                                 <CheckBox Content="Randomize Side Order Weapons" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomizeParameters, Mode=OneWay}">
+                                <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
                                     <Slider x:Name="ParameterScale"
                                         Minimum="1"
@@ -319,6 +319,13 @@
                                             <ToolTip Content="The parameter randomization was developed with a severity of 2 in mind. Severity level 5 in particular may yield crashes on Splatanas and various weapons."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
+                                    <StackPanel.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                            <Binding Path="RandomizeParameters"/>
+                                            <Binding Path="RandomizeMsnParameters"/>
+                                            <Binding Path="RandomizeSdodrParameters"/>
+                                        </MultiBinding>
+                                    </StackPanel.IsVisible>
                                 </StackPanel>
                                 <TextBlock Text="Parameter Rules" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Keep Ink Consumption Under 100%" IsChecked="{Binding MaxInkConsume, Mode=TwoWay}"/>
@@ -330,9 +337,9 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
                                 <TextBlock Text="Ink Appearance" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding RandomizeInkColors, Mode=OneWay}"/>
-                                <CheckBox Content="Randomize Color Lock Ink Colors" IsChecked="{Binding RandomizeInkColorLock, Mode=OneWay}" IsEnabled="{Binding RandomizeInkColors, Mode=OneWay}"/>
-                                <CheckBox Content="Randomize Hero Mode Ink Colors" IsChecked="{Binding RandomizeInkColorMsn, Mode=OneWay}" IsEnabled="{Binding RandomizeInkColors, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding RandomizeInkColors, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Color Lock Ink Colors" IsChecked="{Binding RandomizeInkColorLock, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Hero Mode Ink Colors" IsChecked="{Binding RandomizeInkColorMsn, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Ink Lightness:" Margin="0,5,10,10"/>
                                     <Slider x:Name="ColorBias"
@@ -349,6 +356,13 @@
                                             <ToolTip Content="This changes the brightness of the randomized ink colors. Positive numbers will provide lighter ink colors and negative numbers will provide darker ink colors."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
+                                    <StackPanel.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                            <Binding Path="RandomizeInkColors"/>
+                                            <Binding Path="RandomizeInkColorLock"/>
+                                            <Binding Path="RandomizeInkColorMsn"/>
+                                        </MultiBinding>
+                                    </StackPanel.IsVisible>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -361,28 +375,37 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
                                 <TextBlock Text="Weapon Selection" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Allowed Weapons" IsChecked="{Binding RandomizeHeroWeapons, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Mission Weapons" IsChecked="{Binding RandomizeHeroWeapons, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Ensure One Weapon Works" IsEnabled="{Binding RandomizeHeroWeapons, Mode=OneWay}" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}"/>
+                                    <CheckBox Content="Lock First Weapon" IsEnabled="{Binding RandomizeHeroWeapons, Mode=OneWay}" IsChecked="{Binding EnsureFirstHeroWeapon, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This will prevent softlocks when playing through Hero Mode by keeping the first weapon of each stage the same as the original game. The other 2 will be replaced nonetheless."/>
+                                            <ToolTip Content="This keeps the first weapon of each stage the same as the original game, while randomizing the other 2 avaliable weapons. This helps prevent softlocks from occurring."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <TextBlock Text="Hero Mode Stages" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Kettles" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Power Egg Reward" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Stage Skybox" IsChecked="{Binding RandomizeStageSkybox, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Stage BGM" IsChecked="{Binding RandomizeStageMusic, Mode=TwoWay}"/>
-                                <TextBlock Text="The Crater" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Fuzzball Power Egg Cost" IsChecked="{Binding RandomizeFuzzballCost, Mode=TwoWay}"/>
+                                <CheckBox Content="Shuffle Hero Gear Upgrade Tree" IsChecked="{Binding RandomizeHeroTree, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Randomize Crater Levels" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
+                                    <CheckBox Content="Customize Loot Anchor Egg Amount" IsChecked="{Binding RandomizeDigUpPointEggs, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="Level 1 of The Crater will not be randomized, as it is required for the game to work properly."/>
+                                            <ToolTip Content="This is mainly to stop softlocks from occurring where the player does not have enough eggs to progress."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" IsVisible="{Binding RandomizeDigUpPointEggs, Mode=OneWay}">
+                                    <TextBlock Text="Egg Count:" Margin="0,5,10,10"/>
+                                    <Slider x:Name="LootAnchorAmount"
+                                            Minimum="25"
+                                            Maximum="2500"
+                                            Value="{Binding DigUpPointEggCount, Mode=TwoWay}"
+                                            Margin="0,5,0,10"
+                                            TickFrequency="25"
+                                            IsSnapToTickEnabled="True"
+                                            Width="175"/>
+                                    <TextBlock Text="{Binding DigUpPointEggCount}" Margin="10,5,0,10"/>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -390,28 +413,22 @@
                     <StackPanel Width="350" Margin="5,0,0,0">
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
-                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Octarian Parameters" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
+                                <TextBlock Text="Stage Order" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Randomize Octarians In Levels" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <CheckBox Content="Randomize Crater Level Order" IsChecked="{Binding RandomizeKettlesCrater, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
                                         <ToolTip.Tip>
-                                            <ToolTip Content="This shuffles around all the data for all Octarians, meaning that any Octarian will appear in the place of another. Is this playable? Maybe."/>
+                                            <ToolTip Content="Level 1 of The Crater will not be randomized, as it is required for the game to work properly."/>
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Fuzzball Power Egg Cost" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Hero Gear Upgrade Tree" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
-                                <TextBlock Text="&quot;Cheats&quot;" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Level Fees = 0" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="2nd Stage Clear Reward = 9999" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="10,0,0,0">
-                                        <ToolTip.Tip>
-                                            <ToolTip Content="Meant for esaping Fuzzy Ooze softlocks. Not recommended for those with low self-control."/>
-                                        </ToolTip.Tip>
-                                    </TextBlock>
-                                </StackPanel>
+                                <CheckBox Content="Randomize Alterna Level Order" IsChecked="{Binding RandomizeKettles, Mode=TwoWay}"/>
+                                <TextBlock Text="Stage Rewards" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Level Clear Reward" IsChecked="{Binding RandomizeLevelReward, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Level Fee" IsChecked="{Binding RandomizeLevelFee, Mode=TwoWay}"/>
+                                <TextBlock Text="Stage Attributes" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Stage Skybox" IsChecked="{Binding RandomizeStageSkybox, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Stage BGM" IsChecked="{Binding RandomizeStageMusic, Mode=TwoWay}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

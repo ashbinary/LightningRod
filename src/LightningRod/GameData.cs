@@ -34,8 +34,8 @@ public static class GameData
 public class WeaponInfo // Info is kept for side order and msn randomizers
 {
     public List<Weapon> WeaponInfoMain = [];
-    public List<string> WeaponInfoSub = [];
-    public List<string> WeaponInfoSpecial = [];
+    public List<Weapon> WeaponInfoSub = [];
+    public List<Weapon> WeaponInfoSpecial = [];
 }
 
 public class Weapon(string name, WeaponType type)
