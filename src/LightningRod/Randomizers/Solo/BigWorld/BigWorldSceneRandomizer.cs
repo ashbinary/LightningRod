@@ -46,9 +46,9 @@ public static class BigWorldSceneRandomizer
             dynamic envSet = FileUtils.ToByml(levelPack.GetSarcFileData(envSetPath.Compile())).Root;
 
             skyboxActorNames.Add(envSet["Lighting"]["SkySphere"]["ActorName"].Data);
-            sceneToEnv.Add(stage.SceneName, envSetPath.Compile());
+            if (!sceneToEnv.ContainsKey(stage.SceneName))
+                sceneToEnv.Add(stage.SceneName, envSetPath.Compile());
         }
-
 
         foreach (MissionStage stage in missionStages)
         {
@@ -57,31 +57,48 @@ public static class BigWorldSceneRandomizer
                 $"/Pack/Scene/{stage.SceneName}.pack.zs"
             );
 
-            int missionMapInfoIndex = levelPack.GetSarcFileIndex(
-                $"SceneComponent/MissionMapInfo/{stage.SceneName}.spl__MissionMapInfo.bgyml"
-            );
-            dynamic missionMapInfo = FileUtils
-                .ToByml(levelPack.Files[missionMapInfoIndex].Data)
-                .Root;
-            missionMapInfo = missionMapRSDB.Array.FirstOrDefault(item => (item as dynamic)["__RowId"].Data == stage.SceneName);
+            bool isStagePackEdited = false;
 
-            levelPack.Files[missionMapInfoIndex].Data = FileUtils.SaveByml(missionMapInfo);
+            if (Options.GetOption("randomizeHeroWeapons"))
+            {
+                isStagePackEdited = true;
+                int missionMapInfoIndex = levelPack.GetSarcFileIndex(
+                    $"SceneComponent/MissionMapInfo/{stage.SceneName}.spl__MissionMapInfo.bgyml"
+                );
+                dynamic missionMapInfo = FileUtils
+                    .ToByml(levelPack.Files[missionMapInfoIndex].Data)
+                    .Root;
+                missionMapInfo = missionMapRSDB.Array.FirstOrDefault(item => (item as dynamic)["__RowId"].Data == stage.SceneName);
 
-            int envSetInt = levelPack.GetSarcFileIndex(sceneToEnv[stage.SceneName]);
+                levelPack.Files[missionMapInfoIndex].Data = FileUtils.SaveByml(missionMapInfo);
+            }
 
-            dynamic envSet = FileUtils.ToByml(levelPack.Files[envSetInt].Data).Root;
-            envSet["Lighting"]["SkySphere"]["ActorName"].Data = skyboxActorNames[GameData.Random.NextInt(skyboxActorNames.Count)];
-            levelPack.Files[envSetInt].Data = FileUtils.SaveByml(envSet);
+            if (Options.GetOption("randomizeStageSkybox"))
+            {
+                isStagePackEdited = true;
+                int envSetInt = levelPack.GetSarcFileIndex(sceneToEnv[stage.SceneName]);
 
-            string bgmString = $"SceneComponent/SceneBgm/{stage.SceneName}.spl__SceneBgmParam.bgyml";
-            dynamic sceneBgmParam = FileUtils.ToByml(levelPack.GetSarcFileData(bgmString)).Root;
-            sceneBgmParam["SceneSpecificBgm"].Data = bgmAssetNames[GameData.Random.NextInt(bgmAssetNames.Count)];
-            levelPack.Files[levelPack.GetSarcFileIndex(bgmString)].Data = FileUtils.SaveByml(sceneBgmParam);
+                dynamic envSet = FileUtils.ToByml(levelPack.Files[envSetInt].Data).Root;
+                envSet["Lighting"]["SkySphere"]["ActorName"].Data = skyboxActorNames[GameData.Random.NextInt(skyboxActorNames.Count)];
+                levelPack.Files[envSetInt].Data = FileUtils.SaveByml(envSet);
+            }
 
-            GameData.CommitToFileSystem(
-                $"/Pack/Scene/{stage.SceneName}.pack.zs",
-                FileUtils.SaveSarc(levelPack).CompressZSTD()
-            );
+            if (Options.GetOption("randomizeStageMusic"))
+            {
+                isStagePackEdited = true;
+                string bgmString = $"SceneComponent/SceneBgm/{stage.SceneName}.spl__SceneBgmParam.bgyml";
+                dynamic sceneBgmParam = FileUtils.ToByml(levelPack.GetSarcFileData(bgmString)).Root;
+                sceneBgmParam["SceneSpecificBgm"].Data = bgmAssetNames[GameData.Random.NextInt(bgmAssetNames.Count)];
+                levelPack.Files[levelPack.GetSarcFileIndex(bgmString)].Data = FileUtils.SaveByml(sceneBgmParam);
+            }
+
+            if (isStagePackEdited)
+            {
+                GameData.CommitToFileSystem(
+                    $"/Pack/Scene/{stage.SceneName}.pack.zs",
+                    FileUtils.SaveSarc(levelPack).CompressZSTD()
+                );
+            }
         }
     }
 }

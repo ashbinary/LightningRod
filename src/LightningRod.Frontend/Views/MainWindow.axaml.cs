@@ -121,15 +121,17 @@ public partial class MainWindow : Window
                 case GameType.Base:
                     HoianFSTempBase = new LocalFileSystem(romFSData);
                     this.FindControl<Button>("LoadBaseNSP").Content = "romFS Directory loaded!";
+                    Model.IsBaseLoaded = romFSData is not null;
                     break;
                 case GameType.DLC:
                     HoianFSTempDLC = new LocalFileSystem(romFSData);
                     this.FindControl<Button>("LoadDLCNSP").Content = "DLC romFS Directory loaded!";
+                    Model.IsDLCLoaded = romFSData is not null;
                     break;
             }
         }
 
-        Model.IsBaseLoaded = romFSData is not null;
+        
     }
 
     public async Task LoadGameFileAsync(GameType gameType)

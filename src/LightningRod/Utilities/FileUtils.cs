@@ -15,12 +15,19 @@ public static class FileUtils
     public static byte[] GetFile(this IFileSystem fs, string filepath)
     {
         UniqueRef<IFile> tempFile = new();
-        fs.OpenFile(ref tempFile, filepath.ToU8Span(), OpenMode.Read);
+        try
+        {
+            fs.OpenFile(ref tempFile, filepath.ToU8Span(), OpenMode.Read);
 
-        tempFile.Get.GetSize(out long tempFileSize);
-        FileReader fileReader = new(tempFile.Get);
+            tempFile.Get.GetSize(out long tempFileSize);
+            FileReader fileReader = new(tempFile.Get);
 
-        return fileReader.ReadBytes(0, (int)tempFileSize);
+            return fileReader.ReadBytes(0, (int)tempFileSize);
+        }
+        finally // gets rid of stupid ahh data
+        {
+            tempFile.Destroy();
+        }
     }
 
     // ----------------------------------------------------------------------------

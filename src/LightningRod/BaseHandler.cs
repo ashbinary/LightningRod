@@ -40,6 +40,7 @@ public class BaseHandler(IFileSystem baseFs)
         InkColorRandomizer.Randomize();
         SingletonRandomizer.Randomize();
         HeroParameterRandomizer.Randomize();
+        CoopRandomizer.Randomize();
 
         Logger.MakeFile();
     }

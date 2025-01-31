@@ -16,6 +16,7 @@ public static class StageLayoutRandomizer
         );
 
         SarcFile paramPack = GameData.FileSystem.ParseSarc($"/Pack/Params.pack.zs");
+        StageIterator actorIterator = new(Options.GetOption("tweakLevel"));
 
         foreach (dynamic versusScene in versusSceneInfo.Array)
         {
@@ -41,8 +42,6 @@ public static class StageLayoutRandomizer
 
             dynamic stageBanc = FileUtils.ToByml(rawBancData);
             BymlArrayNode stageActors = stageBanc.Root.Values[0]; // get Actors
-
-            StageIterator actorIterator = new(Options.GetOption("tweakLevel"));
 
             if (Options.GetOption("tweakStageLayoutPos"))
                 actorIterator.editedKeys.Add("Translate");

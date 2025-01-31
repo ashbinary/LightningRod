@@ -86,4 +86,11 @@ public static class MiscUtils
     {
         return GameData.Random.NextInt(100) < chance;
     }
+
+    public static bool IsOfAnyType<T>(this T value, List<T> types)
+    {
+        for (int i = 0; i < types.Count; i++)
+            if (value.Equals(types[i])) return true;
+        return false;
+    }
 }

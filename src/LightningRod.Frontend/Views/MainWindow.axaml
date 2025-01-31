@@ -112,7 +112,7 @@
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" SelectedIndex="3" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
+        <TabControl Grid.Row="2" SelectedIndex="4" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -133,7 +133,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include All Sub Weapons" IsChecked="{Binding AllSubWeapons, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FFEE0070">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is very prone to crashing when a weapon is selected! Use at your own risk."/>
                                         </ToolTip.Tip>
@@ -152,7 +152,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include All Specials" IsChecked="{Binding UseAllSpecials, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FFEE0070">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This has a very high chance of crashing the game, especially regarding the Side Order specials and specials intended for Rivals."/>
                                         </ToolTip.Tip>
@@ -302,6 +302,7 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
+                                <CheckBox Content="Randomize Salmon Run Weapons" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Side Order Weapons" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
@@ -339,6 +340,7 @@
                                 <TextBlock Text="Ink Appearance" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding RandomizeInkColors, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Color Lock Ink Colors" IsChecked="{Binding RandomizeInkColorLock, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Salmon Run Ink Colors" IsChecked="{Binding RandomizeInkColorLock, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
                                 <CheckBox Content="Randomize Hero Mode Ink Colors" IsChecked="{Binding RandomizeInkColorMsn, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Ink Lightness:" Margin="0,5,10,10"/>
@@ -435,7 +437,54 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Salmon Run">
-                <CheckBox Content="Randomize Salmon Run Difficulty" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
+                            <StackPanel>
+                                <TextBlock Text="Loaned Weapons &amp; Kits" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Loaned Weapon Params" IsChecked="{Binding RandomizeLoanedParams, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Splat Bomb" IsChecked="{Binding RandomizeLoanedSub, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Usable Specials" IsChecked="{Binding RandomizeLoanedSpecials, Mode=TwoWay}"/>
+                                <CheckBox Content="Make All Specials Loanable" IsChecked="{Binding AllSpecialsLoanable, Mode=TwoWay}"/>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Salmon Run Difficulty Levels" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Tweak Salmon Run Stage Layouts" IsChecked="{Binding TweakCoopStageLayouts, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This may break Salmonid AI, and may cause variable levels of unplayability. It is hardlocked to be at level 2 no matter what, but if you so desire, changing the coopTweakLevel parameter in a config file will work. Do so at your own risk."/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Width="350" Margin="5,0,0,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
+                            <StackPanel>
+                                <TextBlock Text="Enemy Salmonids" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Salmonid Data" IsChecked="{Binding RandomizeSalmonidParams, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize King Salmonid Data" IsChecked="{Binding RandomizeKingParams, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Shuffle Salmonid Entities" IsChecked="{Binding ShuffleSalmonidActors, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="This randomizes Salmonid 'actors', allowing for Salmonids to spawn in the place of other Salmonids. (ex. replacing Steelheads with Flipper-Floppers)"/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Allow Shuffling Lesser &amp; King Salmonids" IsChecked="{Binding AllowLesserKingSwap, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FFEE0070" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <ToolTip.Tip>
+                                            <ToolTip Content="Probably best not to use this on an old console. Have fun trying to beat it!"/>
+                                        </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Miscellaneous">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">

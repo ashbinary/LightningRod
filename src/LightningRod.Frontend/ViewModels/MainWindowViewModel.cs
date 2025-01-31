@@ -52,7 +52,6 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private int parameterSeverity = 2;
     [ObservableProperty] private bool randomizeWeaponWeight = true; 
     [ObservableProperty] private bool randomizeVersusConstants = true;
-    [ObservableProperty] private bool randomizeCoopLevels = true;
     [ObservableProperty] private bool maxInkConsume = true;
     [ObservableProperty] private bool randomizeInkColors = true;
     [ObservableProperty] private bool randomizeInkColorLock = false;
@@ -78,6 +77,20 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool randomizeKettlesCrater = true;
     [ObservableProperty] private bool randomizeStageSkybox = false;
     [ObservableProperty] private bool randomizeStageMusic = false;
+
+    /* Salmon Run */
+    [ObservableProperty] private bool randomizeLoanedParams = false;
+    [ObservableProperty] private bool randomizeLoanedSub = true;
+    [ObservableProperty] private bool randomizeLoanedSpecials = false;
+    [ObservableProperty] private bool allSpecialsLoanable = false;
+    [ObservableProperty] private bool randomizeCoopLevels = true;
+    [ObservableProperty] private bool tweakCoopStageLayouts = true;
+    [ObservableProperty] private int coopTweakLevel = 2;
+    [ObservableProperty] private bool randomizeSalmonidParams = true;
+    [ObservableProperty] private bool randomizeKingParams = true;
+    [ObservableProperty] private bool shuffleSalmonidActors = false;
+    [ObservableProperty] private bool allowLesserKingSwap = false;
+
     
 
     public MainWindowViewModel() { }

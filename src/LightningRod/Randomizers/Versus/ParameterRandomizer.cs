@@ -1,9 +1,3 @@
-using System.Collections;
-using System.Globalization;
-using System.Net;
-using System.Runtime.CompilerServices;
-using LibHac.Fs;
-using LibHac.Fs.Fsa;
 using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 using LightningRod.Utilities;
@@ -30,14 +24,26 @@ public static class ParameterRandomizer
         string[] weaponWeights = ["Slow", "Mid", "Fast"];
         string[] weaponWeightStats = ["WeaponSpeedType", "WeaponAccType"];
 
+        SarcFile newParamPack = new();
+
         foreach (SarcContent paramFileSarc in paramPack.Files)
         {
-            if (!paramFileSarc.Name.StartsWith("Component/GameParameterTable/Weapon"))
+            string paramFileName = paramFileSarc.Name;
+            if ((!paramFileName.StartsWith("Component/GameParameterTable/Weapon")) ||
+                (paramFileName.Contains("Msn") && !Options.GetOption("randomizeMsnParameters")) ||
+                (paramFileName.Contains("Coop") && !Options.GetOption("randomizeLoanedParams")))
                 continue;
-            if (paramFileSarc.Name.Contains("Msn") && !Options.GetOption("randomizeMsnParameters"))
-                continue;
-            BymlHashTable paramFile = (BymlHashTable)
-                FileUtils.ToByml(paramFileSarc.Data).Root;
+
+            BymlHashTable paramFile;
+            if (paramFileName.Contains("Coop") && !paramFileName.Contains("Bear"))
+            {
+                string paramFileParsed = paramFileName.Replace("_Coop", "");
+                paramFile = (BymlHashTable)FileUtils.ToByml(paramPack.GetSarcFileData(paramFileParsed)).Root;
+            }
+            else
+            {
+                paramFile = (BymlHashTable)FileUtils.ToByml(paramFileSarc.Data).Root;
+            }
 
             if (!paramFile.ContainsKey("GameParameters")) continue;
             paramFile = paramIterator.ProcessBymlRoot(paramFile);
@@ -55,7 +61,19 @@ public static class ParameterRandomizer
                 }
             }
 
-            paramFileSarc.Data = FileUtils.SaveByml(paramFile);
+            newParamPack.Files.Add(new SarcContent()
+            {
+                Name = paramFileName,
+                Data = FileUtils.SaveByml(paramFile),
+            });
+        }
+
+        foreach (SarcContent newContent in newParamPack.Files)
+        {
+            if (paramPack.GetSarcFileIndex(newContent.Name) != -1)
+                paramPack.Files[paramPack.GetSarcFileIndex(newContent.Name)] = newContent;
+            else
+                paramPack.Files.Add(newContent);
         }
 
         GameData.CommitToFileSystem(
