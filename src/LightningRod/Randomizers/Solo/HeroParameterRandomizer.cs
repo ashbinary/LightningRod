@@ -45,7 +45,7 @@ public static class HeroParameterRandomizer
 
         if (Options.GetOption("randomizeSdodrParameters"))
         {
-            string singletonPath = GameData.IsNewerVersion(710)
+            string singletonPath = GameData.IsNewerVersion(700)
                 ? "/Pack/SingletonParam_v-700.pack.zs"
                 : "/Pack/SingletonParam.pack.zs";
             SarcFile singletonSarc = GameData.FileSystem.ParseSarc(singletonPath);

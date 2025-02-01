@@ -33,6 +33,8 @@ public class BaseHandler(IFileSystem baseFs)
             WeaponKitRandomizer.Randomize();
         }
 
+        SdodrRandomizer.Randomize();
+        CoopRandomizer.Randomize();
         VSStageRandomizer.Randomize();
         ParameterRandomizer.Randomize();
         MiscRandomizer.Randomize();
@@ -40,7 +42,6 @@ public class BaseHandler(IFileSystem baseFs)
         InkColorRandomizer.Randomize();
         SingletonRandomizer.Randomize();
         HeroParameterRandomizer.Randomize();
-        CoopRandomizer.Randomize();
 
         Logger.MakeFile();
     }

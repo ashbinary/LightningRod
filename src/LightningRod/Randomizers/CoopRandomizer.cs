@@ -10,6 +10,8 @@ public static class CoopRandomizer
     public static void Randomize()
     {
         CoopEnemyRandomizer.Randomize();
+        CoopWeaponRandomizer.Randomize();
+        Console.WriteLine("made it through?");
 
         dynamic coopSceneInfo = GameData.FileSystem.ParseByml(
             $"/RSDB/CoopSceneInfo.Product.{GameData.GameVersion}.rstbl.byml.zs"
@@ -17,7 +19,7 @@ public static class CoopRandomizer
 
         if (Options.GetOption("tweakCoopStageLayouts"))
         {
-            StageIterator coopIterator = new StageIterator(2);
+            StageIterator coopIterator = new StageIterator(Options.GetOption("coopTweakLevel"));
             coopIterator.editedKeys.AddRange(["Translate", "Rotate", "Scale"]);
 
             foreach (dynamic coopScene in coopSceneInfo.Array)

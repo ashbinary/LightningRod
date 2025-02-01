@@ -55,6 +55,7 @@ public static class MiscUtils
     {
         Weapon data = new("TempWeapon", WeaponType.Other);
         int tableLength = weaponTable.Count;
+        // If there are no available weapons of the specified type, this will loop forever!
         while (!(data.Type == constraint))
             data = weaponTable[GameData.Random.NextInt(tableLength)];
         return data.Name;

@@ -48,14 +48,17 @@ public partial class MainWindowViewModel : ObservableObject
     /* Parameter + Ink Randomization */
     [ObservableProperty] private bool randomizeParameters = true;
     [ObservableProperty] private bool randomizeMsnParameters = true;
-    [ObservableProperty] private bool randomizeSdodrParameters = true;
+    [ObservableProperty, DLCOption] private bool randomizeSdodrParameters = false;
+    [ObservableProperty] private bool randomizeLoanedParams = false;
     [ObservableProperty] private int parameterSeverity = 2;
     [ObservableProperty] private bool randomizeWeaponWeight = true; 
     [ObservableProperty] private bool randomizeVersusConstants = true;
     [ObservableProperty] private bool maxInkConsume = true;
     [ObservableProperty] private bool randomizeInkColors = true;
     [ObservableProperty] private bool randomizeInkColorLock = false;
+    [ObservableProperty] private bool randomizeInkColorCoop = false;
     [ObservableProperty] private bool randomizeInkColorMsn = false;
+    [ObservableProperty, DLCOption] private bool randomizeInkColorSdodr = false;
     [ObservableProperty] private int inkColorBias = 0;
     /* Misc Randomization */
     [ObservableProperty] private bool randomizeDialogue = true;
@@ -79,7 +82,6 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool randomizeStageMusic = false;
 
     /* Salmon Run */
-    [ObservableProperty] private bool randomizeLoanedParams = false;
     [ObservableProperty] private bool randomizeLoanedSub = true;
     [ObservableProperty] private bool randomizeLoanedSpecials = false;
     [ObservableProperty] private bool allSpecialsLoanable = false;
@@ -91,7 +93,25 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool shuffleSalmonidActors = false;
     [ObservableProperty] private bool allowLesserKingSwap = false;
 
-    
+    /* Side Order */
+    [ObservableProperty, DLCOption] private bool randomizeDefaultPalettes = true;
+    [ObservableProperty, DLCOption] private bool randomizePaletteKits = true;
+    [ObservableProperty, DLCOption] private bool randomizePaletteTones = true;
+    [ObservableProperty, DLCOption] private bool swapColorChips = true;
+    [ObservableProperty, DLCOption] private bool randomizeColorChipStats = true;
+    [ObservableProperty, DLCOption] private bool colorChipStatsAlwaysUp = true;
+    [ObservableProperty, DLCOption] private bool randomizeHackEffects = true;
+    [ObservableProperty, DLCOption] private bool randomizeHackCost = true;
+    [ObservableProperty, DLCOption] private bool unlockAllHacks = true;
+    [ObservableProperty, DLCOption] private bool randomizeLockerJem = true;
+    [ObservableProperty, DLCOption] private bool randomizeLockerOrder = true;
+    [ObservableProperty, DLCOption] private bool randomizeEventChance = true;
+    [ObservableProperty, DLCOption] private bool randomizeDangerChance = true;
+    [ObservableProperty, DLCOption] private bool randomizeDangerCombos = true;
+    [ObservableProperty, DLCOption] private bool randomizeAgent4Kits = true;
+    [ObservableProperty, DLCOption] private bool tweakSdodrStageLayouts = true;
+    [ObservableProperty, DLCOption] private int sdodrTweakLevel = 2;
+
 
     public MainWindowViewModel() { }
 

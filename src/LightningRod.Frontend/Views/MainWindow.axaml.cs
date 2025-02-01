@@ -20,6 +20,7 @@ using LibHac.Tools.FsSystem;
 using LibHac.Tools.FsSystem.NcaUtils;
 using LightningRod.Frontend.ViewModels;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace LightningRod.Frontend.Views;
 
@@ -275,6 +276,12 @@ public partial class MainWindow : Window
 
         foreach (var field in observableFields)
         {
+            if (Attribute.IsDefined(field, typeof(DLCOption)) && !Model.IsDLCLoaded)
+            {
+                Options.SetOption(field.Name, false); // Prevent Side Order options from being set if DLC isn't loaded
+                continue;
+            }
+
             Options.SetOption(field.Name, field.GetValue(Model));
         }
 
@@ -289,7 +296,11 @@ public partial class MainWindow : Window
     private async void AsyncExportOptions()
     {
         var optionFolder = await OpenPickerPathAndReturn(true);
-        var jsonData = JsonConvert.SerializeObject(Model);
+        var jsonData = JsonConvert.SerializeObject(Model, new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver(),
+            Formatting = Formatting.Indented
+        });
 
         using (StreamWriter fileStream = new StreamWriter(optionFolder + "\\LightningRod.config"))
         {

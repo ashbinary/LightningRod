@@ -3,7 +3,6 @@
         xmlns:vm="using:LightningRod.Frontend.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:conv ="clr-namespace:LightningRod.Frontend.Converters"
         Width="740" Height="640"
         CanResize="False"
         x:Class="LightningRod.Frontend.Views.MainWindow"
@@ -112,7 +111,7 @@
         </StackPanel>
 
         <!-- Tab Control -->
-        <TabControl Grid.Row="2" SelectedIndex="4" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
+        <TabControl Grid.Row="2" SelectedIndex="6" Margin="10,5,10,10" HorizontalAlignment="Left"> <!-- IsEnabled="{Binding IsBaseLoaded, Mode=OneWay}">-->
             <!-- Tab Items -->
             <TabItem Header="Weapon Kits">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
@@ -302,8 +301,8 @@
                                         </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
-                                <CheckBox Content="Randomize Salmon Run Weapons" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Side Order Weapons" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Salmon Run Weapons" IsChecked="{Binding RandomizeLoanedParams, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Side Order Weapons" IsEnabled="{Binding IsDLCLoaded, Mode=OneWay}" IsChecked="{Binding RandomizeSdodrParameters, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Randomization Level:" Margin="0,5,10,5"/>
                                     <Slider x:Name="ParameterScale"
@@ -325,6 +324,7 @@
                                             <Binding Path="RandomizeParameters"/>
                                             <Binding Path="RandomizeMsnParameters"/>
                                             <Binding Path="RandomizeSdodrParameters"/>
+                                            <Binding Path="RandomizeLoanedParams"/>
                                         </MultiBinding>
                                     </StackPanel.IsVisible>
                                 </StackPanel>
@@ -340,8 +340,9 @@
                                 <TextBlock Text="Ink Appearance" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Randomize Ink Colors" IsChecked="{Binding RandomizeInkColors, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Color Lock Ink Colors" IsChecked="{Binding RandomizeInkColorLock, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
-                                <CheckBox Content="Randomize Salmon Run Ink Colors" IsChecked="{Binding RandomizeInkColorLock, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Salmon Run Ink Colors" IsChecked="{Binding RandomizeInkColorCoop, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
                                 <CheckBox Content="Randomize Hero Mode Ink Colors" IsChecked="{Binding RandomizeInkColorMsn, Mode=TwoWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
+                                <CheckBox Content="Randomize Side Order Ink Colors" IsChecked="{Binding RandomizeInkColorSdodr, Mode=TwoWay}" IsEnabled="{Binding IsDLCLoaded, Mode=OneWay}" IsVisible="{Binding RandomizeInkColors, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Ink Lightness:" Margin="0,5,10,10"/>
                                     <Slider x:Name="ColorBias"
@@ -442,10 +443,9 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
                             <StackPanel>
                                 <TextBlock Text="Loaned Weapons &amp; Kits" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Loaned Weapon Params" IsChecked="{Binding RandomizeLoanedParams, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Splat Bomb" IsChecked="{Binding RandomizeLoanedSub, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Usable Specials" IsChecked="{Binding RandomizeLoanedSpecials, Mode=TwoWay}"/>
-                                <CheckBox Content="Make All Specials Loanable" IsChecked="{Binding AllSpecialsLoanable, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Usable Specials" IsChecked="{Binding RandomizeLoanedSpecials, Mode=TwoWay}" IsEnabled="{Binding !AllSpecialsLoanable, Mode=OneWay}"/>
+                                <CheckBox Content="Make All Specials Loanable" IsChecked="{Binding AllSpecialsLoanable, Mode=TwoWay}" IsEnabled="{Binding !RandomizeLoanedSpecials, Mode=OneWay}"/>
                                 <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Randomize Salmon Run Difficulty Levels" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
@@ -546,7 +546,71 @@
                     </StackPanel>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Side Order">
+            <TabItem Header="Side Order"> <!-- IsEnabled="{Binding IsDLCLoaded}"> -->
+                <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
+                    <StackPanel Width="350" Margin="0,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
+                            <StackPanel>
+                                <TextBlock Text="Palettes" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize First + Second Palettes" IsChecked="{Binding RandomizeDefaultPalettes, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Default Palette Kits" IsChecked="{Binding RandomizePaletteKits, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Favored Palette Tones" IsChecked="{Binding RandomizePaletteTones, Mode=OneWay}"/>
+                                <TextBlock Text="Color Chips" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Shuffle Color Chip Colors" IsChecked="{Binding SwapColorChips, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Color Chip Stats" IsChecked="{Binding RandomizeColorChipStats, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Color Chip Stats Always Increase" IsChecked="{Binding ColorChipStatsAlwaysUp, Mode=TwoWay}" IsEnabled="{Binding Unimplemented, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <ToolTip.Tip>
+                                        <ToolTip Content="This makes it so that your stats won't go down if you equip a certain amount of color chips."/>
+                                    </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Parallel Canon Kits" IsChecked="{Binding RandomizeAgent4Kits, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Tweak Floor Layouts" IsChecked="{Binding TweakSdodrStageLayouts, Mode=TwoWay}"/>
+                                    <TextBlock Text="⚠" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <ToolTip.Tip>
+                                        <ToolTip Content="This may cause issues regarding Jelleton AI. The program always sets the randomization amount to 2, but this can be changed in the config file by changing sdodrTweakLevel. Do at your own risk."/>
+                                    </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Width="350" Margin="5,0,5,0">
+                        <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
+                            <StackPanel>
+                                <TextBlock Text="Lockers" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Prlz Amount in Lockers" IsChecked="{Binding RandomizeLockerJem, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Order of Locker Unlocks" IsChecked="{Binding RandomizeLockerOrder, Mode=OneWay}"/>
+                                <TextBlock Text="Bonus Effects" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Randomize Floor &quot;Event&quot; Rate" IsChecked="{Binding RandomizeEventChance, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <ToolTip.Tip>
+                                        <ToolTip Content="An event is a specific modification to the round (Color Chip Saturation &amp; Bonus Objective)."/>
+                                    </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                                <CheckBox Content="Randomize Danger Appearance Chance" IsChecked="{Binding RandomizeDangerChance, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Danger! Combinations" IsChecked="{Binding RandomizeDangerCombos, Mode=TwoWay}"/>
+                                <TextBlock Text="Hacks" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Hacking Effects" IsChecked="{Binding RandomizeHackEffects, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Hacking Cost" IsChecked="{Binding RandomizeHackCost, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox Content="Auto-Unlock All Hacks" IsChecked="{Binding UnlockAllHacks, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <ToolTip.Tip>
+                                        <ToolTip Content="This will not buy the hacks for you. You still have to buy them, they just won't be locked by progression."/>
+                                    </ToolTip.Tip>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
             </TabItem>
         </TabControl>
     </Grid>

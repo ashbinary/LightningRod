@@ -45,34 +45,8 @@ public static class WeaponKitRandomizer
         int minPFS = Options.GetOption("minimumPFS");
         int maxPFS = Options.GetOption("maximumPFS");
 
-        List<string> subList = [];
-        List<string> specialList = [];
-
-        for (int i = 0; i < weaponSub.Length; i++)
-        {
-            string subRowId = weaponSub[i]["__RowId"].Data;
-            string subType = weaponSub[i]["Type"].Data;
-
-            GameData.weaponNames.WeaponInfoSub.Add(
-                new Weapon(subRowId, subType.ToEnum<WeaponType>())
-            );
-
-            if (!SubBanList.Any(subRowId.Contains))
-                subList.Add(subRowId);
-        }
-
-        for (int i = 0; i < weaponSpecial.Length; i++)
-        {
-            string specialRowId = weaponSpecial[i]["__RowId"].Data;
-            string specialType = weaponSpecial[i]["Type"].Data;
-
-            GameData.weaponNames.WeaponInfoSpecial.Add(
-                new Weapon(specialRowId, specialType.ToEnum<WeaponType>())
-            );
-
-            if (!SpecialBanList.Any(specialRowId.Contains))
-                specialList.Add(specialRowId);
-        }
+        List<string> subList = ParseThroughFileAndBan(ref weaponSub, ref GameData.weaponNames.WeaponInfoSub, ref SubBanList);
+        List<string> specialList = ParseThroughFileAndBan(ref weaponSpecial, ref GameData.weaponNames.WeaponInfoSpecial, ref SpecialBanList);
 
         Dictionary<string, int> periscopeIndexes = [];
 
@@ -134,5 +108,34 @@ public static class WeaponKitRandomizer
                 $"/RSDB/WeaponInfoMain.Product.{GameData.GameVersion}.rstbl.byml.zs",
                 FileUtils.SaveByml(weaponMain).CompressZSTD()
             );
+    }
+
+    public static List<string> ParseThroughFileAndBan(ref dynamic weaponList, ref List<Weapon> weaponData, ref List<string> banList)
+    {
+        List<string> passedList = [];
+
+        for (int i = 0; i < weaponList.Length; i++)
+        {
+            string weaponRowId = weaponList[i]["__RowId"].Data;
+            string weaponType = weaponList[i]["Type"].Data;
+
+            if (weaponRowId.Contains("Sdodr"))
+            {
+                weaponData.Add(
+                    new Weapon(weaponRowId, WeaponType.Sdodr)
+                );
+            }
+            else
+            {
+                weaponData.Add(
+                    new Weapon(weaponRowId, weaponType.ToEnum<WeaponType>())
+                );
+            }
+
+            if (!banList.Any(weaponRowId.Contains))
+                passedList.Add(weaponRowId);
+        }
+
+        return passedList;
     }
 }

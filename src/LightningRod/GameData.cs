@@ -50,5 +50,6 @@ public enum WeaponType
     Coop,
     Mission,
     Rival,
+    Sdodr,
     Other
 }
