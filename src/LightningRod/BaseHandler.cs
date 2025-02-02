@@ -24,6 +24,8 @@ public class BaseHandler(IFileSystem baseFs)
         string RegionLangData = System.Text.Encoding.UTF8.GetString(
             GameData.FileSystem.GetFile("/System/RegionLangMask.txt")
         );
+
+        GameData.AvailableLanguages = RegionLangData.Split("\n")[0].Split(" ");
         GameData.GameVersion = RegionLangData.Split("\n")[2][..3];
 
         Logger.Log($"Game Version: {GameData.GameVersion}");

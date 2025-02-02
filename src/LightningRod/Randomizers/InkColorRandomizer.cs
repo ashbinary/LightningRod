@@ -11,10 +11,11 @@ public static class InkColorRandomizer
             $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs"
         );
 
+        string[] colorTypes = ["R", "G", "B"];
+
         if (Options.GetOption("randomizeInkColors"))
         {
             string[] teamNames = ["AlphaTeam", "BravoTeam", "CharlieTeam", "Neutral"];
-            string[] colorTypes = ["R", "G", "B"];
 
             for (int i = 0; i < inkColorByml.Length; i++)
             {
@@ -43,6 +44,39 @@ public static class InkColorRandomizer
 
             GameData.CommitToFileSystem(
                 $"/RSDB/TeamColorDataSet.Product.{GameData.GameVersion}.rstbl.byml.zs",
+                FileUtils.SaveByml(inkColorByml).CompressZSTD()
+            );
+        }
+
+        if (Options.GetOption("randomizeInkColorSdodr"))
+        {
+            string[] sdodrTeams = ["Enemy", "Friend", "Neutral"];
+
+            BymlArrayNode sdodrColorByml = GameData.FileSystem.ParseByml(
+                $"/RSDB/Exam01Info.Product.{GameData.GameVersion}.rstbl.byml.zs"
+            );
+
+            for (int i = 0; i < sdodrColorByml.Length; i++)
+            {
+                dynamic colorData = sdodrColorByml[i];
+
+                for (int t = 0; t < sdodrTeams.Length; t++)
+                {
+                    BymlHashTable? colorHashTable =
+                        colorData[$"{sdodrTeams[t]}Color"]["TeamColor"]
+                        ;
+                    for (int j = 0; j < colorTypes.Length; j++)
+                    {
+                        float inkColorValue =
+                            GameData.Random.NextInt(255) + Options.GetOption("inkColorBias");
+                        (colorHashTable[colorTypes[j]] as BymlNode<float>).Data =
+                            Math.Clamp(inkColorValue, 0, 255) / 255;
+                    }
+                }
+            }
+
+            GameData.CommitToFileSystem(
+                $"/RSDB/Exam01Info.Product.{GameData.GameVersion}.rstbl.byml.zs",
                 FileUtils.SaveByml(inkColorByml).CompressZSTD()
             );
         }

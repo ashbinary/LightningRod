@@ -219,19 +219,6 @@ public partial class MainWindow : Window
     )
     {
         new PartitionFileSystemCreator().Create(ref hoianData, ref libHacFile).ThrowIfFailure();
-        using UniqueRef<PartitionFileSystem> pfs = new UniqueRef<PartitionFileSystem>();
-        {
-            pfs.Reset(new PartitionFileSystem());
-            Result res = pfs.Get.Initialize(libHacFile);
-            PartitionFileSystem newFs = new();
-            if (res.IsSuccess())
-                newFs = pfs.Get;
-            if(newFs.EnumerateEntries("*.tik", SearchOptions.Default).Any())
-            {
-                throw new Exception("Found ticket!");
-            }
-        }
-        
     }
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e)

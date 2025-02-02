@@ -62,10 +62,12 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty, DLCOption] private bool randomizeInkColorSdodr = false;
     [ObservableProperty] private int inkColorBias = 0;
     /* Misc Randomization */
-    [ObservableProperty] private bool randomizeDialogue = true;
-    [ObservableProperty] private bool randomizeAllText = false;
+    [ObservableProperty] private bool randomizeText = true;
+    [ObservableProperty] private bool randomizeAllDialogue = false;
     [ObservableProperty] private bool notRandomizeWeaponNames = true;
     [ObservableProperty] private bool notRandomizeLevelNames = true;
+    [ObservableProperty] private bool randomizeLayoutText = false;
+    [ObservableProperty] private bool englishOnly = true;
     /* Hero Mode Randomization */
     [ObservableProperty] private bool randomizeHeroWeapons = true;
     [ObservableProperty] private bool ensureFirstHeroWeapon = true;
@@ -87,7 +89,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool randomizeLoanedSpecials = false;
     [ObservableProperty] private bool allSpecialsLoanable = false;
     [ObservableProperty] private bool randomizeCoopLevels = true;
-    [ObservableProperty] private bool tweakCoopStageLayouts = true;
+    [ObservableProperty] private bool tweakCoopStageLayouts = false;
     [ObservableProperty] private int coopTweakLevel = 2;
     [ObservableProperty] private bool randomizeSalmonidParams = true;
     [ObservableProperty] private bool randomizeKingParams = true;

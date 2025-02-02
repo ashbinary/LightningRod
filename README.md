@@ -2,9 +2,25 @@
 LightningRod is a randomizer for most aspects of Splatoon 3.
 
 ![image](https://github.com/ashbinary/LightningRod/assets/111416629/a6cf6e89-4d8b-4fb9-897b-4cd248529fe6)
+## Requirements
+- A dump of the game, in either a dumped romFS, .XCI, or .NSP format.
+- A working prod.keys and title.keys that has played Splatoon 3 at the very least, and has played Side Order if attempting to load an NSP from there.
+- [.NET Runtime 9.0.1](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 ## Usage
-LightningRod takes data from .nsp, .xci, and a direct romFS filesystem dump.
+The prod.keys and title.keys files should be placed in the `C:/Users/[username]/.switch` folder. (This is not required if you are using a romFS dump of the game to load it.)
 
-To use, first click on the button that says [Load Base .nsp/.xci File] or [Load romFS Directory].
+Load in the .NSPs/.XCIs/romFS dumps on the left side of the program. Once the basegame is loaded in, the program will unlock the available options.
 
-This will allow you to start modifying the game using the options in the tool. After modifying the game, simply press [Load Game Data] and then [Randomize + Save]. When pressing [Randomize + Save], a request will pop up for a directory. This directory is the output directory for the tool, and will output the romFS files modified by the program. 
+Configurations can be saved and shared between others, and will keep the randomizer's seed, which can be used to generate the exact randomization while not having to transfer files to others.
+
+Pressing `Load Game Data` will setup all the files you've currently inputted. Inputting any new files (except configurations) will not be used unless you press it again.
+
+When ready, press the `Randomize + Save` button. The user will be prompted with a directory to save the data in, and when the directory is saved, the program will 'stop responding'. It is simply working on generating the game's files. When the LightningRod.log file appears in the directory, the game has completed generating and the files can be used as an Atmosphère mod.
+
+## Credits
+
+[Shadów](https://x.com/shadowninja108) - Created the BYML library used in the program, and was the biggest inspiration in completing the project as a whole.
+
+[AeonSake](https://aeonsake.com/) - Created the SARC & MSBT libraries used in LightningRod.
+
+[DiamCreeper23](https://bsky.app/profile/diam.bsky.social) - Main pre-release playtester.

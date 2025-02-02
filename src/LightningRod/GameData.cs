@@ -10,6 +10,7 @@ public static class GameData
 
     public static string GameVersion { get; set; }
     public static LongRNG Random { get; set; }
+    public static string[] AvailableLanguages { get; set; }
 
     public static WeaponInfo weaponNames = new WeaponInfo();
 
