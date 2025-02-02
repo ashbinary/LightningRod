@@ -1,7 +1,8 @@
 # LightningRod
 LightningRod is a randomizer for most aspects of Splatoon 3.
 
-![image](https://github.com/ashbinary/LightningRod/assets/111416629/a6cf6e89-4d8b-4fb9-897b-4cd248529fe6)
+![LightningRod](https://github.com/user-attachments/assets/3322a331-3c7a-450f-ada9-27c18ac2514c)
+
 ## Requirements
 - A dump of the game, in either a dumped romFS, .XCI, or .NSP format.
 - A working prod.keys and title.keys that has played Splatoon 3 at the very least, and has played Side Order if attempting to load an NSP from there.
