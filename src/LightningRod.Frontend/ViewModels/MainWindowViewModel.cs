@@ -88,7 +88,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool randomizeLoanedSub = true;
     [ObservableProperty] private bool randomizeLoanedSpecials = false;
     [ObservableProperty] private bool allSpecialsLoanable = false;
-    [ObservableProperty] private bool randomizeCoopLevels = true;
+    [ObservableProperty] private bool randomizeCoopLevels = false;
     [ObservableProperty] private bool tweakCoopStageLayouts = false;
     [ObservableProperty] private int coopTweakLevel = 2;
     [ObservableProperty] private bool randomizeSalmonidParams = true;
