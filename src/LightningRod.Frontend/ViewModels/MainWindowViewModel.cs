@@ -9,7 +9,7 @@ namespace LightningRod.Frontend.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public static string ToolVersion => "1.0";
+    public static string ToolVersion => "1.0.1";
     public static string VersionString => $"(v{ToolVersion})";
 
     /* Generic Randomizer Options */
