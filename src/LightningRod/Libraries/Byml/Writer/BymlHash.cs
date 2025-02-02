@@ -41,7 +41,7 @@ namespace LightningRod.Libraries.Byml.Writer
 
             var idx = Utils.BinarySearch(PairList, pair);
             if (idx >= 0)
-                throw new Exception("Duplicate key!");
+                return; // Return early instead of killing the game like a true patriot
 
             idx = ~idx;
 

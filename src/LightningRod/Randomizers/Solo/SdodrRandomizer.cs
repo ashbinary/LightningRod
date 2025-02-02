@@ -1,3 +1,4 @@
+using LightningRod.Libraries.Byml;
 using LightningRod.Libraries.Sarc;
 using LightningRod.Randomizers.Solo.Sdodr;
 using LightningRod.Utilities;
@@ -15,11 +16,27 @@ public static class SdodrRandomizer
         singletonSarc = GameData.FileSystem.ParseSarc(singletonPath);
 
         SdodrLoadoutRandomizer.Randomize();
+        SdodrConstantRandomizer.Randomize();
+        SdodrColorChipRandomizer.Randomize();
 
         GameData.CommitToFileSystem(
             singletonPath,
             FileUtils.SaveSarc(singletonSarc).CompressZSTD()
         );
+
+        // if (Options.GetOption("randomizeAgent4Kits"))
+        // {
+        //     SarcFile rivalSarc = GameData.FileSystem.ParseSarc("Pack/Actor/RivalAppearSequencerSdodr.pack.zs");
+        //     int rivalFileIndex = rivalSarc.GetSarcFileIndex("Component/GameParameterTable/RivalAppearSequencerSdodr.game__GameParameterTable.bgyml");
+        //     dynamic rivalFile = FileUtils.ToByml(rivalSarc.Files[rivalFileIndex].Data).Root;
+
+        //     foreach (BymlHashTable rivalWeaponSet in rivalFile["spl__RivalAppearSequencerParamSdodr"]["WeponSets"])
+        //     {
+        //         dynamic rivalWeapon = rivalWeaponSet;
+        //         if (rivalWeaponSet.ContainsKey("Main"))
+        //             rivalWeapon["Sub"].Data = GameData.weaponNames.WeaponInfoMain.GetRandomIndex("");
+        //     }
+        // }
     }
 }
 

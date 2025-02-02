@@ -59,5 +59,43 @@ public static class SdodrLoadoutRandomizer
 
         SdodrRandomizer.singletonSarc.Files[paletteDefineIndex].Data = FileUtils.SaveByml(paletteDefine);
     
+        int hackingConstantIndex = SdodrRandomizer.singletonSarc.GetSarcFileIndex(
+            $"Gyml/Singleton/spl__SdodrHackingConstant.spl__SdodrHackingConstant.bgyml"
+        );
+        dynamic hackingConstant = FileUtils.ToByml(
+            SdodrRandomizer.singletonSarc.Files[hackingConstantIndex].Data
+        ).Root;
+
+        BymlIterator hackIterator = new(2);
+
+        hackIterator.ruleKeys.Add(
+            key => key.Contains("ContentParams"),
+            (key, table) => {}
+        );
+
+        hackIterator.ruleKeys.Add(
+            key => key.Contains("JemHardMode"),
+            (key, table) => {}
+        );
+
+        if (Options.GetOption("randomizeHackEffects"))
+            hackIterator.ProcessBymlRoot(hackingConstant);
+
+        foreach (BymlHashPair hackData in hackingConstant["ContentParams"].Pairs)
+        {
+            dynamic hackValue = hackData.Value;
+            if (Options.GetOption("randomizeHackCost") && hackValue.ContainsKey("CostArray"))
+                hackIterator.ProcessArray(hackValue["CostArray"]);
+            if (Options.GetOption("randomizeHackEffects") && hackValue.ContainsKey("DisplayValue"))
+                hackIterator.ProcessArray(hackValue["DisplayValue"]);
+            if (Options.GetOption("unlockAllHacks") && hackValue.ContainsKey("UnlockCondition"))
+            {
+                for (int i = 0; i < hackValue.Pairs.Count; i++)
+                    if (hackValue.Pairs[i].Name == "UnlockCondition")
+                        hackValue.Pairs.RemoveAt(i);
+            }   
+        }
+
+        SdodrRandomizer.singletonSarc.Files[hackingConstantIndex].Data = FileUtils.SaveByml(hackingConstant);
     }
 }

@@ -108,7 +108,6 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty, DLCOption] private bool randomizeEventChance = true;
     [ObservableProperty, DLCOption] private bool randomizeDangerChance = true;
     [ObservableProperty, DLCOption] private bool randomizeDangerCombos = true;
-    [ObservableProperty, DLCOption] private bool randomizeAgent4Kits = true;
     [ObservableProperty, DLCOption] private bool tweakSdodrStageLayouts = true;
     [ObservableProperty, DLCOption] private int sdodrTweakLevel = 2;
 

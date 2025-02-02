@@ -12,6 +12,7 @@ public class BaseHandler(IFileSystem baseFs)
 {
     public void TriggerRandomizers(string saveFolder)
     {
+        Console.WriteLine("blud");
         GameData.DataPath = $"{saveFolder}/romfs/";
         GameData.FileSystem = new LayeredFileSystem(baseFs, new LocalFileSystem(GameData.DataPath));
         GameData.Random = new LongRNG(Convert.ToInt64(Options.GetOption("randomizerSeed")));

@@ -19,6 +19,7 @@ public class StageIterator(double randLevel) : BymlIterator(randLevel)
 
         foreach (string key in tempKeys)
         {
+            if (hashTable.ContainsKey(key)) continue;
             float defaultValue = key switch
             {
                 "Translate" or "Rotate" => 0.25f,

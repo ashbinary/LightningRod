@@ -45,6 +45,7 @@ public class BymlIterator
     {
         foreach (BymlHashPair node in hashTable.Pairs)
         {
+            hashTable.SetNode(node.Name, ProcessNode(node.Value));
             foreach (var rule in ruleKeys)
             {
                 if (rule.Key(node.Name)) 
@@ -53,7 +54,7 @@ public class BymlIterator
                     continue;
                 }
             }
-            hashTable.SetNode(node.Name, ProcessNode(node.Value));
+            
         }
         return hashTable;
     }

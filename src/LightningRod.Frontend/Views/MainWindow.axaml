@@ -546,7 +546,7 @@
                     </StackPanel>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Side Order"> <!-- IsEnabled="{Binding IsDLCLoaded}"> -->
+            <TabItem Header="Side Order" IsEnabled="{Binding IsDLCLoaded}">
                 <StackPanel Orientation="Horizontal" Margin="5,20,5,10">
                     <StackPanel Width="350" Margin="0,0,5,0">
                         <Border BorderBrush="Gray" BorderThickness="1" Padding="15,10,10,10">
@@ -558,21 +558,22 @@
                                 <TextBlock Text="Color Chips" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <CheckBox Content="Shuffle Color Chip Colors" IsChecked="{Binding SwapColorChips, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Color Chip Stats" IsChecked="{Binding RandomizeColorChipStats, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal">
+                                <!-- <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Color Chip Stats Always Increase" IsChecked="{Binding ColorChipStatsAlwaysUp, Mode=TwoWay}" IsEnabled="{Binding Unimplemented, Mode=TwoWay}"/>
                                     <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
                                     <ToolTip.Tip>
                                         <ToolTip Content="This makes it so that your stats won't go down if you equip a certain amount of color chips."/>
                                     </ToolTip.Tip>
                                     </TextBlock>
-                                </StackPanel>
-                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Parallel Canon Kits" IsChecked="{Binding RandomizeAgent4Kits, Mode=TwoWay}"/>
+                                </StackPanel> -->
+                                <TextBlock Text="Hacks" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Hacking Effects" IsChecked="{Binding RandomizeHackEffects, Mode=TwoWay}"/>
+                                <CheckBox Content="Randomize Hacking Cost" IsChecked="{Binding RandomizeHackCost, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Tweak Floor Layouts" IsChecked="{Binding TweakSdodrStageLayouts, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <CheckBox Content="Auto-Unlock All Hacks" IsChecked="{Binding UnlockAllHacks, Mode=TwoWay}"/>
+                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
                                     <ToolTip.Tip>
-                                        <ToolTip Content="This may cause issues regarding Jelleton AI. The program always sets the randomization amount to 2, but this can be changed in the config file by changing sdodrTweakLevel. Do at your own risk."/>
+                                        <ToolTip Content="This will not buy the hacks for you. You still have to buy them, they just won't be locked by progression."/>
                                     </ToolTip.Tip>
                                     </TextBlock>
                                 </StackPanel>
@@ -596,17 +597,6 @@
                                 </StackPanel>
                                 <CheckBox Content="Randomize Danger Appearance Chance" IsChecked="{Binding RandomizeDangerChance, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Danger! Combinations" IsChecked="{Binding RandomizeDangerCombos, Mode=TwoWay}"/>
-                                <TextBlock Text="Hacks" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Hacking Effects" IsChecked="{Binding RandomizeHackEffects, Mode=TwoWay}"/>
-                                <CheckBox Content="Randomize Hacking Cost" IsChecked="{Binding RandomizeHackCost, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox Content="Auto-Unlock All Hacks" IsChecked="{Binding UnlockAllHacks, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
-                                    <ToolTip.Tip>
-                                        <ToolTip Content="This will not buy the hacks for you. You still have to buy them, they just won't be locked by progression."/>
-                                    </ToolTip.Tip>
-                                    </TextBlock>
-                                </StackPanel>
                             </StackPanel>
                         </Border>
                     </StackPanel>
