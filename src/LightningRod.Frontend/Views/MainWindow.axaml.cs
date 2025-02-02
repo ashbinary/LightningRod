@@ -9,6 +9,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibHac;
 using LibHac.Common;
 using LibHac.Common.Keys;
 using LibHac.Fs;
@@ -42,6 +43,8 @@ public partial class MainWindow : Window
         HoianFSTempDLC;
 
     BaseHandler thunderBackend;
+
+    KeySet titleKeys;
 
     public MainWindow()
     {
@@ -109,6 +112,23 @@ public partial class MainWindow : Window
         if (loadedData.Count < 1)
             return null;
         return loadedData[0].Path.LocalPath;
+    }
+
+    public static async Task<IStorageFile> SavePickerPathAndReturn(
+        FilePickerSaveOptions options = null
+    )
+    {
+        var mainWindow =
+            (
+                (
+                    Avalonia.Application.Current.ApplicationLifetime
+                    as IClassicDesktopStyleApplicationLifetime
+                )?.MainWindow
+            ) ?? throw new Exception();
+        var storageProvider = mainWindow.StorageProvider;
+
+        var loadedData = await storageProvider.SaveFilePickerAsync(options);
+        return loadedData;
     }
 
     public async Task LoadRomFSAsync(GameType gameType)
@@ -199,6 +219,19 @@ public partial class MainWindow : Window
     )
     {
         new PartitionFileSystemCreator().Create(ref hoianData, ref libHacFile).ThrowIfFailure();
+        using UniqueRef<PartitionFileSystem> pfs = new UniqueRef<PartitionFileSystem>();
+        {
+            pfs.Reset(new PartitionFileSystem());
+            Result res = pfs.Get.Initialize(libHacFile);
+            PartitionFileSystem newFs = new();
+            if (res.IsSuccess())
+                newFs = pfs.Get;
+            if(newFs.EnumerateEntries("*.tik", SearchOptions.Default).Any())
+            {
+                throw new Exception("Found ticket!");
+            }
+        }
+        
     }
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e)
@@ -270,22 +303,25 @@ public partial class MainWindow : Window
     {
         var gameFilePath = await OpenPickerPathAndReturn(true);
 
-        var observableFields = typeof(MainWindowViewModel)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .Where(field => Attribute.IsDefined(field, typeof(ObservablePropertyAttribute)));
-
-        foreach (var field in observableFields)
+        if (gameFilePath != null)
         {
-            if (Attribute.IsDefined(field, typeof(DLCOption)) && !Model.IsDLCLoaded)
+            var observableFields = typeof(MainWindowViewModel)
+                .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                .Where(field => Attribute.IsDefined(field, typeof(ObservablePropertyAttribute)));
+
+            foreach (var field in observableFields)
             {
-                Options.SetOption(field.Name, false); // Prevent Side Order options from being set if DLC isn't loaded
-                continue;
+                if (Attribute.IsDefined(field, typeof(DLCOption)) && !Model.IsDLCLoaded)
+                {
+                    Options.SetOption(field.Name, false); // Prevent Side Order options from being set if DLC isn't loaded
+                    continue;
+                }
+
+                Options.SetOption(field.Name, field.GetValue(Model));
             }
 
-            Options.SetOption(field.Name, field.GetValue(Model));
+            thunderBackend.TriggerRandomizers(gameFilePath);
         }
-
-        thunderBackend.TriggerRandomizers(gameFilePath);
     }
 
     private void ExportOptions(object? sender, RoutedEventArgs e)
@@ -295,16 +331,24 @@ public partial class MainWindow : Window
 
     private async void AsyncExportOptions()
     {
-        var optionFolder = await OpenPickerPathAndReturn(true);
-        var jsonData = JsonConvert.SerializeObject(Model, new JsonSerializerSettings
+        var optionFile = await SavePickerPathAndReturn(new FilePickerSaveOptions
         {
-            ContractResolver = new DefaultContractResolver(),
-            Formatting = Formatting.Indented
+            SuggestedFileName = "LightningRod",
+            DefaultExtension = ".config",
+            ShowOverwritePrompt = true
         });
 
-        using (StreamWriter fileStream = new StreamWriter(optionFolder + "\\LightningRod.config"))
+        if (optionFile != null)
         {
-            fileStream.Write(jsonData);
+            var jsonData = JsonConvert.SerializeObject(Model, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver(),
+                Formatting = Formatting.Indented
+            });
+
+            using var stream = await optionFile.OpenWriteAsync();
+            using var writer = new StreamWriter(stream);
+            writer.Write(jsonData);
         }
     }
 
@@ -324,7 +368,9 @@ public partial class MainWindow : Window
                 AllowMultiple = false,
             }
         );
-        Model.ImportOptions(optionPath);
+
+        if (optionPath != null)
+            Model.ImportOptions(optionPath);
     }
 
     private void SwapRomFSandNSPInput(object sender, RoutedEventArgs e)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using Newtonsoft.Json;
 
 namespace LightningRod.Frontend.ViewModels;
@@ -12,14 +13,14 @@ public partial class MainWindowViewModel : ObservableObject
     public static string VersionString => $"(v{ToolVersion})";
 
     /* Generic Randomizer Options */
-    [ObservableProperty, JsonIgnore] private bool unimplemented = false;
-    [ObservableProperty, JsonIgnore] private string randomizerSeed = GenerateRandomizerSeed();
-    [ObservableProperty, JsonIgnore] private bool isConsoleKeysLoaded = false;
-    [ObservableProperty, JsonIgnore] private bool isBaseLoaded = false;
-    [ObservableProperty, JsonIgnore] private bool isUpdateLoaded = false;
-    [ObservableProperty, JsonIgnore] private bool isDLCLoaded = false;
-    [ObservableProperty, JsonIgnore] private bool gameDataLoaded = false;
-    [ObservableProperty, JsonIgnore] private bool useRomFSInstead = false;
+    [ObservableProperty, JsonIgnoreAttribute] private bool unimplemented = false;
+    [ObservableProperty, JsonIgnoreAttribute] private string randomizerSeed = GenerateRandomizerSeed();
+    [ObservableProperty, JsonIgnoreAttribute] private bool isConsoleKeysLoaded = false;
+    [ObservableProperty, JsonIgnoreAttribute] private bool isBaseLoaded = false;
+    [ObservableProperty, JsonIgnoreAttribute] private bool isUpdateLoaded = false;
+    [ObservableProperty, JsonIgnoreAttribute] private bool isDLCLoaded = false;
+    [ObservableProperty, JsonIgnoreAttribute] private bool gameDataLoaded = false;
+    [ObservableProperty, JsonIgnoreAttribute] private bool useRomFSInstead = false;
     /* Weapon Kit Randomization */
     [ObservableProperty] private bool randomizeKits = true;
     [ObservableProperty] private bool heroSubSelection = false;
@@ -135,10 +136,13 @@ public partial class MainWindowViewModel : ObservableObject
         foreach (KeyValuePair<string, object> option in options)
         {
             var property = GetType().GetProperty(option.Key);
-            if (property != null && property.CanWrite)
+            if (Attribute.IsDefined(property, typeof(JsonIgnoreAttribute)))
             {
-                var value = Convert.ChangeType(option.Value, property.PropertyType);
-                property.SetValue(this, value);
+                if (property != null && property.CanWrite)
+                {
+                    var value = Convert.ChangeType(option.Value, property.PropertyType);
+                    property.SetValue(this, value);
+                }
             }
         }
     }
