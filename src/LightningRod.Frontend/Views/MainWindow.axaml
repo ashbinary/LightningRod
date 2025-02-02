@@ -446,8 +446,8 @@
                                 <CheckBox Content="Randomize Splat Bomb" IsChecked="{Binding RandomizeLoanedSub, Mode=TwoWay}"/>
                                 <CheckBox Content="Randomize Usable Specials" IsChecked="{Binding RandomizeLoanedSpecials, Mode=TwoWay}" IsEnabled="{Binding !AllSpecialsLoanable, Mode=OneWay}"/>
                                 <CheckBox Content="Make All Specials Loanable" IsChecked="{Binding AllSpecialsLoanable, Mode=TwoWay}" IsEnabled="{Binding !RandomizeLoanedSpecials, Mode=OneWay}"/>
-                                <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
-                                <CheckBox Content="Randomize Salmon Run Difficulty Levels" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/>
+                                <!-- <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
+                                <CheckBox Content="Randomize Salmon Run Difficulty Levels" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/> -->
                                 <!-- <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Tweak Salmon Run Stage Layouts" IsChecked="{Binding TweakCoopStageLayouts, Mode=TwoWay}"/>
                                     <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
