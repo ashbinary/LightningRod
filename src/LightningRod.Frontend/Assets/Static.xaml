@@ -1,19 +1,57 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Style for TextBlock -->
-    <Style Selector="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}"/>
-        <Setter Property="Foreground" Value="#FF4C67" />
-    </Style>
-
     <!-- Style for Button -->
     <Style Selector="Button">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}"/>
-        <Setter Property="Foreground" Value="#FF4C67" />
+        <Setter Property="Foreground" Value="{StaticResource MainColor}" />
     </Style>
 
     <Style Selector="CheckBox">
-        <Setter Property="BorderBrush" Value="#FF4C67" />
+        <Style.Resources>
+            <SolidColorBrush x:Key="CheckBoxCheckedPointeroverBackground" Color="{StaticResource MainColorHighlight}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedDefaultBackground" Color="{StaticResource MainColorDark}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedDisabledBackground" Color="{StaticResource MainColorDisabled}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedPressedBackground" Color="{StaticResource MainColorPressed}"/>
+
+            <SolidColorBrush x:Key="CheckBoxPointeroverBorderBrush" Color="{StaticResource MainColor}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedPointeroverBorderBrush" Color="{StaticResource MainColor}"/>
+            <SolidColorBrush x:Key="CheckBoxPressedBorderBrush" Color="{StaticResource MainColor}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedPressedBorderBrush" Color="{StaticResource MainColorHighlight}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedDefaultBorderBrush" Color="{StaticResource MainColorBorder}"/>
+            <SolidColorBrush x:Key="CheckBoxCheckedDisabledBorderBrush" Color="{StaticResource MainColorDisabledBorder}"/>
+
+            <SolidColorBrush x:Key="CheckBoxGlyphDisabledFill" Color="DarkGray"/>
+        </Style.Resources>
     </Style>
+
+    <Style Selector="Slider">
+        <Style.Resources>
+            <SolidColorBrush x:Key="SliderTrackForeground" Color="{StaticResource MainColor}"/>
+            <SolidColorBrush x:Key="SliderTrackBackground" Color="{StaticResource MainColorBorder}"/>
+            <SolidColorBrush x:Key="SliderTrackDisabledBackground" Color="{StaticResource MainColorDisabled}"/>
+        </Style.Resources>
+    </Style>
+
+    <Style Selector="TextBlock.ToolTip">
+        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="Foreground" Value="{StaticResource MainColorDark}"/>
+    </Style>
+
+    <Style Selector="TextBlock.ToolTipSlider">
+        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="5,-5,0,0"/>
+        <Setter Property="Foreground" Value="{StaticResource MainColorDark}"/>
+    </Style>
+
+    <Style Selector="TextBlock.ToolTipScary">
+        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="Foreground" Value="Red"/>
+    </Style>
+
 </Styles>

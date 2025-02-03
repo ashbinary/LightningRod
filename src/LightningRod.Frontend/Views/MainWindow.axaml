@@ -7,8 +7,8 @@
         CanResize="False"
         x:Class="LightningRod.Frontend.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="LightningRod.Frontend">
+        Icon="/Assets/LightningRod.ico"
+        Title="LightningRod">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -124,7 +124,7 @@
                                 <CheckBox Content="Include Hero Mode Sub Weapons" IsChecked="{Binding HeroSubSelection, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include Unused &quot;Big&quot; Splat Bomb" IsChecked="{Binding CoopSplatBomb, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This went unused throughout the game's life, intended for Salmon Run, but still works completely as intended. Depending on the version of the game, it will either show up as a Splat Bomb or as a Smallfry without an icon."/>
                                         </ToolTip.Tip>
@@ -132,7 +132,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include All Sub Weapons" IsChecked="{Binding AllSubWeapons, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FFEE0070">
+                                    <TextBlock Text="⚠" Classes="ToolTipScary">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is very prone to crashing when a weapon is selected! Use at your own risk."/>
                                         </ToolTip.Tip>
@@ -143,7 +143,7 @@
                                 <CheckBox Content="Include Hero Mode Splashdown" IsChecked="{Binding HeroModeSuperLanding, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include Rainmaker" IsChecked="{Binding UseRainmaker, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This includes both the Rainmaker and Modified Rainmaker (after v5.0.0). Highly likely to softlock before v5.0.0."/>
                                         </ToolTip.Tip>
@@ -151,7 +151,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Include All Specials" IsChecked="{Binding UseAllSpecials, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FFEE0070">
+                                    <TextBlock Text="⚠" Classes="ToolTipScary">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This has a very high chance of crashing the game, especially regarding the Side Order specials and specials intended for Rivals."/>
                                         </ToolTip.Tip>
@@ -191,7 +191,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Disable PFS Increments" IsChecked="{Binding NoPFSIncrementation, Mode=TwoWay}" IsEnabled="{Binding RandomizeKits, Mode=OneWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This allows weapons to have any PFS between the desired values instead of all PFS being divisible by 10, such as 188p or 204p for special."/>
                                         </ToolTip.Tip>
@@ -224,7 +224,7 @@
                                         IsSnapToTickEnabled="True"
                                         Width="100"/>
                                     <TextBlock Text="{Binding TweakLevel}" Margin="10,5,0,5"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,-5,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This controls how modified the stage layout is. The higher the severity, the higher chance of a stage being completely unplayable."/>
                                         </ToolTip.Tip>
@@ -236,7 +236,7 @@
                                 <TextBlock Text="Miscellaneous" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Mismatch Stage Icons" IsChecked="{Binding MismatchedStages, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is automatically disabled if the version currently loaded is lower than v1.2.0, as part of the stage file was rewritten, allowing this randomization to work."/>
                                         </ToolTip.Tip>
@@ -275,7 +275,7 @@
                                         IsSnapToTickEnabled="True"
                                         Width="150"/>
                                     <TextBlock Text="{Binding EnvIntensity}" Margin="10,5,0,5"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,-5,0,0" Foreground="#FF54A9FF">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="Level 7 and above may be stressful on the eyes. Take precautions if necessary."/>
                                         </ToolTip.Tip>
@@ -295,7 +295,7 @@
                                 <CheckBox Content="Randomize Multiplayer Weapons" IsChecked="{Binding RandomizeParameters, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Story Mode Weapons" IsChecked="{Binding RandomizeMsnParameters, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="Not recommended as it causes softlocks within Hero Mode levels. However, very fun when used with some sort of anti-softlock protection!"/>
                                         </ToolTip.Tip>
@@ -314,7 +314,7 @@
                                         IsSnapToTickEnabled="True"
                                         Width="120"/>
                                     <TextBlock Text="{Binding ParameterSeverity}" Margin="10,5,0,5"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,-5,0,0">
+                                    <TextBlock Text="⚠" Classes="ToolTipSlider">
                                         <ToolTip.Tip>
                                             <ToolTip Content="The parameter randomization was developed with a severity of 2 in mind. Severity level 5 in particular may yield crashes on Splatanas and various weapons."/>
                                         </ToolTip.Tip>
@@ -354,7 +354,7 @@
                                             IsSnapToTickEnabled="True"
                                             Width="175"/>
                                     <TextBlock Text="{Binding InkColorBias}" Margin="10,5,0,10"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="5,-5,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTipSlider">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This changes the brightness of the randomized ink colors. Positive numbers will provide lighter ink colors and negative numbers will provide darker ink colors."/>
                                         </ToolTip.Tip>
@@ -381,7 +381,7 @@
                                 <CheckBox Content="Randomize Mission Weapons" IsChecked="{Binding RandomizeHeroWeapons, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Lock First Weapon" IsEnabled="{Binding RandomizeHeroWeapons, Mode=OneWay}" IsChecked="{Binding EnsureFirstHeroWeapon, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This keeps the first weapon of each stage the same as the original game, while randomizing the other 2 avaliable weapons. This helps prevent softlocks from occurring."/>
                                         </ToolTip.Tip>
@@ -392,7 +392,7 @@
                                 <CheckBox Content="Shuffle Hero Gear Upgrade Tree" IsChecked="{Binding RandomizeHeroTree, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Customize Loot Anchor Egg Amount" IsChecked="{Binding RandomizeDigUpPointEggs, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is mainly to stop softlocks from occurring where the player does not have enough eggs to progress."/>
                                         </ToolTip.Tip>
@@ -419,7 +419,7 @@
                                 <TextBlock Text="Stage Order" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Crater Level Order" IsChecked="{Binding RandomizeKettlesCrater, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="Level 1 of The Crater will not be randomized, as it is required for the game to work properly."/>
                                         </ToolTip.Tip>
@@ -450,7 +450,7 @@
                                 <CheckBox Content="Randomize Salmon Run Difficulty Levels" IsChecked="{Binding RandomizeCoopLevels, Mode=TwoWay}"/> -->
                                 <!-- <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Tweak Salmon Run Stage Layouts" IsChecked="{Binding TweakCoopStageLayouts, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This may break Salmonid AI, and may cause variable levels of unplayability. It is hardlocked to be at level 2 no matter what, but if you so desire, changing the coopTweakLevel parameter in a config file will work. Do so at your own risk."/>
                                         </ToolTip.Tip>
@@ -467,7 +467,7 @@
                                 <CheckBox Content="Randomize King Salmonid Data" IsChecked="{Binding RandomizeKingParams, Mode=TwoWay}"/>
                                 <!-- <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Shuffle Salmonid Entities" IsChecked="{Binding ShuffleSalmonidActors, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="⚠" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This randomizes Salmonid 'actors', allowing for Salmonids to spawn in the place of other Salmonids. (ex. replacing Steelheads with Flipper-Floppers)"/>
                                         </ToolTip.Tip>
@@ -476,7 +476,7 @@
                                 <TextBlock Text="Coming soon." TextWrapping="Wrap" Margin="0,0,0,-5" Foreground="#FF808080"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Allow Shuffling Lesser &amp; King Salmonids" IsChecked="{Binding AllowLesserKingSwap, Mode=TwoWay}" IsEnabled="{Binding Unimplemented, Mode=OneWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FFEE0070" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="⚠" Classes="ToolTipScary">
                                         <ToolTip.Tip>
                                             <ToolTip Content="Probably best not to use this on an old console. Have fun trying to beat it!"/>
                                         </ToolTip.Tip>
@@ -496,7 +496,7 @@
                                 <CheckBox Content="Randomize Text" IsChecked="{Binding RandomizeText, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize All Dialogue" IsChecked="{Binding RandomizeAllDialogue, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="To prevent crashes, the text randomization only works within the section the game stores it in. This option randomizes all dialogue across the entire game (including Deep Cut's news broadcasts, Side Order, Return of the Mammalians, Tableturf dialogue, and more.)"/>
                                         </ToolTip.Tip>
@@ -504,7 +504,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Prevent Randomizing Weapon Names" IsChecked="{Binding NotRandomizeWeaponNames, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is only for convenience, as the game gets very confusing when weapon names are randomized."/>
                                         </ToolTip.Tip>
@@ -512,7 +512,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Prevent Randomizing Level Names" IsChecked="{Binding NotRandomizeLevelNames, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This is ONLY for Return of the Mammalians, and is only for convenience, as the game gets very confusing when level names are randomized."/>
                                         </ToolTip.Tip>
@@ -520,7 +520,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Only English" IsChecked="{Binding EnglishOnly, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" FontFamily="Segoe UI Symbol" Foreground="#FF54A9FF" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This will affect the RNG, even on the same seed. It is only for saving space."/>
                                         </ToolTip.Tip>
@@ -528,7 +528,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Layout Text" IsChecked="{Binding Unimplemented, Mode=TwoWay}"/>
-                                    <TextBlock Text="⚠" FontFamily="Segoe UI Symbol" Foreground="#FFEE0070" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="⚠" Classes="ToolTipScary">
                                         <ToolTip.Tip>
                                             <ToolTip Content="The game is not a fan of this! Use it at your own risk."/>
                                         </ToolTip.Tip>
@@ -543,7 +543,7 @@
                                 <TextBlock Text="Other" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Match Intro / Results" IsChecked="{Binding RandomizeVersusConstants, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                         <ToolTip.Tip>
                                             <ToolTip Content="This feature is also modified by the parameter severity level."/>
                                         </ToolTip.Tip>
@@ -568,7 +568,7 @@
                                 <CheckBox Content="Randomize Color Chip Stats" IsChecked="{Binding RandomizeColorChipStats, Mode=TwoWay}"/>
                                 <!-- <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Color Chip Stats Always Increase" IsChecked="{Binding ColorChipStatsAlwaysUp, Mode=TwoWay}" IsEnabled="{Binding Unimplemented, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                     <ToolTip.Tip>
                                         <ToolTip Content="This makes it so that your stats won't go down if you equip a certain amount of color chips."/>
                                     </ToolTip.Tip>
@@ -579,7 +579,7 @@
                                 <CheckBox Content="Randomize Hacking Cost" IsChecked="{Binding RandomizeHackCost, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Auto-Unlock All Hacks" IsChecked="{Binding UnlockAllHacks, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                     <ToolTip.Tip>
                                         <ToolTip Content="This will not buy the hacks for you. You still have to buy them, they just won't be locked by progression."/>
                                     </ToolTip.Tip>
@@ -597,7 +597,7 @@
                                 <TextBlock Text="Bonus Effects" FontWeight="Bold" Margin="0,5,0,5"/>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox Content="Randomize Floor &quot;Event&quot; Rate" IsChecked="{Binding RandomizeEventChance, Mode=TwoWay}"/>
-                                    <TextBlock Text="🛈" Foreground="#FF54A9FF" FontFamily="Segoe UI Symbol" VerticalAlignment="Center" Margin="5,0,0,0">
+                                    <TextBlock Text="🛈" Classes="ToolTip">
                                     <ToolTip.Tip>
                                         <ToolTip Content="An event is a specific modification to the round (Color Chip Saturation &amp; Bonus Objective)."/>
                                     </ToolTip.Tip>

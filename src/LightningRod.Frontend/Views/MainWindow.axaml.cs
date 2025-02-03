@@ -16,6 +16,8 @@ using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LibHac.FsSrv.FsCreator;
 using LibHac.FsSystem;
+using LibHac.Spl;
+using LibHac.Tools.Es;
 using LibHac.Tools.Fs;
 using LibHac.Tools.FsSystem;
 using LibHac.Tools.FsSystem.NcaUtils;
@@ -44,14 +46,14 @@ public partial class MainWindow : Window
 
     BaseHandler thunderBackend;
 
-    KeySet titleKeys;
+    KeySet keyList;
 
     public MainWindow()
     {
         InitializeComponent();
         DataContext = new MainWindowViewModel();
 
-        string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        keyList = SetupKeyset();
         // if (File.Exists(System.IO.Path.Combine(homePath, ".switch", "prod.keys"))) // Check for prod keys and hope to god they're not dumb enough to put title keys separately!
         //     Model.IsConsoleKeysLoaded = true;
     }
@@ -219,6 +221,30 @@ public partial class MainWindow : Window
     )
     {
         new PartitionFileSystemCreator().Create(ref hoianData, ref libHacFile).ThrowIfFailure();
+        GetTicketData(hoianData.Get);
+    }
+
+    // Taken from hactoolnet/ProcessAppFs.cs
+    private void GetTicketData(IFileSystem fileSystem)
+    {
+        foreach (DirectoryEntryEx entry in fileSystem.EnumerateEntries("*.tik", SearchOptions.Default))
+        {
+            using var tikFile = new UniqueRef<IFile>();
+            fileSystem.OpenFile(ref tikFile.Ref, entry.FullPath.ToU8Span(), OpenMode.Read).ThrowIfFailure();
+
+            var ticket = new Ticket(tikFile.Get.AsStream());
+
+            if (ticket.RightsId.IsZeros())
+                continue;
+
+            byte[] key = ticket.GetTitleKey(keyList);
+            if (key is null)
+                continue;
+
+            var rightsId = SpanHelpers.AsStruct<RightsId>(ticket.RightsId);
+            var accessKey = SpanHelpers.AsStruct<AccessKey>(key);
+            keyList.ExternalKeySet.Add(rightsId, accessKey).ThrowIfFailure();
+        }
     }
 
     private void SendDataToBackend(object? sender, RoutedEventArgs e)
@@ -238,7 +264,7 @@ public partial class MainWindow : Window
                 addedFilesystems.Add(HoianTempDLC.Get);
             HoianBaseFiles = new LayeredFileSystem(addedFilesystems);
 
-            var filesystem = SwitchFs.OpenNcaDirectory(SetupKeyset(), HoianBaseFiles);
+            var filesystem = SwitchFs.OpenNcaDirectory(keyList, HoianBaseFiles);
             addedFilesystems = [];
 
             IFileSystem baseNcaData = filesystem
@@ -383,15 +409,22 @@ public partial class MainWindow : Window
         }
     }
 
+    private bool DoConsoleKeysExist()
+    {
+        string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string prodKeyFile = System.IO.Path.Combine(homePath, ".switch");
+
+        return System.IO.Path.Exists(prodKeyFile);
+    }
+
     private KeySet SetupKeyset()
     {
         string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        string homeTitleKeyFile = System.IO.Path.Combine(homePath, ".switch", "title.keys");
         string prodKeyFile = System.IO.Path.Combine(homePath, ".switch", "prod.keys");
 
         try
         {
-            return ExternalKeyReader.ReadKeyFile(prodKeyFile, homeTitleKeyFile);
+            return ExternalKeyReader.ReadKeyFile(prodKeyFile);
         }
         catch (Exception e)
         {

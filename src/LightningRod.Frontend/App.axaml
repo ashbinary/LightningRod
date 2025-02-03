@@ -10,11 +10,15 @@
     </Application.DataTemplates>
   
     <Application.Resources>
-        <FontFamily x:Key="DefaultFontFamily">avares://LightningRod.Frontend/Assets/Fonts/#Noto Sans</FontFamily>
+        <ResourceDictionary>
+           <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://LightningRod.Frontend/Assets/Resources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 
     <Application.Styles>
         <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
-        <!--<StyleInclude Source="avares://LightningRod.Frontend/Assets/Static.xaml"/>-->
+        <StyleInclude Source="avares://LightningRod.Frontend/Assets/Static.xaml"/>
     </Application.Styles>
 </Application>

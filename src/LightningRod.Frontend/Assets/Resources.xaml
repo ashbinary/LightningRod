@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="MainColor">#F19647</Color>
+    <Color x:Key="MainColorDark">#E06400</Color>
+    <Color x:Key="MainColorBorder">#632B00</Color>
+    
+    <Color x:Key="MainColorHighlight">#FF9C51</Color>
+    <Color x:Key="MainColorPressed">#F2D380</Color>
+
+    <Color x:Key="MainColorDisabled">#603B21</Color>
+    <Color x:Key="MainColorDisabledBorder">#110700</Color>
+
+    <FontFamily x:Key="DefaultFontFamily">avares://LightningRod.Frontend/Assets/Fonts/#Noto Sans</FontFamily>
+</ResourceDictionary>
