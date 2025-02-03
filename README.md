@@ -1,7 +1,7 @@
 # LightningRod
 LightningRod is a randomizer for most aspects of Splatoon 3.
 
-![LightningRod](https://github.com/user-attachments/assets/3322a331-3c7a-450f-ada9-27c18ac2514c)
+![LightningRod](https://raw.githubusercontent.com/ashbinary/LightningRod/refs/heads/main/assets/preview.png)
 
 ## IMPORTANT NOTE
 **I am NOT responsible for any bans caused by LightningRod. This is meant to be used in an environment disconnected from Nintendo's servers, and using it online will almost surely cause a ban. By downloading this, you, the user, are taking full responsibilty if banned.**
