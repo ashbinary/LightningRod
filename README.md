@@ -6,13 +6,15 @@ LightningRod is a randomizer for most aspects of Splatoon 3.
 ## IMPORTANT NOTE
 **I am NOT responsible for any bans caused by LightningRod. This is meant to be used in an environment disconnected from Nintendo's servers, and using it online will almost surely cause a ban. By downloading this, you, the user, are taking full responsibilty if banned.**
 
+**Due to the hyper-softcoded nature of this program, stability is not guaranteed. In the case of a crash, simply re-randomize the game, and maybe toggle off a few of the more severe options.**
+
 ## Requirements
 - A dump of the game, in either a dumped romFS, .XCI, or .NSP format.
-- A working prod.keys and title.keys that has played Splatoon 3 at the very least, and has played Side Order if attempting to load an NSP from there.
+- A working prod.keys (usually on the latest version of the Switch OS).
 - [.NET Runtime 9.0.1](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
   
 ## Usage
-The prod.keys and title.keys files should be placed in the `C:/Users/[username]/.switch` folder. (This is not required if you are using a romFS dump of the game to load it.)
+The prod.keys file should be placed in the `C:/Users/[username]/.switch` folder. (This is not required if you are using a romFS dump of the game to load it.)
 
 Load in the .NSPs/.XCIs/romFS dumps on the left side of the program. Once the basegame is loaded in, the program will unlock the available options.
 
