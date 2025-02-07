@@ -26,7 +26,7 @@ When ready, press the `Randomize + Save` button. The user will be prompted with 
 
 ## Credits
 
-[Shadów](https://x.com/shadowninja108) - Created the BYML library used in the program, and was the biggest inspiration in completing the project as a whole.
+[Shadów](https://x.com/shadowninja108) - Created the BYML library used in LightningRod.
 
 [AeonSake](https://aeonsake.com/) - Created the SARC & MSBT libraries used in LightningRod.
 
