@@ -3,10 +3,10 @@ LightningRod is a randomizer for most aspects of Splatoon 3.
 
 ![LightningRod](https://raw.githubusercontent.com/ashbinary/LightningRod/refs/heads/main/assets/preview.png)
 
-## IMPORTANT NOTE
-**I am NOT responsible for any bans caused by LightningRod. This is meant to be used in an environment disconnected from Nintendo's servers, and using it online will almost surely cause a ban. By downloading this, you, the user, are taking full responsibilty if banned.**
-
-**Due to the hyper-softcoded nature of this program, stability is not guaranteed. In the case of a crash, simply re-randomize the game, and maybe toggle off a few of the more severe options.**
+> [!WARNING]  
+>**I am NOT responsible for any bans caused by LightningRod. This is meant to be used in an environment disconnected from Nintendo's servers, and using it online will almost surely cause a ban. By downloading this, you, the user, are taking full responsibilty if banned.**
+> 
+>**Due to the hyper-softcoded nature of this program, stability is not guaranteed. In the case of a crash, simply re-randomize the game, and maybe toggle off a few of the more severe options.**
 
 ## Requirements
 - A dump of the game, in either a dumped romFS, .XCI, or .NSP format.
